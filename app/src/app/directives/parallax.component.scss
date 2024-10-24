@@ -1,0 +1,20 @@
+.parallax-parent {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+
+    &.parallax-column {
+        flex-direction: column;
+    }
+
+    &.parallax-row {
+        flex-direction: row;
+    }
+
+    .parallax-child {
+        position: relative;
+    }
+}
+
+
+

@@ -1,0 +1,93 @@
+@use '@angular/material' as mat;
+
+@use 'styles/theme/palette' as palette; 
+@use 'styles/theme/typography' as typography;
+
+// Import component themes
+@use 'styles/theme/components/header' as header;
+@use 'styles/theme/components/footer' as footer;
+@use 'styles/theme/components/hero' as hero;
+@use 'styles/theme/components/home' as home;
+@use 'styles/theme/components//familiar-technology' as familiar-technology;
+@use 'styles/theme/components/open-source-banner' as open-source-banner;
+@use 'styles/theme/components/post-list' as post-list;
+@use 'styles/theme/components/elementor' as elementor;
+@use 'styles/theme/components/page-not-found' as page-not-found;
+
+@include mat.core();
+
+@import '~material-icons/iconfont/material-icons.css';
+@import 'styles/theme/zindex';
+@import "bootstrap/scss/bootstrap";
+@import 'styles/theme//shape';
+@import 'app/directives/parallax.component.scss';
+
+/* Configure theme */
+
+$light-theme: mat.define-theme((
+  
+  color: (
+    theme-type: light,
+    primary: palette.$primary,
+    tertiary: palette.$tertiary,
+  ),
+  typography: (
+    brand-family: typography.$heading-font, 
+    plain-family: typography.$regular-font,
+  ),
+));
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: palette.$primary,
+    tertiary: palette.$tertiary,
+  ),
+  typography: (
+    brand-family: typography.$heading-font, 
+    plain-family: typography.$regular-font,
+  ),
+));
+
+
+/* Global Styles and apply theme */
+html, body { height: 100%; }
+body { 
+    margin: 0; 
+    font-family: typography.$regular-font-family;
+}
+
+html {
+    $theme: $dark-theme;
+    @include mat.all-component-themes($theme);
+    @include mat.typography-hierarchy($theme);
+    @include elementor.theme($theme);
+    @include header.theme($theme);
+    @include footer.theme($theme);
+    @include hero.theme($theme);
+    @include home.theme($theme);
+    @include familiar-technology.theme($theme);
+    @include open-source-banner.theme($theme);
+    @include post-list.theme($theme);
+    @include page-not-found.theme($theme);
+    // @include mat.typography-hierarchy($theme);
+
+    // Material Specific
+    .mdc-list-item__primary-text {
+      color: mat.get-theme-color($theme, 'primary', 20);
+    }
+
+    .mdc-list-item__secondary-text {
+      color: mat.get-theme-color($theme, 'neutral', 40);
+    }    
+}
+
+app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+app-footer {
+    margin-top: auto;
+}

@@ -1,0 +1,101 @@
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+
+#wordpress-banner {
+    width: 100%;
+    min-height: 700px;
+    position: relative;
+    z-index: 2;
+
+    .camera-coordinates {
+        color: #000; 
+        position: absolute; 
+        top: 0; 
+        right: 0; 
+        font-weight: bold; 
+        z-index: 2; 
+        padding: 5px 5px; 
+        opacity: 0.5;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        input {
+            width: 100%;
+        }
+    }
+
+    .banner-text-section {
+        position: absolute;
+        left: 42%;
+        top: 250px;
+        opacity: 0;
+        animation: fadeOut 100ms linear;
+        display: flex;
+        flex-direction: column;
+
+        .heading-text {
+            font-size: 100px;
+            text-shadow: #3f1f12 5px 5px 14px;
+            color: #3f1f12;
+            font-family: 'Bree Serif', serif;
+            font-weight: bold;
+            line-height: 1;
+            
+        }
+
+        .sub-heading-text {
+            font-size: 20px;
+            text-shadow: #000 5px 5px 14px;
+            color: #000;
+            font-family: 'Bree Serif', serif;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        &.show {
+            animation: fadeIn 1s linear;
+            opacity: 1;
+        }
+        
+    }
+
+    @media all and (max-width: 1024px) {
+        .banner-text-section {
+            font-size: 80px;
+        }
+    }
+
+    @media all and (max-width: 991px) {
+        .banner-text-section {
+            font-size: 70px;
+        }
+    }
+
+    @media all and (max-width: 767px) {
+        width: 100%;
+
+        .banner-text-section {
+            font-size: 50px;
+        }
+    }
+
+
+}

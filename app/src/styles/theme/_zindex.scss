@@ -1,0 +1,64 @@
+/* Header */
+#navigation-header {
+    z-index: 2;
+}
+
+/* Main Section */
+#main-content-wrapper {
+    z-index: 1;
+}
+
+/* Footer */
+#footer-section {
+    z-index: 1;
+}
+
+/* Route Components */
+#home-component {
+    z-index: 2;
+
+    #open-source-banner {
+        z-index: 3;
+
+        .open-source-banner-image {
+            z-index: 3;
+        }
+    }
+
+    #hero-component {
+        z-index: 4;
+    }
+
+
+    #familiar-technologies {
+        z-index: 5;
+
+        #familiar-frameworks {
+            z-index: 5;
+        }
+
+        #familiar-languages {
+            z-index: 6;
+        }
+
+        #familiar-deployments {
+            z-index: 7;
+        }
+    }
+}
+
+#page-not-found {
+    z-index: 2;
+    .stars {
+        z-index: 2;
+    }
+
+    .twinkling {
+        z-index: 3;
+    }
+
+    .content {
+        z-index: 4
+    }
+}
+

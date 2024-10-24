@@ -1,0 +1,40 @@
+<div id="post-container">
+    <div class="post-header">
+        <a href="/posts/{{categoryId}}/{{categoryName}}" class="post-header-item category-name">{{categoryName}}</a>
+        <span class="post-header-item post-date">published {{getPublishedDate()}}</span>
+        <div class="post-header-item author-name-section">
+            <img src="{{getAuthorImage(author)}}" class="author-image" alt="profile picture">
+            <span class="author-name">
+                
+                by 
+                @if(author && author.name) {
+                    <a class="author-name-link" href="#">{{author.name}}</a>
+                }
+                @else {
+                    Anonymous
+                }
+                </span>
+        </div>
+        
+    </div>
+    <div class="post-body" #postContainer>
+    </div>
+    <div class="container post-footer">
+        @if(relatedPosts && relatedPosts.length) {
+            <div class="row related-posts-header">
+                <div class="col-12">
+                    <h4>You may also like</h4>
+                </div>
+            </div>
+            <div class="row related-posts">
+                @for(post of relatedPosts; track post.id;) {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <app-post-card [post]="post" [postCardType]="'grid'" [categoryID]="categoryId" 
+                        [categoryName]="categoryName" class="related-post"></app-post-card>
+                    </div>
+                    
+                } 
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,155 @@
+@keyframes animateFrontendExperienceText {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes animateFrontendExpreienceImage {
+    from {
+        left: -20%;
+    }
+
+    to {
+        left: 0;
+    }
+}
+
+#home-banners {
+    #frontend-experience-banner {
+        position: relative; 
+        background-color: #fff; 
+        padding: 30px 0; 
+        z-index: 3; 
+        overflow: hidden;
+
+        .angular-logo-section {
+            z-index: 3;
+        }
+
+        .angular-logo {
+            width: 70%; 
+            opacity: 0.3;
+            position: relative;
+            left: -200px;
+        }
+
+        .angular-logo-overlay-rectangle {
+            z-index: 4; 
+            position: absolute; 
+            width: 55%; 
+            height: 100%; 
+            background: #cb2323; 
+            right: -110px; 
+            top: 0;
+            transform: skewX(-30deg);
+            box-shadow: #000 0 10px 25px;
+        }
+
+        .frontend-experience-banner-content {
+            position: absolute; 
+            right: 20px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            z-index: 6; 
+            color: #fff; 
+            width: 40%; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column;
+            text-align: right;
+
+            .title, .subtitle {
+                width: 100%;
+                margin-left: auto;
+                opacity: 0;
+                
+            }
+
+            .title {
+                font-weight: bold;
+                margin-left: auto;
+
+                &.crossed {
+                    animation: animateFrontendExperienceText 300ms ease-in-out;
+                    opacity: 1;
+                }
+            }
+
+            .subtitle.crossed {
+                animation: animateFrontendExperienceText 500ms ease-in-out;
+                opacity: 1;
+            }
+                        
+        }
+
+        @media all and (max-width: 991px) {
+            .frontend-experience-banner-content {
+                .title {
+                    font-size: 30px;
+                }
+    
+                .subtitle {
+                    font-size: 20px;
+                }
+            }
+            
+        }
+
+        @media all and (max-width: 767px) {
+            padding: 30px 0 0 0;
+            .angular-logo {
+                width: 100%;
+            }
+
+            .angular-logo-overlay-square, .angular-logo-overlay-rectangle {
+                display: none;
+            }
+
+            .frontend-experience-banner-content {
+                position: relative;
+                width: 100%;
+                left: 50%;
+                top: unset;
+                transform: translateX(-50%);
+                background-color: #cb2323;
+                padding: 10px 10px;
+
+                .title, .subtitle {
+                    text-align: center;
+                    margin-bottom: 0;
+                }
+
+                .subtitle {
+                    max-width: 80%;
+                    margin: 0 auto;
+                }
+
+            }
+        }
+
+        @media all and (max-width: 373px) {
+            .frontend-experience-banner-content {
+
+                .title {
+                    font-size: 25px;
+                }
+
+                .subtitle {
+                    font-size: 18px;
+                }
+
+            }
+        }
+    }
+
+    .home-wordpress-banner {
+        background-color: #fff;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+}

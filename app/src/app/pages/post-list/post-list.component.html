@@ -1,0 +1,49 @@
+<div class="container" id="post-list-component">
+    <div class="row">
+        <div class="col-12 col-md-3 category-list-container">
+            <h6>Search by a category</h6>
+            <mat-action-list role="category-list">
+                @for(category of categories; track category.id) {
+                    <mat-list-item role="listitem" class="list-item" (click)="goToPage(category.name, category.id)">
+                        <span matListItemTitle class="category-list-item-title">{{category.name}}</span>
+                        @if(category.description && category.description.length > 0) {
+                            <span matListItemLine class="category-list-item-subtitle">{{category.description}}</span>
+                        }
+                    </mat-list-item>
+                }
+            </mat-action-list>
+
+            <mat-divider class="divider"></mat-divider>
+
+            <h6>Search by keyword</h6>
+            <mat-form-field>
+                <input matInput placeholder="Search by keyword" name="search-by-keyword-input" [(ngModel)]="searchTerm" class="search-by-keyword-input">
+            </mat-form-field>
+            <p>Search keyword in:</p>
+            <mat-selection-list #keywordFieldSelectionList>
+                @for (postField of lookupPostAt; track postField.value; let i = $index) {
+                    <mat-list-option class="keyword-filter-list-item" [value]="postField.value">{{postField.label}}</mat-list-option>
+                }
+            </mat-selection-list>
+            <button mat-stroked-button class="button search-by-keyword-button" (click)="searchKeyword()">Search</button>
+
+        </div>
+        <div class="col-12 col-md-9 post-list">
+            <div class="container-fluid post-list-header">
+                <span>Displaying {{posts.length}} out of {{totalItems}} items</span>
+            </div>
+            <div class="container-fluid post-list-item" *ngFor="let post of posts">
+                <app-post-card [post]="post" [postCardType]="'list'" [categoryID]="categoryID" 
+                [categoryName]="categoryName" [tags]="tags"></app-post-card>
+            </div>
+            <div class="container-fluid post-list-footer">
+                @if(posts.length > 0 && posts.length < totalItems && totalItems > 0 && (!fetchPostError || fetchPostError.length == 0)) {
+                    <button mat-stroked-button class="button load-more-button" (click)="loadMorePosts()">Load more posts</button>
+                }
+                @else {
+                    <span>There are no more posts to display</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>

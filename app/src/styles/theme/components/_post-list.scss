@@ -1,0 +1,67 @@
+// _carousel-theme.scss
+
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($theme) {
+    #post-list-component {
+        button {
+            background-color: mat.get-theme-color($theme, 'primary', 10);
+        }
+        .category-list-container {
+            background-color: mat.get-theme-color($theme, 'primary', 80);
+
+
+            .list-item, .keyword-filter-list-item {
+                color: mat.get-theme-color($theme, 'primary', 10);
+
+                .mdc-checkbox__background {
+                    border-color: mat.get-theme-color($theme, 'primary', 25);
+                }
+
+
+                &:hover {
+                    background-color: mat.get-theme-color($theme, 'primary', 25);
+
+                    .category-list-item-title, .category-list-item-subtitle, .mdc-checkbox__background {
+                        color: mat.get-theme-color($theme, 'primary', 98);
+                    }
+
+                    .mdc-checkbox__background {
+                        border-color: mat.get-theme-color($theme, 'primary', 98);
+                    }
+                }
+            }
+        }
+
+        .post-list {
+            .mat-mdc-card-outlined {
+                background-color: transparent;
+                border: none;
+                border-bottom: 1px solid mat.get-theme-color($theme, 'primary', 70);
+                border-radius: 0;
+
+                &:last-of-type {
+                    border-bottom: none;
+                }
+              }
+        }
+
+        .post-tag {
+            border: 1px solid mat.get-theme-color($theme, 'primary', 70);
+            border-radius: 10px;
+        }
+
+        @media all and (max-width: 767px) {
+            .post-list-item {
+                border: 1px solid mat.get-theme-color($theme, 'neutral', 80);
+            }
+        }
+    }
+}
+
+@mixin theme($theme) {
+    @if mat.theme-has($theme, color) {
+        @include color($theme);
+    }
+}

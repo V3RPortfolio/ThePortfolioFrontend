@@ -1,0 +1,22 @@
+// _carousel-theme.scss
+
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($theme) {
+  #navigation-header {
+    // Read the 50 hue from the primary color palette.
+    background-color: mat.get-theme-color($theme, 'primary');
+    color: mat.get-theme-color($theme, 'on-primary');
+
+    #sign-up-button {
+        color: mat.get-theme-color($theme, 'on-secondary');
+    }
+  }
+}
+
+@mixin theme($theme) {
+    @if mat.theme-has($theme, color) {
+        @include color($theme);
+    }
+}

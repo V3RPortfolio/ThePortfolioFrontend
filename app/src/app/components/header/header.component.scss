@@ -1,0 +1,15 @@
+@use '../../../styles/theme/palette' as palette;
+@use '@angular/material' as mat;
+#navigation-header {
+    padding-left: 30px;
+    padding-right: 30px;
+
+    .notification-banner {
+        width: 100%;
+        
+    }
+
+    .authentication-button {
+        margin-left: 10px;
+    }
+}

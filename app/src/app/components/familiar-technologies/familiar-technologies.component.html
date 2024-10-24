@@ -1,0 +1,56 @@
+<section id="familiar-technologies">
+    <div class="wrapper" id="familiar-frameworks">
+        <div class="container familiar-technology-section">
+            <div class="section-header">
+                <h2 class="title">Mastering the Web</h2>
+                <h6 class="subtitle">My Go-To Frameworks for Building Dynamic, Scalable Applications</h6>
+            </div>
+            <div class="section-body">
+                <ul class="familiar-technology-list familiar-framework-list">
+                    @for(framework of familiarTechnologies.frameworks; track framework.name) {
+                        <li class="familiar-technology familiar-framework" attr.data="{{framework.name}}">
+                            <img class="familiar-technology-icon" src="{{technologyImagePath}}/{{framework.icon}}" alt="{{framework.name}}" />
+                            <span class="familiar-technology-name">{{framework.name}}</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper" id="familiar-languages" [appParallax]="{speed: 0.1}">
+        <div class="container familiar-technology-section">
+            <div class="section-header">
+                <h2 class="title">Code Fluent</h2>
+                <h6 class="subtitle">The Programming Languages That Power My Development Expertise</h6>
+            </div>
+            <div class="section-body">
+                <ul class="familiar-technology-list familiar-framework-list">
+                    @for(language of familiarTechnologies.languages; track language.name) {
+                        <li class="familiar-technology familiar-language" attr.data="{{language.name}}">
+                            <img class="familiar-technology-icon" src="{{technologyImagePath}}/{{language.icon}}" alt="{{language.name}}" />
+                            <span class="familiar-technology-name">{{language.name}}</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper" id="familiar-deployments"  [appParallax]="{speed: 0.15}">
+        <div class="container familiar-technology-section">
+            <div class="section-header">
+                <h2 class="title">From code to cloud</h2>
+                <h6 class="subtitle">The Deployment Tools That Bring My Applications to Life</h6>
+            </div>
+            <div class="section-body">
+                <ul class="familiar-technology-list familiar-deployment-list">
+                    @for(deployment of familiarTechnologies.deployments; track deployment.name) {
+                        <li class="familiar-technology familiar-language" attr.data="{{deployment.name}}">
+                            <img class="familiar-technology-icon" src="{{technologyImagePath}}/{{deployment.icon}}" alt="{{deployment.name}}" />
+                            <span class="familiar-technology-name">{{deployment.name}}</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,40 @@
+<div class="container-fluid post-card" [attr.card-type]="postCardType">
+    <div class="row">
+        <div class="col-12 post-featured-image-section" [ngClass]="postCardType == 'list' ? 'col-md-5' : ''">
+            <img [src]="!!post.featuredImage ? post.featuredImage: featuredImagePlaceholder" class="post-featured-image" alt="featured image">
+        </div>
+        <div class="col-12 col-md-7 post-content-section" [ngClass]="postCardType == 'list' ? 'col-md-7' : ''" [@fadeInEnterFromRight]>
+            <h6 class="post-list-item-title" (click)="goToPost(post.id, post.title.rendered)">{{post.title.rendered}}</h6>
+            @if(post.excerpt) {
+                <div class="post-list-item-description" [innerHTML]="post.excerpt.rendered">
+                </div>
+            }
+            <div class="post-list-item-footer">
+                <img class="post-author-image" [src]="post.authorInfo ? getAuthorImage(post.authorInfo) : authorImagePlaceholder" alt="{{post.title.rendered}}">
+                <small class="post-author-info">
+                    Published by&nbsp;
+                    <strong>
+                    @if(post.authorInfo) {
+                        {{post.authorInfo.name}}
+                    }
+                    @else {
+                        Anonymous
+                    }
+                    </strong>
+                    @if(post.date_gmt && post.date_gmt.length > 0) {
+                        &nbsp;{{getPublishedDate()}}
+                    }
+                </small>
+                <ul class="post-tags">
+                    @if(post.tags && post.tags.length > 0) {
+                        @for(tag of post.tags; track tags) {
+                            @if(tags[tag]) {
+                                <li class="post-tag">{{tags[tag].name}}</li>
+                            }
+                        }
+                    }
+                </ul>
+            </div>
+        </div>        
+    </div>
+</div>

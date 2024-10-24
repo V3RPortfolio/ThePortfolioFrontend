@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:  
+
+  frontend_experience_angular:
+    build: .
+    container_name: myportfolio-frontend-exp-angular
+    command: ng serve --host 0.0.0.0 --port ${ANGULAR_LOCAL_PORT} --poll 2000
+    volumes:
+      - ./app:/angular-app
+
+    ports:
+      - "${ANGULAR_PORT}:${ANGULAR_LOCAL_PORT}"
+
+    networks:
+      - platform_net
+    
+
+networks:
+  platform_net:
+    driver: bridge
+    name: my-portfolio-network
+    external: true

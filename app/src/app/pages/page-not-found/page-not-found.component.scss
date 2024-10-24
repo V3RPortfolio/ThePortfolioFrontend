@@ -1,0 +1,81 @@
+
+@keyframes move-twink-back {
+  from {background-position: 0 0;}
+  to {background-position: -10000px 5000px;}
+}
+#page-not-found {
+  :host {
+    display: block;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .space-background {
+    position: relative;
+    height: 100%;
+  }
+  .stars, .twinkling {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .twinkling {
+    animation: move-twink-back 200s linear infinite;
+  }
+  .content {
+    padding: 20px 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  h1 {
+    font-size: 8rem;
+    margin: 0;
+  }
+  p {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+  }
+  .astronaut {
+    width: 100px;
+    height: 150px;
+    position: relative;
+    margin: 2rem 0;
+  }
+  .astronaut-helmet {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 20px;
+  }
+  .astronaut-body {
+    width: 80px;
+    height: 100px;
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    border-radius: 40px 40px 0 0;
+  }
+  .astronaut-pack {
+    width: 60px;
+    height: 70px;
+    position: absolute;
+    top: 50px;
+    left: 20px;
+    border-radius: 10px;
+  }
+
+  @media all and (max-width: 767px) {
+    .content {
+      text-align: center;
+    }
+  }
+}

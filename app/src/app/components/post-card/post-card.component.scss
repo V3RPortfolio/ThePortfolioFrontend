@@ -1,0 +1,61 @@
+.post-card {
+    .post-list-item-title {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .post-featured-image {
+        width: 100%;
+        margin-right: 10px;
+    }
+    
+    .post-author-image {
+        width: 20px;
+        border-radius: 50% 50%;
+        margin-right: 10px;
+    }
+
+    .post-tags {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 10px 0;
+
+        .post-tag {
+            display: inline-block;
+            padding: 5px 5px;
+            margin: 0 10px 10px 0;
+        }
+    }
+
+    &[card-type='list'] {
+        .post-featured-image-section {
+            margin-right: 10px;
+        }
+
+        .post-content-section.col-md-7 {
+            width: calc(58.33333333% - 10px);            
+        }
+    }
+
+    &[card-type='grid'] {
+        .post-content-section {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    @media all and (max-width: 767px) {
+        &[card-type='list'] {
+            .post-featured-image-section {
+                margin-right: 0;
+            }
+
+            .post-content-section {
+                text-align: center;
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+<div id="wordpress-banner" #mainWrapper>
+    @if(debugEnabled) {
+        <div class="camera-coordinates">
+            <small class="Title">Camera:</small><br>
+            <small>X: {{ cameraX }}</small><br>
+            <small>Y: {{ cameraY }}</small><br>
+            <small>Z: {{ cameraZ }}</small><br>
+        </div>
+    }
+    <div class="banner-text-section" #wordpressText [ngClass]="showText ? 'show': ''">
+        <span class="heading-text" #wordpressHeader>ORDPRESS</span>
+        <span class="sub-heading-text" #wordpressTagline>Custom Theme & REST Api Development</span>
+
+    </div>
+</div>
