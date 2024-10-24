@@ -1,6 +1,8 @@
 import { NgFor } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { WordpressBannerComponent } from '../wordpress-banner/wordpress-banner.component';
+import { angularRepoUrl } from '../../app.constants';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-home-banners',
@@ -9,7 +11,8 @@ import { WordpressBannerComponent } from '../wordpress-banner/wordpress-banner.c
   standalone: true,
   imports: [
     NgFor,
-    WordpressBannerComponent
+    WordpressBannerComponent,
+    MatButton
   ]
 })
 export class HomeBannersComponent implements OnInit, AfterViewInit {
@@ -21,6 +24,7 @@ export class HomeBannersComponent implements OnInit, AfterViewInit {
 
   animateTriggerClass:string = "crossed";
   initialLeft = -200;
+  angularRepoUrl = angularRepoUrl;
 
   ngOnInit() {
     
@@ -73,5 +77,7 @@ export class HomeBannersComponent implements OnInit, AfterViewInit {
   }
 
   
-
+  viewPage(page:string) {
+    window.open(page, '_blank');
+  }
 }

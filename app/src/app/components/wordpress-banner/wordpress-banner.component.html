@@ -7,9 +7,8 @@
             <small>Z: {{ cameraZ }}</small><br>
         </div>
     }
-    <div class="banner-text-section" #wordpressText [ngClass]="showText ? 'show': ''">
+    <div class="banner-text-section" #wordpressText [ngClass]="showText ? 'show': ''" (click)="viewPage(wordpressRepoUrl)">
         <span class="heading-text" #wordpressHeader>ORDPRESS</span>
         <span class="sub-heading-text" #wordpressTagline>Custom Theme & REST Api Development</span>
-
     </div>
 </div>

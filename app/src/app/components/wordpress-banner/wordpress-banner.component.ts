@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import * as THREE from 'three';
 import { GLTFLoader, OrbitControls } from 'three-stdlib';
 import { asteroidModelPath, ExternalModels, WordpressBannerAnimationService } from './wordpress-banner-animation.service';
+import { wordpressRepoUrl } from '../../app.constants';
+import { MatButton } from '@angular/material/button';
 
 
 export class Dust {
@@ -58,7 +60,8 @@ export class ObjectTexture {
   imports: [
     NgFor,
     NgClass,
-    FormsModule
+    FormsModule,
+    MatButton
   ]
 })
 export class WordpressBannerComponent implements AfterViewInit, OnInit {
@@ -73,6 +76,7 @@ export class WordpressBannerComponent implements AfterViewInit, OnInit {
   cameraY = "0";
   cameraZ = "0";
   showText:boolean = false;
+  wordpressRepoUrl = wordpressRepoUrl;
 
 
   animationService:WordpressBannerAnimationService;
@@ -153,5 +157,9 @@ export class WordpressBannerComponent implements AfterViewInit, OnInit {
     if(show) this.adjustTextSize();
     this.showText = show;
     this.adjustTextPosition();
+  }
+
+  viewPage(page:string) {
+    window.open(page, "_blank");
   }
 }

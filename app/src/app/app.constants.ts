@@ -11,6 +11,8 @@ export const FEATURED_IMAGE_PLACEHOLDER="/images/common/image_placeholder.jpg";
 
 // Repository urls
 export const infrastructureRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioInfrastructure.git";
+export const angularRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioFrontend.git";
+export const wordpressRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioCMS.git";
 
 export function singularize(n:number, singular:string, plural:string|null=null):string {
     return n === 1 ? singular :

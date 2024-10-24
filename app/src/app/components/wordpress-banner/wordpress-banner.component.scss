@@ -50,6 +50,7 @@
         animation: fadeOut 100ms linear;
         display: flex;
         flex-direction: column;
+        cursor: pointer;
 
         .heading-text {
             font-size: 100px;
