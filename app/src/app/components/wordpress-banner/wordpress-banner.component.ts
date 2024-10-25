@@ -74,6 +74,7 @@ export class WordpressBannerComponent implements AfterViewInit, OnInit {
   cameraZ = "0";
   showText:boolean = false;
   wordpressRepoUrl = wordpressRepoUrl;
+  isWebGlAvailable = true;
 
 
   animationService:WordpressBannerAnimationService;
@@ -88,6 +89,7 @@ export class WordpressBannerComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
+    this.isWebGlAvailable = this.isWebGLAvailable();
     this.loadExternalModels().then(() => {
       this.animationService = new WordpressBannerAnimationService(
         this._mainWrapper.nativeElement,
@@ -101,6 +103,17 @@ export class WordpressBannerComponent implements AfterViewInit, OnInit {
       this.animationService.handleAnimation();
     });
 
+  }
+
+  private isWebGLAvailable() {
+    try {
+      var canvas = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (
+        canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+      );
+    } catch(e) {
+      return false;
+    }
   }
 
   private async loadExternalModels() {

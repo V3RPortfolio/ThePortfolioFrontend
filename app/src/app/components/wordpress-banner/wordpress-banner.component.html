@@ -7,7 +7,7 @@
             <small>Z: {{ cameraZ }}</small><br>
         </div>
     }
-    <div class="banner-text-section" [ngClass]="showText ? 'show': ''" (click)="viewPage(wordpressRepoUrl)">
+    <div class="banner-text-section" [ngClass]="showText || !isWebGlAvailable ? 'show': ''" (click)="viewPage(wordpressRepoUrl)">
         <span class="heading-text">WORDPRESS</span>
         <span class="sub-heading-text">Custom Theme & REST Api Development</span>
     </div>
