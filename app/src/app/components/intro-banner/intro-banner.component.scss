@@ -52,7 +52,7 @@
             margin: 0 20px 0 auto;
             width: auto;
             font-size: 24px;
-            
+            animation: blink-animation 2s steps(5, start) infinite;
         }
         
     }
