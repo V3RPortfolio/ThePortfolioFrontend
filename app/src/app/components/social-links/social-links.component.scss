@@ -1,0 +1,8 @@
+.social-icons {
+    display: flex;
+    gap: 8px;
+
+    @media all and (max-width: 767px) {
+        justify-content: center;
+    }
+}

@@ -24,6 +24,7 @@ import { HomeBannersComponent } from '../../components/home-banners/home-banners
 export class HomeComponent implements OnInit {
   speed = 0.9;
   enabled = true;
+  hideIntro:boolean = false;
   ngOnInit(): void {
     // console.log(environment);
   }

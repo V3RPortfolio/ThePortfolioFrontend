@@ -1,0 +1,21 @@
+<section id="intro-banner">
+    <div class="intro-nav">
+        <h4 class="intro-title">Portfolio | Zohair Mehtab</h4>
+        <app-social-links></app-social-links>
+        @if(doesSessionExist || currentlyDisplayedContents / totalContents > 0.5) {
+            <button class="nav-link skip-button" (click)="hide()">Skip</button>
+        }
+    </div>
+    <div class="intro-banner-content">
+        <p class="intro-header" >
+            <span #bannerTitle></span><span class="cursor" [ngClass]="typingInHeader ? 'show': ''">_</span>
+        </p>
+        <p class="intro-content">
+            <span #bannerContent></span><span class="cursor" [ngClass]="!typingInHeader ? 'show': ''">_</span>
+        </p>
+    </div>
+    <div class="loader">
+        <div class="progress" [style.width]="currentLoadingComplete"></div>
+        <span class="progress-text">{{currentLoadingComplete}} complete</span>
+    </div>
+</section>

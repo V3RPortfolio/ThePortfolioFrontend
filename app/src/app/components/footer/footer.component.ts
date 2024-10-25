@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatIconAnchor, MatAnchor } from '@angular/material/button';
+import { SocialLinksComponent } from '../social-links/social-links.component';
 
 
 export interface CustomIcon {
@@ -21,7 +22,7 @@ export const customIcons: CustomIcon[] = [
     templateUrl: './footer.component.html',
     styleUrl: './footer.component.scss',
     standalone: true,
-    imports: [MatToolbar, MatList, MatListItem, MatIconAnchor, MatIcon, MatAnchor]
+    imports: [MatToolbar, MatList, MatListItem, MatIconAnchor, MatAnchor, SocialLinksComponent]
 })
 export class FooterComponent {
   sections = [

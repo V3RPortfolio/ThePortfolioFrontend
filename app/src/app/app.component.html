@@ -1,5 +1,10 @@
-<app-header></app-header>
-<main id="main-content-wrapper">
+@if(hasPageLoaded) {
+  <app-header></app-header>
+}
+<main id="main-content-wrapper" [ngClass]="hasPageLoaded ? '': 'hide'">
   <router-outlet />
 </main>
-<app-footer></app-footer>
+@if(hasPageLoaded) {
+  <app-footer></app-footer>
+}
+<app-intro-banner class="intro-banner-wrapper" (hidePanel)="onHideIntro($event)" [ngClass]="hideIntro? 'hide': ''"></app-intro-banner>

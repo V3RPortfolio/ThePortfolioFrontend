@@ -23,11 +23,7 @@ footer {
     .mat-h3 {
         margin-bottom: 16px;
     }
-    
-    .social-icons {
-        display: flex;
-        gap: 8px;
-    }
+
     
     .copyright-toolbar {
         font-size: 0.9em;
@@ -57,10 +53,6 @@ footer {
         
         .toolbar-spacer {
             display: none;
-        }
-        
-        .social-icons {
-            justify-content: center;
         }
     }
 }

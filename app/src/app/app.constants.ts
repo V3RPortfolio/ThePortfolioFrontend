@@ -41,3 +41,5 @@ export function getPostPublishDateReadable(postDate:Date):string {
     const years = Math.floor(diff / 31536000000);
     return years + singularize(years, " year") + " ago";
 }
+
+export const sessionidKey = "mps-sessionid";

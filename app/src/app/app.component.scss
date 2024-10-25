@@ -1,0 +1,35 @@
+@keyframes slideOut {
+    0% {
+        left: 0;
+    }
+    100% {
+        left: -500%;
+    }
+}
+@-webkit-keyframes slideOut {
+    0% {
+        left: 0;
+    }
+    100% {
+        left: -500%;
+    }
+}
+
+
+#main-content-wrapper.hide {
+    opacity: 0;
+}
+
+.intro-banner-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+ 
+    &.hide {
+        left: -500%;
+        animation: slideOut 1s forwards;
+        -webkit-animation: slideOut 1s forwards;
+    }
+}
