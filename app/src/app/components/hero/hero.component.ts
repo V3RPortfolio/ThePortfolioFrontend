@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeIn, fadeInEnterFromRight } from '../../services/triggers';
+import { fadeIn, fadeInEnterFromRight } from '../../services/triggers.service';
 
 @Component({
     selector: 'app-hero',

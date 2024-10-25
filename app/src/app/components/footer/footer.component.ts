@@ -22,7 +22,7 @@ export const customIcons: CustomIcon[] = [
     templateUrl: './footer.component.html',
     styleUrl: './footer.component.scss',
     standalone: true,
-    imports: [MatToolbar, MatList, MatListItem, MatIconAnchor, MatAnchor, SocialLinksComponent]
+    imports: [MatList, MatListItem, MatIconAnchor, MatAnchor, SocialLinksComponent]
 })
 export class FooterComponent {
   sections = [

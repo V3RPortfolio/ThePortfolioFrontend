@@ -7,7 +7,7 @@ import { NgClass } from '@angular/common';
 import { sessionidKey } from './app.constants';
 
 import { randomUUID } from 'crypto';
-import { SessionManager } from './services/session';
+import { SessionManager } from './services/session.service';
 
 @Component({
   selector: 'app-root',
@@ -33,10 +33,12 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.hasPageLoaded = true;
-      this.sessionManager.setSessionId();
-    }, 500);
+    if(!this.hasPageLoaded) {
+      setTimeout(() => {
+        this.hasPageLoaded = true;
+        this.sessionManager.setSessionId();
+      }, 500);
+    }
   }
 
   onHideIntro(event: boolean) {

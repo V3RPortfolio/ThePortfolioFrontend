@@ -67,9 +67,6 @@ export class ObjectTexture {
 export class WordpressBannerComponent implements AfterViewInit, OnInit {
 
   @ViewChild('mainWrapper') _mainWrapper: ElementRef;
-  @ViewChild('wordpressText') _wordpressText: ElementRef;
-  @ViewChild('wordpressHeader') _wordpressHeader: ElementRef;
-  @ViewChild('wordpressTagline') _wordpressTagline: ElementRef;
   debugEnabled = false;
   sceneBackgroundColor = 0xefefef;
   cameraX = "0";
@@ -119,28 +116,11 @@ export class WordpressBannerComponent implements AfterViewInit, OnInit {
     
   }
 
-  adjustTextPosition() {
-    const posiiton = this.animationService.planetPositionRelativeToCanvas()
-    this._wordpressText.nativeElement.style.left = `${posiiton[0] + 30}px`;
-    this._wordpressText.nativeElement.style.top = `${posiiton[1] - 30}px`;
-
-  }
-
-  adjustTextSize() {
-    const planetSize = this.animationService.getPlanetSizeOnScreen();
-    if(planetSize > 0) {
-      
-      this._wordpressHeader.nativeElement.style.fontSize = `${planetSize * 0.08}px`;
-      this._wordpressTagline.nativeElement.style.fontSize = `${planetSize * 0.03}px`;
-    }
-  }
-
   
   @HostListener('window:resize', ['$event'])
   updateOnWindowResize() {
     if(!this.animationService || !this.animationService.configured) return;
     if(!this.debugEnabled) this.animationService.handleWindowResize();
-    this.adjustTextPosition();
   }
 
   // Listen for scroll
@@ -154,9 +134,7 @@ export class WordpressBannerComponent implements AfterViewInit, OnInit {
       this.cameraZ = this.animationService.cameraZ.toFixed(2);
     }
     const show = this.animationService.hasCameraMovementEnded;
-    if(show) this.adjustTextSize();
     this.showText = show;
-    this.adjustTextPosition();
   }
 
   viewPage(page:string) {

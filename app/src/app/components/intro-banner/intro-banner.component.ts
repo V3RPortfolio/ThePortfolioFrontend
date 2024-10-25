@@ -1,7 +1,7 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgFor } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, output, Output, ViewChild } from '@angular/core';
 import { EventEmitter } from 'stream';
-import { SessionManager } from '../../services/session';
+import { SessionManager } from '../../services/session.service';
 import { SocialLinksComponent } from '../social-links/social-links.component';
 
 @Component({
@@ -11,6 +11,7 @@ import { SocialLinksComponent } from '../social-links/social-links.component';
   standalone: true,
   imports: [
     NgClass,
+    NgFor,
     SocialLinksComponent
   ],
   providers: [SessionManager]
@@ -26,7 +27,7 @@ export class IntroBannerComponent implements AfterViewInit {
     }, {
       title: "Explore the Code that Powers My World",
       contents: [
-        "This is more than just a portfolio - it's a living ecosystem of my skills and passions.",
+        "This is more than just a portfolio - it's an ecosystem of my skills and passions.",
         "Dive into the code behind interactive web experiences and explore the architecture of microservices.",
         "Every project is open-source, every component tells a story, and every line of code is an invitation to collaborate.",
       ]
@@ -123,6 +124,8 @@ export class IntroBannerComponent implements AfterViewInit {
     this.currentBannerIndex = (this.currentBannerIndex + 1) % this.bannerContents.length;
     if(this.currentlyDisplayedContents >= this.totalContents) {
       this.currentLoadingComplete = "100%";
+      await this.sleep(500);
+      this.hide();
     }
     this.animateText();
   }

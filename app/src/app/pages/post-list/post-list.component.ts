@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BackendService, ErrorCode, PostColumnFilterType, PostSearchColumnType } from '../../services/backend';
+import { BackendService, ErrorCode, PostColumnFilterType, PostSearchColumnType } from '../../services/backend.service';
 import { Post } from '../../interfaces/backend/post.interface';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { forkJoin, map, mergeMap, Observable } from 'rxjs';

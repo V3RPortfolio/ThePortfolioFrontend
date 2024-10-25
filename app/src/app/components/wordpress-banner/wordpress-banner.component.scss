@@ -53,12 +53,13 @@
         cursor: pointer;
 
         .heading-text {
-            font-size: 100px;
+            font-size: 80px;
             text-shadow: #3f1f12 5px 5px 14px;
             color: #3f1f12;
             font-family: 'Bree Serif', serif;
             font-weight: bold;
             line-height: 1;
+            margin-bottom: 15px;
             
         }
 
@@ -69,6 +70,7 @@
             font-family: 'Bree Serif', serif;
             font-weight: bold;
             line-height: 1;
+            padding-left: 10px;
         }
 
         &.show {
@@ -78,14 +80,8 @@
         
     }
 
-    @media all and (max-width: 1024px) {
-        .banner-text-section {
-            font-size: 80px;
-        }
-    }
-
     @media all and (max-width: 991px) {
-        .banner-text-section {
+        .banner-text-section .heading-text {
             font-size: 70px;
         }
     }
@@ -94,7 +90,13 @@
         width: 100%;
 
         .banner-text-section {
-            font-size: 50px;
+            left: 0;
+            top: 10%;
+            width: 100%;
+            text-align: center;
+            .heading-text {
+                font-size: 50px;
+            }
         }
     }
 

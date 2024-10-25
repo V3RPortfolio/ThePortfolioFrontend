@@ -14,8 +14,11 @@
             <span #bannerContent></span><span class="cursor" [ngClass]="!typingInHeader ? 'show': ''">_</span>
         </p>
     </div>
+    <div class="loading-message">
+        <span>Processing components...</span>
+    </div>
     <div class="loader">
-        <div class="progress" [style.width]="currentLoadingComplete"></div>
+        <div class="progress" [attr.progress]="currentLoadingComplete"></div>
         <span class="progress-text">{{currentLoadingComplete}} complete</span>
     </div>
 </section>

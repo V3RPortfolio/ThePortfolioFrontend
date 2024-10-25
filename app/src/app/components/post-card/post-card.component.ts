@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Post } from '../../interfaces/backend/post.interface';
-import { BackendService } from '../../services/backend';
+import { BackendService } from '../../services/backend.service';
 import { AUTHOR_IMAGE_PLACEHOLDER, FEATURED_IMAGE_PLACEHOLDER, getPostPublishDateReadable, RoutePaths } from '../../app.constants';
 import { Router } from '@angular/router';
 import { User } from '../../interfaces/backend/user.interface';
 import { Tag } from '../../interfaces/backend/tag,interface';
 import { NgClass } from '@angular/common';
-import { fadeInEnterFromRight } from '../../services/triggers';
+import { fadeInEnterFromRight } from '../../services/triggers.service';
 
 @Component({
   selector: 'app-post-card',

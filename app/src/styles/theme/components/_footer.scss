@@ -4,13 +4,12 @@
 @use '@angular/material' as mat;
 
 @mixin color($theme) {
-  app-footer {
-    .mat-toolbar {
-      background-color: mat.get-theme-color($theme, 'primary', 20);
-    }
+  #footer-section {
+    background-color: mat.get-theme-color($theme, 'primary', 20);
+    color: mat.get-theme-color($theme, 'primary', 70);
 
-    .footer-link .mdc-list-item__primary-text {
-      color: mat.get-theme-color($theme, 'primary', 70);
+    .heading {
+      color: mat.get-theme-color($theme, 'primary', 90);
     }
   }
 }

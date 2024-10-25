@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { BackendService } from '../../services/backend';
+import { BackendService } from '../../services/backend.service';
 import { Post } from '../../interfaces/backend/post.interface';
 import { AUTHOR_IMAGE_PLACEHOLDER, BACKEND_POST_SPECIFIC_STYLESHEET, FEATURED_IMAGE_PLACEHOLDER, getPostPublishDateReadable, singularize } from '../../app.constants';
 import { User } from '../../interfaces/backend/user.interface';
