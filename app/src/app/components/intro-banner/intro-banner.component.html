@@ -18,7 +18,7 @@
         <span>Processing components...</span>
     </div>
     <div class="loader">
-        <div class="progress" [attr.progress]="currentLoadingComplete"></div>
+        <div class="progress" [style.width]="currentLoadingComplete"></div>
         <span class="progress-text">{{currentLoadingComplete}} complete</span>
     </div>
 </section>

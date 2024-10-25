@@ -27,27 +27,6 @@
     }
 }
 
-@for $i from 1 to 100 {
-    @keyframes progress-#{$i} {
-        0% {
-            width: $i - 1%;
-        }
-        100% {
-            width: $i * 1%;
-        }
-    }   
-
-    @-webkit-keyframes progress-#{$i} {
-        0% {
-            width: $i - 1%;
-        }
-        100% {
-            width: $i * 1%;
-        }
-    }
-}
-
-
 
 #intro-banner {
     width: 100%;
@@ -145,14 +124,6 @@
             width: 1%;
             height: 30px;
             border-radius: 10px;
-
-            @for $i from 1 through 100 {
-                &[progress='#{$i}%'] {
-                    animation: progress-#{$i} 1s linear;
-                    -webkit-animation: progress-#{$i} 1s linear;
-                    width: $i * 1%;
-                }
-            }
         }
         .progress-text {
             position: absolute;
