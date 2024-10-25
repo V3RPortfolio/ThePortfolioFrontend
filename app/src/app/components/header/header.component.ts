@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { MatButton } from '@angular/material/button';
-import { BackendService } from '../../services/backend';
+import { BackendService } from '../../services/backend.service';
 import { PostCategory } from '../../interfaces/backend/category.interface';
 import { Router } from '@angular/router';
 import { RoutePaths } from '../../app.constants';

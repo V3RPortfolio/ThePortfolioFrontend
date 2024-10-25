@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeInEnterFromLeft } from '../../services/triggers';
+import { fadeInEnterFromLeft } from '../../services/triggers.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { infrastructureRepoUrl } from '../../app.constants';

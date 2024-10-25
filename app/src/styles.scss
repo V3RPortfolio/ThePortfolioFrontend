@@ -13,6 +13,8 @@
 @use 'styles/theme/components/post-list' as post-list;
 @use 'styles/theme/components/elementor' as elementor;
 @use 'styles/theme/components/page-not-found' as page-not-found;
+@use 'styles/theme/components/intro-banner' as intro-banner;
+@use 'styles/theme/components/social-links' as social-links;
 
 @include mat.core();
 
@@ -70,6 +72,8 @@ html {
     @include open-source-banner.theme($theme);
     @include post-list.theme($theme);
     @include page-not-found.theme($theme);
+    @include intro-banner.theme($theme);
+    @include social-links.theme($theme);
     // @include mat.typography-hierarchy($theme);
 
     // Material Specific

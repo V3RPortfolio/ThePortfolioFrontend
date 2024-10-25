@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WebglComponent } from './webgl.component';
+import { IntroBannerComponent } from './intro-banner.component';
 
-describe('WebglComponent', () => {
-  let component: WebglComponent;
-  let fixture: ComponentFixture<WebglComponent>;
+describe('IntroBannerComponent', () => {
+  let component: IntroBannerComponent;
+  let fixture: ComponentFixture<IntroBannerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [WebglComponent]
+      declarations: [IntroBannerComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(WebglComponent);
+    fixture = TestBed.createComponent(IntroBannerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
