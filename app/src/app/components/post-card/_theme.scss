@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+.post-card {
+    .post-list-item-description {
+        font-family: mat.get-theme-typography(theme.$theme, 'body-medium', 'font-family');
+    }
+
+    .post-tag {
+        border: 1px solid mat.get-theme-color(theme.$theme, 'primary', 70);
+        border-radius: 10px;
+    }
+}

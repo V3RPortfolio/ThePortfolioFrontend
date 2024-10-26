@@ -26,23 +26,46 @@
     }
 
     #hero-component {
-        z-index: 4;
+        z-index: 3;
     }
 
 
     #familiar-technologies {
-        z-index: 5;
+        z-index: 3;
 
         #familiar-frameworks {
-            z-index: 5;
+            z-index: 3;
         }
 
         #familiar-languages {
-            z-index: 6;
+            z-index: 4;
         }
 
         #familiar-deployments {
-            z-index: 7;
+            z-index: 5;
+        }
+    }
+
+    #home-banners {
+        z-index: 3;
+        #frontend-experience-banner {
+            z-index: 3;
+            .angular-logo-section {
+                z-index: 3;
+            }
+            .angular-logo-overlay-rectangle {
+                z-index: 4; 
+            }
+            .frontend-experience-banner-content {
+                z-index: 6;
+            }
+        }
+
+        #wordpress-banner {
+            z-index: 3;
+            .camera-coordinates {
+                z-index: 3;
+            }
         }
     }
 }

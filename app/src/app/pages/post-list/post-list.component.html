@@ -1,6 +1,6 @@
-<div class="container" id="post-list-component">
+<div class="mat-typography container" id="post-list-component">
     <div class="row">
-        <div class="col-12 col-md-3 category-list-container">
+        <div class="col-3 col-md-12 category-list-container">
             <h6>Search by a category</h6>
             <mat-action-list role="category-list">
                 @for(category of categories; track category.id) {
@@ -28,7 +28,7 @@
             <button mat-stroked-button class="button search-by-keyword-button" (click)="searchKeyword()">Search</button>
 
         </div>
-        <div class="col-12 col-md-9 post-list">
+        <div class="col-9 col-md-12 post-list">
             <div class="container-fluid post-list-header">
                 <span>Displaying {{posts.length}} out of {{totalItems}} items</span>
             </div>

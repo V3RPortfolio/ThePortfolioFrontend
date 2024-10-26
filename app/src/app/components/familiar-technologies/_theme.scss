@@ -1,0 +1,31 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+#familiar-technologies {
+    // background-color: mat.get-theme-color($theme, 'primary', 20);
+    background-image: url('../../../../public/images/banners/cloud.PNG');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    #familiar-frameworks {
+        color: mat.get-theme-color(theme.$theme, 'primary', 20);
+        background-color: mat.get-theme-color(theme.$theme, 'neutral', 98);
+    }
+
+    #familiar-languages {
+        background-color: mat.get-theme-color(theme.$theme, 'primary', 20);
+        color: mat.get-theme-color(theme.$theme, 'neutral', 98);
+        box-shadow: #000 10px 0px 55px;
+
+        img {
+            filter: grayscale(1) brightness(10) contrast(0.8);
+        }
+    }
+
+    #familiar-deployments {
+        color: mat.get-theme-color(theme.$theme, 'primary', 20);
+        background-color: mat.get-theme-color(theme.$theme, 'neutral', 98);
+        box-shadow: #000 10px 0px 55px;
+    }
+}

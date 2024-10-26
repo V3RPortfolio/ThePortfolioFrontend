@@ -1,0 +1,7 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+#post-container {
+    .post-body {
+        font-family: mat.get-theme-typography(theme.$theme, 'body-medium', 'font-family');
+    }
+}

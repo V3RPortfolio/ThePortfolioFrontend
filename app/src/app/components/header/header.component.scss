@@ -1,15 +1,119 @@
-@use '../../../styles/theme/palette' as palette;
-@use '@angular/material' as mat;
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+
+@import 'theme';
+
+
+$expandedPaddingValue: map-get(constants.$padding, lg);
+$contractedPaddingValue: map-get(constants.$padding, md);
+
+@keyframes contractNavMenu {
+    to {
+        padding-top: $contractedPaddingValue;
+        padding-bottom: $contractedPaddingValue;
+    }
+}
+
+@-webkit-keyframes contractNavMenu {
+    to {
+        padding-top: $contractedPaddingValue;
+        padding-bottom: $contractedPaddingValue;
+    }
+}
+
 #navigation-header {
-    padding-left: 30px;
-    padding-right: 30px;
+    height: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
 
-    .notification-banner {
-        width: 100%;
-        
+    &.sticky {
+        .container {
+            $paddingValue: $expandedPaddingValue;
+            animation: contractNavMenu 100ms linear;
+            -webkit-animation: contractNavMenu 100ms linear;
+            animation-fill-mode: forwards;
+            -webkit-animation-fill-mode: forwards;
+        }
+    }
+    .navigation-toggle-button {
+      display: none;
+      margin-right: map-get(constants.$margin, sm);
     }
 
-    .authentication-button {
-        margin-left: 10px;
+    .navigation-title {
+        line-height: 2;
+        cursor: pointer;
     }
+
+    .navigation-body {
+        display: flex;
+        flex-wrap: wrap;
+        flex-grow: 1;
+    }
+
+    .navigation-menu {
+        display: flex;
+        list-style: none;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 0;
+        flex-grow: 1;
+        padding: 0 0 0 map-get(constants.$padding, md);
+    }
+
+    .navigation-item {
+        margin-right: map-get(constants.$margin, sm);
+    }
+
+    .navigation-link {
+        text-decoration: none;
+        background-color: transparent;
+        box-shadow: none;
+        border: none;
+        font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+        cursor: pointer;
+    }
+
+    #sign-in-button {
+        margin-right: map-get(constants.$margin, sm);
+    }
+
+    @include breakpoint.mobile {
+        .navigation-toggle-button {
+            display: block;
+        }
+
+        .navigation-title {
+            font-size: map-get(constants.$font-sizes-rem, md);
+        }
+
+        .navigation-body {
+            display: none;
+
+            &.show {
+                display: flex;
+                width: 100%;
+                padding: map-get(constants.$padding, lg) 0;
+                flex-direction: column;
+
+                .navigation-menu {
+                    flex-direction: column;
+                    padding-left: 0;
+                    margin-bottom: map-get($map: constants.$margin, $key: md);
+                }
+
+                #sign-in-button {
+                    margin-right: 0;
+                    margin-bottom: map-get($map: constants.$margin, $key: md);
+                }
+            }
+        }
+    }
+}
+
+#navigation-header-placeholder {
+    height: 104px;
+    display: block;
+    width: 100%;
 }

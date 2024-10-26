@@ -1,21 +1,22 @@
-<section id="intro-banner">
+<section class="mat-typography" id="intro-banner">
     <div class="intro-nav">
-        <h4 class="intro-title">Portfolio | Zohair Mehtab</h4>
+        <h2 class="intro-title">Portfolio | Zohair Mehtab</h2>
         <app-social-links></app-social-links>
         @if(doesSessionExist || currentlyDisplayedContents / totalContents > 0.5) {
-            <button class="nav-link skip-button" (click)="hide()">Skip</button>
+            <button mat-flat-button class="skip-button" (click)="hide()">Skip</button>
         }
     </div>
     <div class="intro-banner-content">
-        <p class="intro-header" >
-            <span #bannerTitle></span><span class="cursor" [ngClass]="typingInHeader ? 'show': ''">_</span>
-        </p>
-        <p class="intro-content">
-            <span #bannerContent></span><span class="cursor" [ngClass]="!typingInHeader ? 'show': ''">_</span>
-        </p>
+        <div class="intro-header">
+            <h4 class="banner-content-text" #bannerTitle></h4><h4 class="banner-content-text cursor" [ngClass]="typingInHeader ? 'show': ''">_</h4>
+            
+        </div>
+        <div class="intro-content">
+            <h6 class="banner-content-text" #bannerContent></h6><h6 class="banner-content-text cursor" [ngClass]="!typingInHeader ? 'show': ''">_</h6>
+        </div>
     </div>
     <div class="loading-message">
-        <span>Processing components...</span>
+        <h4>Processing components...</h4>
     </div>
     <div class="loader">
         <div class="progress" [style.width]="currentLoadingComplete"></div>

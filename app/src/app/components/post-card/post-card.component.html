@@ -1,9 +1,9 @@
 <div class="container-fluid post-card" [attr.card-type]="postCardType">
     <div class="row">
-        <div class="col-12 post-featured-image-section" [ngClass]="postCardType == 'list' ? 'col-md-5' : ''">
+        <div [ngClass]="postCardType == 'list' ? 'col-5' : 'col-12'" class="col-md-12 post-featured-image-section">
             <img [src]="!!post.featuredImage ? post.featuredImage: featuredImagePlaceholder" class="post-featured-image" alt="featured image">
         </div>
-        <div class="col-12 col-md-7 post-content-section" [ngClass]="postCardType == 'list' ? 'col-md-7' : ''" [@fadeInEnterFromRight]>
+        <div [ngClass]="postCardType == 'list' ? 'col-7' : 'col-12'" class="col-md-12 post-content-section" [@fadeInEnterFromRight]>
             <h6 class="post-list-item-title" (click)="goToPost(post.id, post.title.rendered)">{{post.title.rendered}}</h6>
             @if(post.excerpt) {
                 <div class="post-list-item-description" [innerHTML]="post.excerpt.rendered">

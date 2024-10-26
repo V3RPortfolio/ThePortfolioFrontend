@@ -1,14 +1,12 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@import 'theme';
+
 #footer-section {
-    padding: 32px 16px;
 
     .footer-content {
-        display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
         text-align: center;
     }
     
@@ -23,14 +21,14 @@
         align-items: center;
         justify-content: center;
         text-align: center;
-        margin-top: 20px;
+        padding-top: 0;
     }
     
     .toolbar-spacer {
         flex: 1 1 auto;
     }
     
-    @media (max-width: 767px) {
+    @include breakpoint.mobile {
         .footer-content {
             flex-direction: column;
             text-align: center;

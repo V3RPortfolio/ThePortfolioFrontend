@@ -1,3 +1,6 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@import 'theme';
+
 @keyframes animateFrontendExperienceText {
     from {
         opacity: 0;
@@ -21,14 +24,8 @@
 #home-banners {
     #frontend-experience-banner {
         position: relative; 
-        background-color: #fff; 
         padding: 40px 0; 
-        z-index: 3; 
         overflow: hidden;
-
-        .angular-logo-section {
-            z-index: 3;
-        }
 
         .angular-logo {
             width: 70%; 
@@ -38,15 +35,14 @@
         }
 
         .angular-logo-overlay-rectangle {
-            z-index: 4; 
             position: absolute; 
             width: 55%; 
             height: 100%; 
-            background: #cb2323; 
+            background: #cb2323; // not theme specific
             right: -110px; 
             top: 0;
             transform: skewX(-30deg);
-            box-shadow: #000 0 10px 25px;
+            box-shadow: #000 0 10px 25px; // not theme specific
         }
 
         .frontend-experience-banner-content {
@@ -54,8 +50,7 @@
             right: 20px; 
             top: 50%; 
             transform: translateY(-50%); 
-            z-index: 6; 
-            color: #fff; 
+            color: #fff; // not theme specific
             width: 40%; 
             overflow: hidden; 
             display: flex; 
@@ -86,28 +81,19 @@
             }
 
             .github-button {
-                background-color: #a50303;
-                color: #fff;
+                // background-color: #a50303;
+                // color: #fff;
                 margin-top: 10px;
             }
                         
         }
 
-        @media all and (max-width: 991px) {
+        @include breakpoint.tablet {
             padding: 60px 0;
-            .frontend-experience-banner-content {
-                .title {
-                    font-size: 30px;
-                }
-    
-                .subtitle {
-                    font-size: 20px;
-                }
-            }
             
         }
 
-        @media all and (max-width: 767px) {
+        @include breakpoint.mobile {
             padding: 30px 0 0 0;
             .angular-logo {
                 width: 100%;
@@ -139,24 +125,10 @@
 
             }
         }
-
-        @media all and (max-width: 373px) {
-            .frontend-experience-banner-content {
-
-                .title {
-                    font-size: 25px;
-                }
-
-                .subtitle {
-                    font-size: 18px;
-                }
-
-            }
-        }
     }
 
     .home-wordpress-banner {
-        background-color: #fff;
+        background-color: #fff;  // not theme specific
         display: flex;
         flex-wrap: wrap;
     }

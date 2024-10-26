@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+#open-source-banner {
+    .open-source-banner-title, .open-source-banner-content {
+        color: mat.get-theme-color(theme.$theme, 'primary', 10);
+    }
+    .open-source-banner-title {
+        text-shadow: 0px 5px 30px mat.get-theme-color(theme.$theme, 'primary', 10);
+    }
+
+    .open-source-banner-button[mat-stroked-button] {
+        background-color: mat.get-theme-color(theme.$theme, 'primary', 40);
+    }
+}

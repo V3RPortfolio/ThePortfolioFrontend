@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+
+#footer-section {
+    background-color: mat.get-theme-color(theme.$theme, 'primary');
+    color: mat.get-theme-color(theme.$theme, 'on-primary');
+
+    .heading {
+      color: mat.get-theme-color(theme.$theme, 'on-primary');
+    }
+}

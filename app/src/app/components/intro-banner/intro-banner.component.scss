@@ -1,3 +1,4 @@
+@import 'theme';
 @keyframes blink-animation {
     to {
       visibility: hidden;
@@ -51,7 +52,6 @@
         .skip-button {
             margin: 0 20px 0 auto;
             width: auto;
-            font-size: 24px;
             animation: blink-animation 2s steps(5, start) infinite;
         }
         
@@ -60,7 +60,6 @@
     app-social-links {
         justify-content: center;
         align-items: center;
-        font-size: 25px;
         display: flex;
     }
 
@@ -76,15 +75,11 @@
     }
 
     .intro-header {
-        font-size: 3rem;
-        line-height: 1;
         font-weight: bold;
+        margin-bottom: 20px;
     }
 
     .intro-content {
-        font-size: 1.5rem;
-        line-height: 1;
-
         &.fade {
             animation: fadeOut 1s ease-out;
             -webkit-animation: fadeOut 1s ease-out;
@@ -93,11 +88,14 @@
 
     }
 
+    .banner-content-text {
+        display: inline;
+    }
     .cursor {
         display: none;
 
         &.show {
-            display: inline;
+            display: inline-block;
             animation: blink-animation 1s steps(5, start) infinite;
             -webkit-animation: blink-animation 1s steps(5, start) infinite;
         }
@@ -106,7 +104,6 @@
     .loading-message {
         width: 100%;
         text-align: center;
-        font-size: 1.5rem;
         margin: auto 20px 10px 20px;
     }
 
@@ -142,13 +139,8 @@
             padding: 20px 0;
             text-align: center;
 
-            .intro-title {
-                font-size: 1.5rem;
-            }
-
             .skip-button {
                 margin: 20px 0;
-                font-size: 18px;
             }
             app-social-links {
                 margin: 20px 0;

@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, output, Output, ViewChild } from 
 import { EventEmitter } from 'stream';
 import { SessionManager } from '../../services/session.service';
 import { SocialLinksComponent } from '../social-links/social-links.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-intro-banner',
@@ -12,6 +13,7 @@ import { SocialLinksComponent } from '../social-links/social-links.component';
   imports: [
     NgClass,
     NgFor,
+    MatButton,
     SocialLinksComponent
   ],
   providers: [SessionManager]

@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+@use '../../../styles/theme/constants' as constants;
+
+.social-icons {
+    i {
+      color: mat.get-theme-color(theme.$theme, 'on-primary');
+
+      &:hover {
+        color: mat.get-theme-color(theme.$theme, 'inverse-primary');
+      }
+    }
+  }
