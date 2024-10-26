@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+#hero-component {
+    background-image: url('/images/banners/cloud.PNG');
+
+    .hero-tagline {
+        color: mat.get-theme-color(theme.$theme, 'neutral', 10);
+    }
+
+    .hero-title {
+        color: mat.get-theme-color(theme.$theme, 'primary', 10);
+        font-weight: bold;
+    }
+}

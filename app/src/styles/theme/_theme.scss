@@ -1,0 +1,25 @@
+@use '@angular/material' as mat;
+@use 'palette' as palette; 
+@use 'typography' as typography;
+
+$light-theme: mat.define-theme((
+  
+  color: (
+    theme-type: light,
+    primary: palette.$primary,
+    tertiary: palette.$tertiary,
+  ),
+  typography: (
+    brand-family: typography.$heading-font, 
+    plain-family: typography.$regular-font,
+    bold-weight: typography.$bold-weight,
+    regular-weight: typography.$regular-weight,
+    medium-weight: typography.$medium-weight,
+  ),
+  density: (
+    scale: 0
+  )
+));
+
+
+$theme: $light-theme;

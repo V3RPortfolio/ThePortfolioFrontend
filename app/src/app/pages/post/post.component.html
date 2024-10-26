@@ -19,6 +19,7 @@
     </div>
     <div class="post-body" #postContainer>
     </div>
+    <mat-divider></mat-divider>
     <div class="container post-footer">
         @if(relatedPosts && relatedPosts.length) {
             <div class="row related-posts-header">
@@ -28,7 +29,7 @@
             </div>
             <div class="row related-posts">
                 @for(post of relatedPosts; track post.id;) {
-                    <div class="col-12 col-md-6 col-lg-4">
+                    <div class="col-4 col-md-6 col-sm-12">
                         <app-post-card [post]="post" [postCardType]="'grid'" [categoryID]="categoryId" 
                         [categoryName]="categoryName" class="related-post"></app-post-card>
                     </div>

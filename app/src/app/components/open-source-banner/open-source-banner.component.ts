@@ -17,7 +17,6 @@ import { infrastructureRepoUrl } from '../../app.constants';
 export class OpenSourceBannerComponent {
     infraUrl = infrastructureRepoUrl;
     viewPage(page) {
-        console.log("Opening page: " + page);
         window.open(page, '_blank');
     }
 }

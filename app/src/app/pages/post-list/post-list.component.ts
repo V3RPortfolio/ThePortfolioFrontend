@@ -161,7 +161,6 @@ export class PostListComponent implements OnInit {
       this.backendService.getTag(tagId).subscribe({
         next: (tag) => {
           this.tags[tagId] = tag;
-          console.log(this.tags);
         },
         error: (err) => console.error(err),
         // complete: () => console.log('Completed fetching tag')

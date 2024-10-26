@@ -1,0 +1,61 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($theme) {
+    .elementor-section.elementor-section-boxed > .elementor-container{
+        max-width:1140px;
+    }
+    .e-con{
+        --container-max-width:1140px;
+        &.e-parent {
+            margin-top: 20px;
+        }
+    }
+    .elementor-widget:not(:last-child){
+        margin-block-end:20px;
+    }
+    .elementor-element{
+        --widgets-spacing:20px 20px;
+    }
+    h1.entry-title{
+        display:var(--page-title-display);
+    }
+
+    .elementor-widget-heading .elementor-heading-title {
+        font-weight: bold;
+        color: mat.get-theme-color($theme, 'primary', 25);
+    }
+
+    .elementor-widget {
+        .elementor-icon-list-items {
+            list-style: none;
+        }
+    }
+
+    .elementor img {
+        width: 100%;
+    }
+
+    @media(max-width:1024px){
+        .elementor-section.elementor-section-boxed > .elementor-container{
+            max-width:1024px;
+        }
+        .e-con{
+            --container-max-width:1024px;
+        }
+    }
+    @media(max-width:767px){
+        .elementor-section.elementor-section-boxed > .elementor-container{
+            max-width:767px;
+        }
+        .e-con{
+            --container-max-width:767px;
+        }
+    }    
+}
+
+@mixin theme($theme) {
+    @if mat.theme-has($theme, color) {
+        @include color($theme);
+    }
+}

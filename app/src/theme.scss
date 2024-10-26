@@ -1,0 +1,77 @@
+@use '@angular/material' as mat;
+
+// Import component themes
+@use 'styles/theme/theme' as theme;
+@use 'styles/theme/breakpoint' as breakpoint;
+@use 'styles/theme/constants' as constants;
+@use 'styles/theme/elementor' as elementor;
+
+@import '~material-icons/iconfont/material-icons.css';
+
+
+
+// ----- Styles ----- //
+
+
+// Initialize Angular Material
+@include mat.core();
+
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    @include mat.core-theme(theme.$theme);
+    @include mat.button-theme(theme.$theme);
+    @include elementor.theme(theme.$theme);
+}
+
+// Bootstrap style layout management
+.container, .container-fluid {
+    $paddingValue: map-get(constants.$padding, xl);
+    display: flex;
+    flex-direction: column; 
+    padding: $paddingValue $paddingValue;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
+    > * {
+        max-width: 100%;
+    }
+}
+
+@for $i from 1 through 12 {
+    .col-#{$i} {
+        width: calc(100% / 12 * $i);
+        flex: 0 0 auto;
+    }
+
+    .col-md-#{$i} {
+        @include breakpoint.max-breakpoint(md) {
+            width: calc(100% / 12 * $i);
+            flex: 0 0 auto;
+        }
+    }
+
+    .col-sm-#{$i} {
+        @include breakpoint.max-breakpoint(sm) {
+            width: calc(100% / 12 * $i);
+            flex: 0 0 auto;
+        }
+    }
+
+    .col-xs-#{$i} {
+        @include breakpoint.max-breakpoint(xs) {
+            width: calc(100% / 12 * $i);
+            flex: 0 0 auto;
+        }
+    }
+
+}

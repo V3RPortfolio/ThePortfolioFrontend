@@ -1,8 +1,11 @@
+@use 'theme';
+@use '../../../styles/theme/breakpoint' as breakpoint;
+
 .social-icons {
     display: flex;
     gap: 15px;
 
-    @media all and (max-width: 767px) {
+    @include breakpoint.mobile {
         justify-content: center;
     }
 }

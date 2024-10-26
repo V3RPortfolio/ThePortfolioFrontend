@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+
+#navigation-header {
+    // Read the 50 hue from the primary color palette.
+    background-color: mat.get-theme-color(theme.$theme, 'primary');
+    color: mat.get-theme-color(theme.$theme, 'on-primary');
+
+    .navigation-toggle-button{
+        background-color: transparent;
+        box-shadow: none;
+        border: none;
+        color: mat.get-theme-color(theme.$theme, 'on-primary');
+    }
+
+    .navigation-link {
+        background-color: transparent;
+        color: mat.get-theme-color(theme.$theme, 'on-primary');
+    }
+
+    #sign-up-button {
+        color: mat.get-theme-color(theme.$theme, 'on-secondary');
+    }
+  }

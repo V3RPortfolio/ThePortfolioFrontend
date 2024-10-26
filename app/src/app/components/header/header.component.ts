@@ -1,10 +1,13 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { MatButton } from '@angular/material/button';
 import { BackendService } from '../../services/backend.service';
 import { PostCategory } from '../../interfaces/backend/category.interface';
 import { Router } from '@angular/router';
 import { RoutePaths } from '../../app.constants';
+import { NgClass } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'app-header',
@@ -24,13 +27,19 @@ import { RoutePaths } from '../../app.constants';
         ])
     ],
     standalone: true,
-    imports: [MatButton],
+    imports: [
+      MatButton, 
+      MatToolbar,
+      MatIcon,
+      NgClass
+    ],
     providers: [BackendService]
 })
 export class HeaderComponent implements OnInit {
-  scrollOffset = 20;
-  headerHeight: number = 100;
-  isExpanded = true; // Initial state
+  @ViewChild('navbar') navbar: ElementRef;
+  
+  showMenu = false;
+  hasScrolled:boolean=false;
 
   menuItems:PostCategory[]=[];
 
@@ -42,12 +51,12 @@ export class HeaderComponent implements OnInit {
   }
 
   @HostListener('window:scroll', ['$event'])
-  onScroll() {
-    this.isExpanded = window.scrollY <= this.scrollOffset;
+  onWindowScroll() {
+    this.hasScrolled = window.scrollY > 0;
   }
 
   ngOnInit() {
-    this.isExpanded = window.scrollY <= this.scrollOffset;
+    this.onWindowScroll();
     this.fetchMenuItems();
   }
 
@@ -61,5 +70,9 @@ export class HeaderComponent implements OnInit {
 
   goToPage(name:string, id:number): void {
     this.router.navigate([`/${RoutePaths.posts}`, id, name]);
+  }
+
+  toggleMenu() {
+    this.showMenu = !this.showMenu;
   }
 }

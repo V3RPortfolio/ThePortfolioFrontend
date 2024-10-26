@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+#intro-banner {
+    background-color: mat.get-theme-color(theme.$theme, primary, 10);
+    color: mat.get-theme-color(theme.$theme, primary, 90);
+
+    .loader {
+      background-color: mat.get-theme-color(theme.$theme, primary, 90);
+
+      .progress {
+        background-color: mat.get-theme-color(theme.$theme, primary, 70);
+      }
+
+      .progress-text {
+        color: mat.get-theme-color(theme.$theme, primary, 30);
+      }
+    }
+}

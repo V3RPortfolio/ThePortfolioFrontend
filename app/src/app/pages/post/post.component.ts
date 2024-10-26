@@ -6,6 +6,7 @@ import { AUTHOR_IMAGE_PLACEHOLDER, BACKEND_POST_SPECIFIC_STYLESHEET, FEATURED_IM
 import { User } from '../../interfaces/backend/user.interface';
 import { map, Observable } from 'rxjs';
 import { PostCardComponent } from '../../components/post-card/post-card.component';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-post',
@@ -14,6 +15,7 @@ import { PostCardComponent } from '../../components/post-card/post-card.componen
   standalone: true,
   providers: [BackendService],
   imports: [
+    MatDivider,
     PostCardComponent
   ]
 })

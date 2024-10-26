@@ -1,0 +1,7 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+#home-component {
+    // Read the 50 hue from the primary color palette.
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 60);
+}

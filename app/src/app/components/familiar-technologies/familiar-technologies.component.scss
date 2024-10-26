@@ -1,3 +1,6 @@
+@use 'theme';
+@use '../../../styles/theme/breakpoint' as breakpoint;
+
 #familiar-technologies {
     .familiar-technology-list {
         display: flex;
@@ -5,6 +8,9 @@
         justify-content: center;
         align-items: stretch;
         flex-wrap: wrap;
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
 
         .familiar-technology {
             width: calc(20% - 20px);
@@ -34,7 +40,7 @@
         position: relative;
     }
 
-    @media all and (max-width: 991px) {
+    @include breakpoint.tablet {
         .familiar-technology-list {
             .familiar-technology {
                 margin: 20px 30px;
@@ -43,12 +49,13 @@
         }
     }
 
-    @media all and (max-width: 767px) {
+    @include breakpoint.mobile {
         .familiar-technology-list {
             .familiar-technology {
                 margin: 20px 10px;
                 width: calc(50% - 20px);
             }
         }
+        
     }
 }

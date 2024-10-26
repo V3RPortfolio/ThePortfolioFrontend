@@ -1,0 +1,23 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+#page-not-found {
+    .space-background {
+        background: #000;
+    }
+
+    .stars {
+        background: #000 url('/images/banners/stars.png') repeat top center;
+    }
+    .twinkling {
+        background: transparent url('/images/banners/twinkling.png') repeat top center;
+    }
+    .content {
+        color: mat.get-theme-color(theme.$theme, 'primary', 100);
+    }
+    .astronaut-helmet, .astronaut-pack {
+        background-color: mat.get-theme-color(theme.$theme, 'primary', 70);
+    }
+    .astronaut-body {
+        background-color: mat.get-theme-color(theme.$theme, 'primary', 30);
+    }
+}

@@ -1,12 +1,10 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { IntroBannerComponent } from './components/intro-banner/intro-banner.component';
 import { NgClass } from '@angular/common';
-import { sessionidKey } from './app.constants';
 
-import { randomUUID } from 'crypto';
 import { SessionManager } from './services/session.service';
 
 @Component({
@@ -23,13 +21,18 @@ import { SessionManager } from './services/session.service';
   ],
   providers: [SessionManager]
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnInit {
   title = 'My Portfolio';
   hasPageLoaded = false;
   hideIntro = false;
+  isHiddenFromStart = false;
   constructor(
-    private sessionManager: SessionManager
+    private sessionManager: SessionManager,
   ) { 
+  }
+
+  ngOnInit(): void {
+    if(window.location.pathname != '/') this.isHiddenFromStart = true;
   }
 
   ngAfterViewInit(): void {
