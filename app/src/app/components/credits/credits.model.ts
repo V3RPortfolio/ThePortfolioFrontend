@@ -36,7 +36,7 @@ export const credits: CreditGroup[] = [
     },
 
     {
-      title: 'Everyone who made this project possible',
+      title: 'Everyone whose open-source contribution made this project possible',
       animation: 'scroll',
       show: true,
       credits: [
