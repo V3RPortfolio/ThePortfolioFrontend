@@ -7,7 +7,14 @@
     background-color: mat.get-theme-color(theme.$theme, 'primary');
     color: mat.get-theme-color(theme.$theme, 'on-primary');
 
-    .heading {
+
+    .heading, .footer-link {
       color: mat.get-theme-color(theme.$theme, 'on-primary');
+    }
+
+    .footer-link {
+      &:hover {
+        color: mat.get-theme-color(theme.$theme, 'inverse-primary');
+      }
     }
 }

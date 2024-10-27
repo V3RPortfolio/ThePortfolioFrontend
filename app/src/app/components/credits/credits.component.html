@@ -1,0 +1,31 @@
+<section class="mat-typography" id="credits-section">
+    <div class="container credits-workspace">
+        <div class="credit-group" 
+        #mainBody
+        >
+            <div class="credit-group-wrapper" #creditGroup>
+                <div class="credit-group-title" *ngIf="currentCreditInfo && currentCreditInfo.title">{{currentCreditInfo.title}}</div>
+                @if(currentCreditInfo) {
+                    @for(credit of currentCreditInfo.credits; track credit.title) {
+                        <div class="credit">
+                            <div class="credit-prefix" *ngIf="credit.prefixNote" #prefixNote>
+                                <span class="prefix-note">{{credit.prefixNote}}</span>
+                            </div>
+                            <div class="credit-main" *ngIf="credit.title" #mainContent>
+                                <span class="credit-title">{{credit.title}}</span>
+                                <span class="credit-subtitle" *ngIf="credit.subtitle">{{credit.subtitle}}</span>
+                                <a href="{{credit.link}}" class="credit-link" *ngIf="credit.link">{{credit.link}}</a>
+                            </div>
+                            @if(credit.suffixNote && credit.suffixNote.length > 0) {
+                            <div class="credit-suffix-list" #suffixNote>
+                                <p class="credit-suffix" *ngFor="let note of credit.suffixNote">{{note}}</p>
+                            </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+            
+        </div>
+    </div>
+</section>
