@@ -2,7 +2,7 @@
 @use '../../../styles/theme/theme' as theme;
 
 #hero-component {
-    background-image: url('/images/banners/cloud.PNG');
+    background-image: url('/images/banners/cloud.jpg');
 
     .hero-tagline {
         color: mat.get-theme-color(theme.$theme, 'neutral', 10);
