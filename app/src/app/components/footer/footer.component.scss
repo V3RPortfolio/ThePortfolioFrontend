@@ -16,17 +16,33 @@
         font-weight: bold;
     }
     
-    .copyright-toolbar {
+    .copyright-toolbar, .footer-links {
         font-size: 0.9em;
         align-items: center;
         justify-content: center;
         text-align: center;
         padding-top: 0;
     }
+
+    .footer-links {
+        padding-bottom: 0;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .footer-link {
+        display: inline-block;
+        line-height: 1;
+        padding: 10px 10px;
+    }
     
     .toolbar-spacer {
         flex: 1 1 auto;
     }
+    
     
     @include breakpoint.mobile {
         .footer-content {

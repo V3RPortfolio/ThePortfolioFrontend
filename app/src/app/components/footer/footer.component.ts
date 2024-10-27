@@ -5,6 +5,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatIconAnchor, MatAnchor } from '@angular/material/button';
 import { SocialLinksComponent } from '../social-links/social-links.component';
+import { RoutePaths } from '../../app.constants';
 
 
 export interface CustomIcon {
@@ -25,13 +26,9 @@ export const customIcons: CustomIcon[] = [
     imports: [MatList, MatListItem, MatIconAnchor, MatAnchor, SocialLinksComponent]
 })
 export class FooterComponent {
-  sections = [
-    {
-      name: 'Icons',
-      class: 'material-icons-round',
-      items: ['github'],
-    },
-  ];
+
+  creditsRoute=`/${RoutePaths.credits}`;
+  
   constructor(
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer

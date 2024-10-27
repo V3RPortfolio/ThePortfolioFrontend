@@ -1,0 +1,28 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+
+#credits-section {
+    .credit-group-title, .prefix-note, .credit-title, .credit-subtitle, .credit-link, .credit-suffix {
+        font-size: map-get($map: constants.$font-sizes-rem, $key: xl);
+        color: mat.get-theme-color(theme.$theme, 'primary');
+    }
+
+    .credit-subtitle {
+        font-size: map-get($map: constants.$font-sizes-rem, $key: lg);
+    }
+    .credit-link {
+        font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+    }
+
+    .scrolling {
+        .prefix-note, .credit-subtitle, .credit-link, .credit-suffix {
+            font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+        }
+
+        .credit-title {
+            font-size: map-get($map: constants.$font-sizes-rem, $key: lg);
+        }
+    }
+}
