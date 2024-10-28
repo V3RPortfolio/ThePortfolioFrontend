@@ -1,4 +1,5 @@
 @use 'theme';
+@use '../../../styles/theme/breakpoint' as breakpoint;
 #post-container {
     .post-header {
         padding: 30px 20px;
@@ -16,24 +17,7 @@
     }
 
     .post-footer {
-        padding-left: 0;
-        padding-right: 0;
         margin: auto auto;
-    }
-
-    .related-posts-header {
-        margin-top: 30px;
-    }
-
-    .related-posts {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        
-        .related-post {
-            margin: 20px 10px;
-        }
-
     }
 
     @media all and (min-width: 1400px) {
@@ -42,7 +26,7 @@
         }
     }
 
-    @media all and (max-width: 767px) {
+    @include breakpoint.mobile {
         .post-header {
             padding: 20px 10px;
             justify-content: center;
@@ -50,17 +34,6 @@
         }
         .post-header-item {
             width: 100%;
-        }
-
-        .related-posts-header {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .related-posts {
-
-            .related-post {
-                margin: 20px 0;
-            }
         }
 
     }

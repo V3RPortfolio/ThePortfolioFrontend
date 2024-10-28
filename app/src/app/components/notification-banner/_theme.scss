@@ -2,7 +2,7 @@
 @use '../../../styles/theme/theme' as theme;
 
 #notification-banner {
-    background-color: mat.get-theme-color(theme.$theme, 'primary', 98);
+    background-color: mat.get-theme-color(theme.$theme, 'neutral', 98);
     color: mat.get-theme-color(theme.$theme, 'primary', 30);
     display: block;
   }

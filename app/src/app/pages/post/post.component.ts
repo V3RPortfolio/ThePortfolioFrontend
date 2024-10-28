@@ -2,11 +2,11 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BackendService } from '../../services/backend.service';
 import { Post } from '../../interfaces/backend/post.interface';
-import { AUTHOR_IMAGE_PLACEHOLDER, BACKEND_POST_SPECIFIC_STYLESHEET, FEATURED_IMAGE_PLACEHOLDER, getPostPublishDateReadable, singularize } from '../../app.constants';
+import { AUTHOR_IMAGE_PLACEHOLDER, BACKEND_POST_SPECIFIC_STYLESHEET, getPostPublishDateReadable } from '../../app.constants';
 import { User } from '../../interfaces/backend/user.interface';
-import { map, Observable } from 'rxjs';
 import { PostCardComponent } from '../../components/post-card/post-card.component';
 import { MatDivider } from '@angular/material/divider';
+import { RelatedPostsComponent } from '../../components/related-posts/related-posts.component';
 
 @Component({
   selector: 'app-post',
@@ -16,7 +16,8 @@ import { MatDivider } from '@angular/material/divider';
   providers: [BackendService],
   imports: [
     MatDivider,
-    PostCardComponent
+    PostCardComponent,
+    RelatedPostsComponent
   ]
 })
 export class PostComponent implements OnInit {
@@ -29,7 +30,6 @@ export class PostComponent implements OnInit {
   post:Post;
   categoryName:string;
   categoryId:number;
-  relatedPosts:Post[] = [];
 
 
   constructor(
@@ -58,7 +58,6 @@ export class PostComponent implements OnInit {
       if(!!this.postId && this.postId > 0) {
         this.injectPostSpecificStylesheet(this.postId);
         this.displayPost(this.postId);
-        this.getRelatedPosts();
       }
     });
   }
@@ -108,21 +107,6 @@ export class PostComponent implements OnInit {
     link.rel = "stylesheet";
     link.href = stylesheet;
     document.head.appendChild(link);
-  }
-
-  getRelatedPosts() {
-    if(!this.categoryId) return;
-    this.backendService.getPostList(this.categoryId, {
-      pageSize: 3,
-      fields: ['id', 'title', 'author', 'date_gmt', 'featured_media'],
-    }).subscribe({
-      next: (posts:Post[]) => {
-        this.relatedPosts = posts;
-      },
-      error: (error) => {
-        console.error("Error fetching related posts", error);
-      }
-    });
   }
 
 }

@@ -4,4 +4,8 @@
 #home-component {
     // Read the 50 hue from the primary color palette.
     background-color: mat.get-theme-color(theme.$theme, 'primary', 60);
+
+    .related-posts-section {
+        background-color: mat.get-theme-color(theme.$theme, 'neutral', 98);
+    }
 }

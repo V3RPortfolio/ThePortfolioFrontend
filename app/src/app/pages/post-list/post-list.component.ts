@@ -172,8 +172,8 @@ export class PostListComponent implements OnInit {
 
     // Fetch all posts
     this.backendService.getPostList(
-      categoryId,
       {
+        categoryId: categoryId,
         page: this.currentPage,
         pageSize: this.pageSize,
         fields: ['id', 'title', 'excerpt', 'author', 'date_gmt', 'featured_media', 'tags'],

@@ -6,6 +6,8 @@ import { FamiliarTechnologiesComponent } from '../../components/familiar-technol
 
 import { NotificationBannerComponent } from '../../components/notification-banner/notification-banner.component';
 import { HomeBannersComponent } from '../../components/home-banners/home-banners.component';
+import { RelatedPostsComponent } from '../../components/related-posts/related-posts.component';
+import { BackendService } from '../../services/backend.service';
 
 @Component({
     selector: 'app-home',
@@ -19,12 +21,20 @@ import { HomeBannersComponent } from '../../components/home-banners/home-banners
       HeroComponent, 
       FamiliarTechnologiesComponent,
       HomeBannersComponent,
+      RelatedPostsComponent,
     ]
 })
 export class HomeComponent implements OnInit {
   speed = 0.9;
   enabled = true;
   hideIntro:boolean = false;
+
+  constructor(
+    private backendService: BackendService
+  ) {
+
+  }
+
   ngOnInit(): void {
     // console.log(environment);
   }
