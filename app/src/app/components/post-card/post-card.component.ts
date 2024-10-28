@@ -7,6 +7,7 @@ import { User } from '../../interfaces/backend/user.interface';
 import { Tag } from '../../interfaces/backend/tag,interface';
 import { NgClass } from '@angular/common';
 import { fadeInEnterFromRight } from '../../services/triggers.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-post-card',
@@ -41,6 +42,7 @@ export class PostCardComponent implements OnInit {
       if(!this.post) return;
       this.backendService.addFeaturedImageToPost(this.post.featured_media, this.post).subscribe();
       this.backendService.addAuthorToPost(this.post.author, this.post).subscribe();
+      if(!this.categoryID || this.categoryID <= 0) this.fetchCategoryInfoFromBackend();
   }
 
   getFeaturedImage(post:Post): string {
@@ -62,6 +64,25 @@ export class PostCardComponent implements OnInit {
   getPublishedDate() {
     if(!this.post || (!this.post.date_gmt && !this.post.date)) return "";
     return getPostPublishDateReadable(new Date(!!this.post.date_gmt ? this.post.date_gmt : this.post.date));
+  }
+
+  async fetchCategoryInfoFromBackend() {
+    let categories = [];
+    if(this.post && this.post.categories && this.post.categories.length > 0) categories = this.post.categories;
+    if(categories.length == 0) {
+      // fetch category data from post
+      const post = await firstValueFrom(this.backendService.getPost(this.post.id, {fields: ['categories']}));
+      if(post && post.categories && post.categories.length > 0) categories = post.categories;
+    }
+    if(categories.length == 0) return;
+
+    // fetch the first category info
+    const category = await firstValueFrom(this.backendService.getPostCategory(categories[0]));
+    if(category) {
+      this.categoryID = category.id;
+      this.categoryName = category.name;
+    }
+
   }
 
 }

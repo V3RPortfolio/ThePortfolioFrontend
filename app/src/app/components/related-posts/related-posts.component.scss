@@ -1,0 +1,31 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@import 'theme';
+#related-posts-section {
+    .related-posts-header {
+        margin-top: 30px;
+        text-align: left;
+        h2 {
+            font-weight: bold;
+        }
+    }
+
+    .related-posts {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        flex-direction: column;
+        
+        .related-post {
+            padding: 20px 0;
+            
+        }
+
+    }
+
+    @include breakpoint.mobile {
+        .related-posts-header {
+            margin-top: 20px;
+            text-align: center;
+        }
+    }
+}

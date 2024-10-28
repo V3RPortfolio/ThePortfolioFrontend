@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+
+#related-posts-section {
+    .related-posts-header {
+        color: mat.get-theme-color(theme.$theme, 'primary');
+    }
+    .related-post {
+        border-top: 1px solid mat.get-theme-color(theme.$theme, 'neutral', 90);
+        &:first-child {
+            border-top: none;
+        }
+    }
+}

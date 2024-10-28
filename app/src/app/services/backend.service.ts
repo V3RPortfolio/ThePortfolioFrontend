@@ -131,8 +131,8 @@ export class BackendService {
 
 
     getPostList(
-        categoryId:number,
         {
+            categoryId=null,
             pageSize=10,
             page=1,
             orderBy='date',
@@ -141,6 +141,7 @@ export class BackendService {
             filter='',
             searchColumns=[],
         }:{
+            categoryId?:number,
             pageSize?:number,
             page?:number,
             orderBy?:PostOrderByType,
@@ -155,8 +156,10 @@ export class BackendService {
             "page": page,
             "orderby": orderBy,
             "order": desc ? 'desc' : 'asc',
-            "categories": categoryId
         };
+        if(categoryId) {
+            params['categories'] = categoryId;
+        }
         if(fields && fields.length > 0) {
             params['_fields[]'] = fields;
         }
@@ -223,5 +226,19 @@ export class BackendService {
             return post;
             })
         );
+    }
+
+    getPostCategory(
+        categoryId:number,
+        {
+            fields=['id', 'name', 'slug', 'count']
+        }: {
+            fields?: PostCategoryFilterType[]
+        }={}
+    ): Observable<PostCategory> {
+        const params = {
+            '_fields[]': fields
+        }
+        return this.get<PostCategory>('/categories/' + categoryId, params);
     }
 }

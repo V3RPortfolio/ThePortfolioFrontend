@@ -1,0 +1,18 @@
+<div id="related-posts-section">
+    @if(relatedPosts && relatedPosts.length) {
+        <div class="row related-posts-header">
+            <div class="col-12">
+                <h2>{{title}}</h2>
+            </div>
+        </div>
+        <div class="row related-posts">
+            @for(post of relatedPosts; track post.id;) {
+                <div class="col-12 related-post">
+                    <app-post-card [post]="post" [postCardType]="'list'" [categoryID]="categoryId" 
+                    [categoryName]="categoryName"></app-post-card>
+                </div>
+                
+            } 
+        </div>
+    }
+</div>
