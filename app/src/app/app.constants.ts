@@ -1,3 +1,5 @@
+import { environment } from "../environments/environment";
+
 export enum RoutePaths {
     home = '',
     posts = 'posts',
@@ -19,14 +21,14 @@ export const wordpressRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioCMS.g
 export const GraphQLClients = {
     default: {
         name: 'default',
-        uri: 'http://localhost:8000/graphql/',
+        uri: environment.ADMIN_GITHUB_API,
     },
     github: {
         name: 'github',
-        uri: 'http://localhost:8000/github/graphql/v1',
+        uri: environment.ADMIN_GITHUB_API,
     },
 };
-export const ADMIN_BACKEND_API = "http://localhost:8000";
+export const ADMIN_BACKEND_API = environment.ADMIN_BACKEND_API;
 export const ADMIN_BACKEND_XCSRF_KEY = "X-CSRFToken";
 
 

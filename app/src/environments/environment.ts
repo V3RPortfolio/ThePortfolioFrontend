@@ -5,4 +5,5 @@ export const environment = {
 
     ADMIN_GITHUB_API: process.env['DJANGO_GITHUB_BACKEND_API'] || 'http://localhost:8000/github/graphql/v1',
     ADMIN_CSRF_API: process.env['DJANGO_GET_CSRF_PATH'] || 'http://localhost:8000/csrf',
+    ADMIN_BACKEND_API: process.env['DJANGO_ADMIN_BACKEND_API'] || 'http://localhost:8000',
 };
