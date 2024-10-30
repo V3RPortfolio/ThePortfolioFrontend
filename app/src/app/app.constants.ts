@@ -15,6 +15,21 @@ export const infrastructureRepoUrl = "https://github.com/zuhairmhtb/ThePortfolio
 export const angularRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioFrontend.git";
 export const wordpressRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioCMS.git";
 
+
+export const GraphQLClients = {
+    default: {
+        name: 'default',
+        uri: 'http://localhost:8000/graphql/',
+    },
+    github: {
+        name: 'github',
+        uri: 'http://localhost:8000/github/graphql/v1',
+    },
+};
+export const ADMIN_BACKEND_API = "http://localhost:8000";
+export const ADMIN_BACKEND_XCSRF_KEY = "X-CSRFToken";
+
+
 export function singularize(n:number, singular:string, plural:string|null=null):string {
     return n === 1 ? singular :
         plural ? plural : singular + 's';

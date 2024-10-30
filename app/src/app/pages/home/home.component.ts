@@ -8,6 +8,7 @@ import { NotificationBannerComponent } from '../../components/notification-banne
 import { HomeBannersComponent } from '../../components/home-banners/home-banners.component';
 import { RelatedPostsComponent } from '../../components/related-posts/related-posts.component';
 import { WPBackendService } from '../../services/wpbackend.service';
+import { GithubIssueMetricsComponent } from '../../components/github/github-issue-metrics/github-issue-metrics.component';
 
 @Component({
     selector: 'app-home',
@@ -22,6 +23,7 @@ import { WPBackendService } from '../../services/wpbackend.service';
       FamiliarTechnologiesComponent,
       HomeBannersComponent,
       RelatedPostsComponent,
+      GithubIssueMetricsComponent,
     ]
 })
 export class HomeComponent implements OnInit {

@@ -1,1 +1,22 @@
-<p>github-issue-metrics works!</p>
+<section id="github-issue-metric">
+@if(metrics) {
+    <div class="metric" *ngFor="let metric of metrics">
+        <div class="metric__repository">{{metric.repository}}</div>
+        <div class="metric__url">{{metric.url}}</div>
+        <div class="metric__open">{{metric.open}}</div>
+        <div class="metric__closed">{{metric.closed}}</div>
+        <div class="metric__all">{{metric.all}}</div>
+        @if(metric.title) {
+            <div class="metric__title">{{metric.title}}</div>
+        }
+        @if(metric.description) {
+            <div class="metric__description">{{metric.description}}</div>
+        }
+        @if(metric.icon) {
+            <div class="metric__icon">
+                <img [src]="metric.icon" alt="icon">
+            </div>
+        }
+    </div>
+}
+</section>

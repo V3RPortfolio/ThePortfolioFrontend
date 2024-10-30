@@ -1,10 +1,10 @@
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app/app.component';
-import { importProvidersFrom } from '@angular/core';
+import { importProvidersFrom, inject } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import routes from './app/app.routes';
 
@@ -14,6 +14,10 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatCardModule} from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
+import { provideNamedApollo } from 'apollo-angular';
+
+import { GraphQLClients } from './app/app.constants';
+import { ApolloService } from './app/services/apollo.service';
 
 
 const materialComponents = [
@@ -36,7 +40,15 @@ bootstrapApplication(AppComponent, {
         provideAnimationsAsync(),
         provideHttpClient(),
         provideAnimations(),
-        provideRouter(routes)
+        provideRouter(routes),
+        provideNamedApollo(() => {
+            const http = inject(HttpClient);
+            return {
+                [GraphQLClients.default.name]: ApolloService.getDefaultApolloClient(),
+                [GraphQLClients.github.name]: ApolloService.getGithubApolloClient(http),
+            };
+        })
+        
     ]
 })
   .catch(err => console.error(err));

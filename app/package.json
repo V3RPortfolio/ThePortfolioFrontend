@@ -25,6 +25,7 @@
     "angular-three": "^2.5.1",
     "angular-three-soba": "^2.5.1",
     "apollo-angular": "^7.2.1",
+    "apollo-link-context": "^1.0.20",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "graphql": "^16.9.0",
