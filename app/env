@@ -1,3 +1,4 @@
 WORDPRESS_BACKEND_API=https://localhost:8080/wp-json/wp/v2
 WORDPRESS_API_KEY="basic password"
 WORDPRESS_API_KEY_USERNAME="basic username"
+DJANGO_GITHUB_BACKEND_API="http://localhost:8000/github/graphql/v1"

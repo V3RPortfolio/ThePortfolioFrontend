@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BackendService, ErrorCode, PostColumnFilterType, PostSearchColumnType } from '../../services/backend.service';
+import { WPBackendService, ErrorCode, PostSearchColumnType } from '../../services/wpbackend.service';
 import { Post } from '../../interfaces/backend/post.interface';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { forkJoin, map, mergeMap, Observable } from 'rxjs';
@@ -22,9 +22,6 @@ import { RoutePaths } from '../../app.constants';
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.scss',
   standalone: true,
-  providers: [
-    BackendService
-  ],
   
 
   imports: [
@@ -94,7 +91,7 @@ export class PostListComponent implements OnInit {
 
 
   constructor(
-    private backendService:BackendService,
+    private backendService:WPBackendService,
     private activatedRoute:ActivatedRoute,
     private router:Router
   ) {

@@ -7,7 +7,7 @@ import { FamiliarTechnologiesComponent } from '../../components/familiar-technol
 import { NotificationBannerComponent } from '../../components/notification-banner/notification-banner.component';
 import { HomeBannersComponent } from '../../components/home-banners/home-banners.component';
 import { RelatedPostsComponent } from '../../components/related-posts/related-posts.component';
-import { BackendService } from '../../services/backend.service';
+import { WPBackendService } from '../../services/wpbackend.service';
 
 @Component({
     selector: 'app-home',
@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
   hideIntro:boolean = false;
 
   constructor(
-    private backendService: BackendService
+    private backendService: WPBackendService
   ) {
 
   }

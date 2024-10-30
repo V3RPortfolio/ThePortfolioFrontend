@@ -32,7 +32,7 @@ export enum ErrorCode {
     providedIn: 'root',
     
 })
-export class BackendService {
+export class WPBackendService {
     private url:string;
     private username:string;
     private password:string;
