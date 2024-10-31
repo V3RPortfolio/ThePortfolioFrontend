@@ -1,24 +1,27 @@
-<section class="container" id="github-issue-metric">
-    <div class="row">
-        @if(metrics) {
-            <div class="metric col-3 col-md-4 col-sm-12" *ngFor="let metric of metrics">
-                <app-speedometer class="metric-speedometer" [closed]="metric.closed" [open]="metric.open" [total]="metric.all"></app-speedometer>
-                <div class="metric-content">
-                    <div class="metric-title">
-                        <a class="metric-link" href="{{metric.url}}">
+<section class="github-issue-metric-wrapper" id="github-issue-metric">
+    <div class="container">
+        <div class="row">
+            @if(metrics) {
+                <div class="metric col-3 col-md-4 col-sm-12" *ngFor="let metric of metrics">
+                    <app-speedometer class="metric-speedometer" [closed]="metric.closed" [open]="metric.open" [total]="metric.all"></app-speedometer>
+                    <div class="metric-content">
+                        <div class="metric-title">
                             @if(metric.title) {
-                                {{metric.title}}
+                                    {{metric.title}}
                             } 
                             @else {
                                 {{metric.repository}}
                             }
-                        </a>
+                        </div>
+                        @if(metric.description) {
+                            <small class="metric-description">{{metric.description}}</small>
+                        }
+                        @if(metric.url) {
+                            <a [href]="metric.url" class="metric-link">View on GitHub</a>
+                        }
                     </div>
-                    @if(metric.description) {
-                        <small class="metric-description"><i>{{metric.description}}</i></small>
-                    }
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
 </section>

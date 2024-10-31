@@ -1,5 +1,8 @@
- 
- @import 'theme';
+@use 'sass:math';
+@import 'theme';
+
+
+
  .speedometer {
     position: relative;
     height: 150px;
@@ -32,7 +35,7 @@
       
       @for $i from 0 to 20 {
         .tick:nth-child(#{$i + 1}) {
-          --angle: #{360deg / 27 * $i};
+          --angle: #{math.div(360deg, 27) * $i};
         }
       }
     
@@ -50,9 +53,16 @@
         position: absolute;
         width: 3px;
         height: 3px;
-        top: 56px;
-        left: 56px;
+        top: 125px;
+        left: 115px;
         border-radius: 50%;
+    }
+
+    .metric-value {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 20px;
     }
  }
  

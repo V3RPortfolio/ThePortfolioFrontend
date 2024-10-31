@@ -4,21 +4,26 @@
 @use '../../../../styles/theme/constants' as constants;
 
 #github-issue-metric {
-
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 20);
     .metric {
-        border: 1px solid mat.get-theme-color(theme.$theme, 'primary', 50);
+        background: mat.get-theme-color(theme.$theme, 'neutral', 95);
         border-radius: 10px;
+        
     }
-    .metric-link, .metric-description {
+    .metric-title, .metric-link {
         color: mat.get-theme-color(theme.$theme, 'primary', 10);
         font-weight: bold;
+    }
+
+    .metric-description {
+        color: mat.get-theme-color(theme.$theme, 'primary', 10);
     }
 
     @include breakpoint.mobile {
         .metric {
             border: none;
 
-            .metric-link {
+            .metric-title {
                 font-size: map-get($map: constants.$font-sizes-rem, $key: lg);
             }
 
