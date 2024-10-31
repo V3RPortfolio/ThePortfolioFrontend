@@ -5,6 +5,10 @@
 
 #github-issue-metric {
     background-color: mat.get-theme-color(theme.$theme, 'primary', 20);
+    .github-issue-metric-title {
+        color: mat.get-theme-color(theme.$theme, 'neutral', 95);
+        font-weight: bold;
+    }
     .metric {
         background: mat.get-theme-color(theme.$theme, 'neutral', 95);
         border-radius: 10px;
@@ -20,6 +24,9 @@
     }
 
     @include breakpoint.mobile {
+        .github-issue-metric-title {
+            text-align: center;
+        }
         .metric {
             border: none;
 

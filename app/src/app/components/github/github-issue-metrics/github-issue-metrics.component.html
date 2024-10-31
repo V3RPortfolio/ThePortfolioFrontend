@@ -1,6 +1,9 @@
 <section class="github-issue-metric-wrapper" id="github-issue-metric">
     <div class="container">
         <div class="row">
+            <h2 class="github-issue-metric-title">Repository Progress Dashboard: Accelerating Towards 100%</h2>
+        </div>
+        <div class="row metric-container">
             @if(metrics) {
                 <div class="metric col-3 col-md-4 col-sm-12" *ngFor="let metric of metrics">
                     <app-speedometer class="metric-speedometer" [closed]="metric.closed" [open]="metric.open" [total]="metric.all"></app-speedometer>

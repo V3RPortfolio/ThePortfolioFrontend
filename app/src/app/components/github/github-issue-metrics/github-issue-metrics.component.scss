@@ -1,9 +1,14 @@
 @use '../../../../styles/theme/breakpoint' as breakpoint;
 @import 'theme';
 #github-issue-metric {
+    padding: 30px 0;
+    .github-issue-metric-title {
+        width: 100%;
+    }
     .row {
         flex-wrap: wrap;
     }
+
     .metric {
         position: relative;
         padding: 30px 5px;
