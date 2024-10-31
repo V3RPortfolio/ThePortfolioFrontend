@@ -134,9 +134,9 @@ export class CreditsComponent implements AfterViewInit, OnInit {
 
     if(startAnimation == this.fadeInClass) {
       await new FadeCreditService(
-        this.prefixNote.nativeElement as HTMLElement,
+        this.prefixNote ? this.prefixNote.nativeElement as HTMLElement : null,
         this.mainContent.nativeElement as HTMLElement,
-        this.suffixNote.nativeElement as HTMLElement,
+        this.suffixNote ? this.suffixNote.nativeElement as HTMLElement : null,
         this.showMainClass,
         startAnimation,
         endAnimation,

@@ -7,7 +7,8 @@ import { FamiliarTechnologiesComponent } from '../../components/familiar-technol
 import { NotificationBannerComponent } from '../../components/notification-banner/notification-banner.component';
 import { HomeBannersComponent } from '../../components/home-banners/home-banners.component';
 import { RelatedPostsComponent } from '../../components/related-posts/related-posts.component';
-import { BackendService } from '../../services/backend.service';
+import { WPBackendService } from '../../services/wpbackend.service';
+import { GithubIssueMetricsComponent } from '../../components/github/github-issue-metrics/github-issue-metrics.component';
 
 @Component({
     selector: 'app-home',
@@ -22,6 +23,7 @@ import { BackendService } from '../../services/backend.service';
       FamiliarTechnologiesComponent,
       HomeBannersComponent,
       RelatedPostsComponent,
+      GithubIssueMetricsComponent,
     ]
 })
 export class HomeComponent implements OnInit {
@@ -30,7 +32,7 @@ export class HomeComponent implements OnInit {
   hideIntro:boolean = false;
 
   constructor(
-    private backendService: BackendService
+    private backendService: WPBackendService
   ) {
 
   }

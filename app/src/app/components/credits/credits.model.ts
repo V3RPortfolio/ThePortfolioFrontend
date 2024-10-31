@@ -36,6 +36,25 @@ export const credits: CreditGroup[] = [
     },
 
     {
+      title: 'Special thanks to',
+      animation: 'fade',
+      show: true,
+      credits: [
+        
+        {
+          title: 'The open-source community',
+          subtitle: '',
+
+          prefixNote: 'Special thanks to ',
+
+          suffixNote: [
+            'For providing the tools and resources that made this project possible'
+          ]
+        }
+      ]
+    },
+
+    {
       title: 'Everyone whose open-source contribution made this project possible',
       animation: 'scroll',
       show: true,
@@ -98,22 +117,32 @@ export const credits: CreditGroup[] = [
 
       ]
     },
+    {
+      title: 'Open-source code snippets used in this project',
+      animation: 'scroll',
+      show: true,
+      credits: [
+        {
+          title: 'Speedometer by',
+          link: 'https://codepen.io/armods/pen/BaxgNON'
+        },
+        {
+          title: 'Speedometer animation by',
+          link: 'https://stackblitz.com/edit/angular-animation-builder-pl9qkn?file=app%2Fapp.component.ts'
+        }
+      ]
+    },
 
     {
-      title: 'Special thanks to',
+      title: 'Copyright and License',
       animation: 'fade',
       show: true,
       credits: [
         
         {
-          title: 'The open-source community',
-          subtitle: '',
+          title: 'Zohair Mehtab',
+          subtitle: 'All rights reserved © 2024',
 
-          prefixNote: 'Special thanks to ',
-
-          suffixNote: [
-            'For providing the tools and resources that made this project possible'
-          ]
         }
       ]
     },

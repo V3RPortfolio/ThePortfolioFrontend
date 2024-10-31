@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { MatButton } from '@angular/material/button';
-import { BackendService } from '../../services/backend.service';
+import { WPBackendService } from '../../services/wpbackend.service';
 import { PostCategory } from '../../interfaces/backend/category.interface';
 import { Router } from '@angular/router';
 import { RoutePaths } from '../../app.constants';
@@ -33,7 +33,6 @@ import { MatIcon } from '@angular/material/icon';
       MatIcon,
       NgClass
     ],
-    providers: [BackendService]
 })
 export class HeaderComponent implements OnInit {
   @ViewChild('navbar') navbar: ElementRef;
@@ -43,8 +42,10 @@ export class HeaderComponent implements OnInit {
 
   menuItems:PostCategory[]=[];
 
+  creditsRoute=`/${RoutePaths.credits}`;
+
   constructor(
-    private backendService:BackendService,
+    private backendService:WPBackendService,
     private router:Router
   ) {
 

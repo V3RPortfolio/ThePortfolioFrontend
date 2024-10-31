@@ -1,0 +1,68 @@
+@use 'sass:math';
+@import 'theme';
+
+
+
+ .speedometer {
+    position: relative;
+    height: 150px;
+    width: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    .speed__wheel {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 0% 90%);
+    }
+    
+    .speed__tick {
+        display: flex;
+        gap: 1px;
+    }
+    
+    .tick {
+        transform-origin: bottom;
+        position: absolute;
+        height: 70px;
+        width: 2px;
+        top: 10px;
+        left: 50%;
+        transform: rotate(var(--angle)) rotateZ(-127deg);
+    }
+      
+      @for $i from 0 to 20 {
+        .tick:nth-child(#{$i + 1}) {
+          --angle: #{math.div(360deg, 27) * $i};
+        }
+      }
+    
+    .pointer {
+        position: relative;
+        height: 95px;
+        width: 10px;
+        left: 70px;
+        top: 1.5px;
+        clip-path: polygon(9px 10px, 11px 10px, 20px 150px, 10px 190px, 0 150px);
+        transform-origin: 5px 76px;
+    }
+    
+    .endpoint {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        top: 125px;
+        left: 115px;
+        border-radius: 50%;
+    }
+
+    .metric-value {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 20px;
+    }
+ }
+ 

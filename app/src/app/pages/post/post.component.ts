@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { BackendService } from '../../services/backend.service';
+import { WPBackendService } from '../../services/wpbackend.service';
 import { Post } from '../../interfaces/backend/post.interface';
 import { AUTHOR_IMAGE_PLACEHOLDER, BACKEND_POST_SPECIFIC_STYLESHEET, getPostPublishDateReadable } from '../../app.constants';
 import { User } from '../../interfaces/backend/user.interface';
@@ -13,7 +13,6 @@ import { RelatedPostsComponent } from '../../components/related-posts/related-po
   templateUrl: './post.component.html',
   styleUrl: './post.component.scss',
   standalone: true,
-  providers: [BackendService],
   imports: [
     MatDivider,
     PostCardComponent,
@@ -34,7 +33,7 @@ export class PostComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private backendService: BackendService
+    private backendService: WPBackendService
   ) {
 
   }

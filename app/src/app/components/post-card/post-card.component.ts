@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Post } from '../../interfaces/backend/post.interface';
-import { BackendService } from '../../services/backend.service';
+import { WPBackendService } from '../../services/wpbackend.service';
 import { AUTHOR_IMAGE_PLACEHOLDER, FEATURED_IMAGE_PLACEHOLDER, getPostPublishDateReadable, RoutePaths } from '../../app.constants';
 import { Router } from '@angular/router';
 import { User } from '../../interfaces/backend/user.interface';
@@ -32,7 +32,7 @@ export class PostCardComponent implements OnInit {
   featuredImagePlaceholder = FEATURED_IMAGE_PLACEHOLDER;
 
   constructor(
-    private backendService: BackendService,
+    private backendService: WPBackendService,
     private router: Router
   ) {
 

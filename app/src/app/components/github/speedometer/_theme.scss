@@ -1,0 +1,36 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/theme/theme' as theme;
+@use '../../../../styles/theme/constants' as constants;
+
+
+$lightColor: mat.get-theme-color(theme.$theme, 'neutral', 98);
+$darkColor: mat.get-theme-color(theme.$theme, 'primary', 20);
+.speedometer {    
+    .speed__wheel {
+        background-color: $darkColor;
+        
+    }
+    
+    .tick {
+        background: linear-gradient(to top, transparent 90%, $lightColor);
+    }
+    .tick:nth-child(odd)::before {
+        color: $lightColor;
+      }
+    
+    .pointer {
+        background: $lightColor;
+    }
+    
+    .pointer::before {
+        background: $lightColor;
+    }
+    
+    .endpoint {
+        background: $lightColor;
+    }
+    .metric-value {
+        color: $lightColor;
+        font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+    }
+ }

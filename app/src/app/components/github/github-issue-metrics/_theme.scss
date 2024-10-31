@@ -1,0 +1,43 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/theme/theme' as theme;
+@use '../../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../../styles/theme/constants' as constants;
+
+#github-issue-metric {
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 20);
+    .github-issue-metric-title {
+        color: mat.get-theme-color(theme.$theme, 'neutral', 95);
+        font-weight: bold;
+    }
+    .metric {
+        background: mat.get-theme-color(theme.$theme, 'neutral', 95);
+        border-radius: 10px;
+        
+    }
+    .metric-title, .metric-link {
+        color: mat.get-theme-color(theme.$theme, 'primary', 10);
+        font-weight: bold;
+    }
+
+    .metric-description {
+        color: mat.get-theme-color(theme.$theme, 'primary', 10);
+    }
+
+    @include breakpoint.mobile {
+        .github-issue-metric-title {
+            text-align: center;
+        }
+        .metric {
+            border: none;
+
+            .metric-title {
+                font-size: map-get($map: constants.$font-sizes-rem, $key: lg);
+            }
+
+            .metric-description {
+                font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+                margin-top: 10px;
+            }
+        }
+    }
+}

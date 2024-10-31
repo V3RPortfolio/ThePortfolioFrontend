@@ -1,3 +1,5 @@
+import { environment } from "../environments/environment";
+
 export enum RoutePaths {
     home = '',
     posts = 'posts',
@@ -14,6 +16,21 @@ export const FEATURED_IMAGE_PLACEHOLDER="/images/common/image_placeholder.jpg";
 export const infrastructureRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioInfrastructure.git";
 export const angularRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioFrontend.git";
 export const wordpressRepoUrl = "https://github.com/zuhairmhtb/ThePortfolioCMS.git";
+
+
+export const GraphQLClients = {
+    default: {
+        name: 'default',
+        uri: environment.ADMIN_GITHUB_API,
+    },
+    github: {
+        name: 'github',
+        uri: environment.ADMIN_GITHUB_API,
+    },
+};
+export const ADMIN_BACKEND_API = environment.ADMIN_BACKEND_API;
+export const ADMIN_BACKEND_XCSRF_KEY = "X-CSRFToken";
+
 
 export function singularize(n:number, singular:string, plural:string|null=null):string {
     return n === 1 ? singular :

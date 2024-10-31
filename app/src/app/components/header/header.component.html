@@ -4,17 +4,17 @@
         <button mat-icon-button class="navigation-toggle-button" aria-label="Navbar toggle button" (click)="toggleMenu()">
             <mat-icon>menu</mat-icon>
         </button>
-        <h2 class="navigation-title">Portfolio | Zohair Mehtab</h2>
+        <h2 class="navigation-title"><a href="/">Portfolio | Zohair Mehtab</a></h2>
         <section class="navigation-body" [ngClass]="showMenu ? 'show': ''">
             <ul class="navigation-menu">
-                <li class="navigation-item">
-                    <a class="navigation-link" href="/">Home</a>
-                </li>
                 @for(item of menuItems; track item.id) {
-                    <li class="navigaion-item">
+                    <li class="navigation-item">
                         <button class="navigation-link" (click)="goToPage(item.name, item.id)">{{item.name}}</button>
                     </li>
                 }
+                <li class="navigation-item">
+                    <a class="navigation-link" href="{{creditsRoute}}">Credits</a>
+                </li>
                 <!--<li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
                 </li>-->

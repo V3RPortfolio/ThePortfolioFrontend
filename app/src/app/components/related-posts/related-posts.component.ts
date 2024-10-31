@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BackendService, PostOrderByType } from '../../services/backend.service';
+import { WPBackendService, PostOrderByType } from '../../services/wpbackend.service';
 import { Post } from '../../interfaces/backend/post.interface';
 import { PostCardComponent } from '../post-card/post-card.component';
 
@@ -24,7 +24,7 @@ export class RelatedPostsComponent implements OnInit {
 
   relatedPosts: Post[] = [];
   constructor(
-    private backendService: BackendService
+    private backendService: WPBackendService
   ) {
 
   }
