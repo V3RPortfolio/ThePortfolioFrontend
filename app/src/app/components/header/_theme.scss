@@ -15,6 +15,10 @@
         color: mat.get-theme-color(theme.$theme, 'on-primary');
     }
 
+    .navigation-title a {
+        color: mat.get-theme-color(theme.$theme, 'on-primary');
+    }
+
     .navigation-link {
         background-color: transparent;
         color: mat.get-theme-color(theme.$theme, 'on-primary');
