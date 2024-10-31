@@ -42,6 +42,8 @@ export class HeaderComponent implements OnInit {
 
   menuItems:PostCategory[]=[];
 
+  creditsRoute=`/${RoutePaths.credits}`;
+
   constructor(
     private backendService:WPBackendService,
     private router:Router
