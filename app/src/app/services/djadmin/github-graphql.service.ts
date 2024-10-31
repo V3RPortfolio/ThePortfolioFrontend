@@ -15,6 +15,10 @@ export class GithubIssueMetricGQL extends Query<GithubIssueMetric[]> {
                 open
                 closed
                 all
+                title
+                description
+                icon
+                url
             }
         }
     `;

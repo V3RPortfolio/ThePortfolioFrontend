@@ -3,6 +3,7 @@ import { GithubIssueMetric } from '../../../interfaces/djadmin/github.interface'
 import { GithubIssueMetricGQL } from '../../../services/djadmin/github-graphql.service';
 import { NgFor } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { SpeedometerComponent } from '../speedometer/speedometer.component';
 
 @Component({
   selector: 'app-github-issue-metrics',
@@ -10,7 +11,8 @@ import { Subscription } from 'rxjs';
   styleUrl: './github-issue-metrics.component.scss',
   standalone: true,
   imports: [
-    NgFor
+    NgFor,
+    SpeedometerComponent
   ]
 })
 export class GithubIssueMetricsComponent implements AfterViewInit, OnDestroy {

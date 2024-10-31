@@ -1,0 +1,54 @@
+@use '../../../../styles/theme/breakpoint' as breakpoint;
+@import 'theme';
+#github-issue-metric {
+    .row {
+        flex-wrap: wrap;
+    }
+    .metric {
+        position: relative;
+        padding: 30px 5px;
+        margin: 10px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        &.col-3 {
+            width: calc(25% - 20px);
+        }
+
+
+
+        .metric-speedometer {
+            width: 150px;
+        }
+
+        .metric-content {
+            width: 100%;
+            padding-top: 30px;
+            text-align: center;
+            margin-bottom: auto;
+        }
+
+        .metric-link {
+            text-decoration: underline;
+            margin-bottom: 20px;
+        }
+    }
+
+    @include breakpoint.tablet {
+        .metric.col-md-4 {
+            width: calc(33.33333% - 20px);
+        }
+    }
+
+    @include breakpoint.mobile {
+
+        .metric {
+            &.col-sm-12 {
+                width: calc(100% - 20px);
+            }
+        }
+        
+    }
+}
