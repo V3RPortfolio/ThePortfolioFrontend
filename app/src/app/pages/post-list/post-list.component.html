@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-3 col-md-12 category-list-container">
             <h6>Search by a category</h6>
-            <mat-action-list role="category-list">
+            <mat-action-list role="category-list" class="category-list">
                 @for(category of categories; track category.id) {
                     <mat-list-item role="listitem" class="list-item" (click)="goToPage(category.name, category.id)">
                         <span matListItemTitle class="category-list-item-title">{{category.name}}</span>
@@ -25,7 +25,7 @@
                     <mat-list-option class="keyword-filter-list-item" [value]="postField.value">{{postField.label}}</mat-list-option>
                 }
             </mat-selection-list>
-            <button mat-stroked-button class="button search-by-keyword-button" (click)="searchKeyword()">Search</button>
+            <button mat-flat-button class="button search-by-keyword-button" (click)="searchKeyword()">Search</button>
 
         </div>
         <div class="col-9 col-md-12 post-list">

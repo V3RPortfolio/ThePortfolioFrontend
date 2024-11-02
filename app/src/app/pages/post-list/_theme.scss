@@ -4,9 +4,6 @@
 
 
 #post-list-component {
-    button {
-        background-color: mat.get-theme-color(theme.$theme, 'primary', 10);
-    }
     .category-list-container {
         background-color: mat.get-theme-color(theme.$theme, 'primary', 80);
 
@@ -20,10 +17,10 @@
 
 
             &:hover {
-                background-color: mat.get-theme-color(theme.$theme, 'primary', 25);
+                background-color: mat.get-theme-color(theme.$theme, 'primary', 90);
 
                 .category-list-item-title, .category-list-item-subtitle, .mdc-checkbox__background {
-                    color: mat.get-theme-color(theme.$theme, 'primary', 98);
+                    color: mat.get-theme-color(theme.$theme, 'primary', 20);
                 }
 
                 .mdc-checkbox__background {

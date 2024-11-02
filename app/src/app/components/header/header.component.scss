@@ -44,7 +44,7 @@ $contractedPaddingValue: map-get(constants.$padding, md);
     .navigation-title {
         line-height: 2;
         cursor: pointer;
-        width: 245px;
+        max-width: 245px;
 
         a {
             text-decoration: none;
@@ -91,7 +91,6 @@ $contractedPaddingValue: map-get(constants.$padding, md);
 
         .navigation-title {
             font-size: map-get(constants.$font-sizes-rem, md);
-            width: 100%;
         }
 
         .navigation-body {
