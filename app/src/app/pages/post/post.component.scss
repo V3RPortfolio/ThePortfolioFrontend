@@ -2,41 +2,46 @@
 @use '../../../styles/theme/breakpoint' as breakpoint;
 #post-container {
     .post-header {
-        padding: 30px 20px;
-        display: flex;
-        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
     }
 
+    .author-name-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     .author-image {
         max-width: 24px;
         border-radius: 50% 50%;
         margin-right: 5px;
         display: inline-block;
     }
+
     .post-body {
         word-wrap: break-word;
     }
 
-    .post-footer {
+    .post-footer-content {
         margin: auto auto;
     }
 
     @media all and (min-width: 1400px) {
-        .post-footer {
+        .post-footer-content {
             max-width: 1140px;
         }
     }
 
     @include breakpoint.mobile {
         .post-header {
-            padding: 20px 10px;
+            padding: 0 10px;
             justify-content: center;
             text-align: center;
         }
         .post-header-item {
             width: 100%;
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
 
     }

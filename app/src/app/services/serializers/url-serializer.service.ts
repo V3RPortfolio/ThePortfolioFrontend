@@ -6,10 +6,10 @@ export class CustomUrlSerializer extends DefaultUrlSerializer {
         return value.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '').toLowerCase();
     }
 
-    override parse(url: string): UrlTree {
-        const sanitizedUrl = url.split('/').map(this.sanitize).join('/');
-        return super.parse(sanitizedUrl);
-    }
+    // override parse(url: string): UrlTree {
+    //     const sanitizedUrl = url.split('/').map(this.sanitize).join('/');
+    //     return super.parse(sanitizedUrl);
+    // }
 
     override serialize(tree: UrlTree): string {
         const url = decodeURI(super.serialize(tree));

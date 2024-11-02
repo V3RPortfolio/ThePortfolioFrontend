@@ -93,6 +93,7 @@ export class PostComponent implements OnInit {
         this.getAuthorInfo(post);
         if(!post || !post.content || !post.content.rendered || post.content.rendered.length == 0) return;
         this.postContainer.nativeElement.innerHTML = post.content.rendered;
+        window.scrollTo(0, 0);
       },
       error: (error) => {
         console.error("Error fetching post", error);
