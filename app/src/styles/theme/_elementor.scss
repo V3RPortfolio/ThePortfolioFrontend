@@ -32,8 +32,16 @@
         }
     }
 
-    .elementor img {
-        width: 100%;
+    .elementor {
+        img {
+            width: 100%;
+        }
+        a {
+            word-wrap: break-word;
+        }
+        pre {
+            overflow-y: scroll;
+        }
     }
 
     @media(max-width:1024px){
