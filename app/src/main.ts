@@ -5,7 +5,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app/app.component';
 import { importProvidersFrom, inject } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, UrlSerializer } from '@angular/router';
 import routes from './app/app.routes';
 
 import {MatButtonModule} from '@angular/material/button'; 
@@ -18,6 +18,7 @@ import { provideNamedApollo } from 'apollo-angular';
 
 import { GraphQLClients } from './app/app.constants';
 import { ApolloService } from './app/services/apollo.service';
+import { CustomUrlSerializer } from './app/services/serializers/url-serializer.service';
 
 
 const materialComponents = [
@@ -47,7 +48,11 @@ bootstrapApplication(AppComponent, {
                 [GraphQLClients.default.name]: ApolloService.getDefaultApolloClient(),
                 [GraphQLClients.github.name]: ApolloService.getGithubApolloClient(http),
             };
-        })
+        }),
+        {
+            provide: UrlSerializer,
+            useClass: CustomUrlSerializer
+        }        
         
     ]
 })
