@@ -1,25 +1,28 @@
 <div id="post-container">
-    <div class="post-header">
-        <a href="/posts/{{categoryId}}/{{categoryName}}" class="post-header-item category-name">{{categoryName}}</a>
-        <span class="post-header-item post-date">published {{getPublishedDate()}}</span>
-        <div class="post-header-item author-name-section">
-            <img src="{{getAuthorImage(author)}}" class="author-image" alt="profile picture">
-            <span class="author-name">
-                
-                by 
-                @if(author && author.name) {
-                    <a class="author-name-link" href="#">{{author.name}}</a>
-                }
-                @else {
-                    Anonymous
-                }
-                </span>
-        </div>
-        
+    <div class="container">
+        <div class="row post-header">
+            <a href="/posts/{{categoryId}}/{{categoryName}}" class="post-header-item category-name">{{categoryName}}</a>
+            <span class="post-header-item post-date">published {{getPublishedDate()}}</span>
+            <div class="post-header-item author-name-section">
+                <img src="{{getAuthorImage(author)}}" class="author-image" alt="profile picture">
+                <span class="author-name">
+                    
+                    by 
+                    @if(author && author.name) {
+                        <a class="author-name-link" href="#">{{author.name}}</a>
+                    }
+                    @else {
+                        Anonymous
+                    }
+                    </span>
+            </div>
+        </div>        
     </div>
     <div class="post-body" #postContainer>
     </div>
-    <div class="container post-footer">
-        <app-related-posts [categoryId]="categoryId" [categoryName]="categoryName"></app-related-posts>
+    <div class="post-footer">
+        <div class="container post-footer-content">
+            <app-related-posts [categoryId]="categoryId" [categoryName]="categoryName"></app-related-posts>
+        </div>
     </div>
 </div>

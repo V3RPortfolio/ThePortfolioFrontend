@@ -7,7 +7,6 @@ import { FamiliarTechnologiesComponent } from '../../components/familiar-technol
 import { NotificationBannerComponent } from '../../components/notification-banner/notification-banner.component';
 import { HomeBannersComponent } from '../../components/home-banners/home-banners.component';
 import { RelatedPostsComponent } from '../../components/related-posts/related-posts.component';
-import { WPBackendService } from '../../services/wpbackend.service';
 import { GithubIssueMetricsComponent } from '../../components/github/github-issue-metrics/github-issue-metrics.component';
 
 @Component({
@@ -32,12 +31,10 @@ export class HomeComponent implements OnInit {
   hideIntro:boolean = false;
 
   constructor(
-    private backendService: WPBackendService
   ) {
 
   }
 
   ngOnInit(): void {
-    // console.log(environment);
   }
 }

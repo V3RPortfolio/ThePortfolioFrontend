@@ -8,7 +8,7 @@
     .e-con{
         --container-max-width:1140px;
         &.e-parent {
-            margin-top: 20px;
+            padding: 10px 20px;
         }
     }
     .elementor-widget:not(:last-child){
@@ -32,8 +32,28 @@
         }
     }
 
-    .elementor img {
-        width: 100%;
+    .elementor {
+        img {
+            width: 100%;
+        }
+        a {
+            word-wrap: break-word;
+            color: mat.get-theme-color($theme, 'primary');
+            text-decoration: underline;
+        }
+        pre {
+            overflow-y: auto;
+            border: 1px solid mat.get-theme-color($theme, 'neutral', 90);
+            padding: 10px 10px;
+            border-bottom-width: 30px;
+            border-radius: 5px;
+            color: mat.get-theme-color($theme, 'on-background');
+            background-color: mat.get-theme-color($theme, 'background');
+        }
+
+        .elementor-heading-title {
+            color: mat.get-theme-color($theme, 'primary');
+        }
     }
 
     @media(max-width:1024px){

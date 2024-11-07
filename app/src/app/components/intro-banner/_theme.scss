@@ -2,18 +2,18 @@
 @use '../../../styles/theme/theme' as theme;
 
 #intro-banner {
-    background-color: mat.get-theme-color(theme.$theme, primary, 10);
-    color: mat.get-theme-color(theme.$theme, primary, 90);
+    // background-color: mat.get-theme-color(theme.$theme, neutral, 90);
+    color: mat.get-theme-color(theme.$theme, primary, 10);
 
     .loader {
-      background-color: mat.get-theme-color(theme.$theme, primary, 90);
+      background-color: mat.get-theme-color(theme.$theme, primary, 10);
 
       .progress {
-        background-color: mat.get-theme-color(theme.$theme, primary, 70);
+        background-color: mat.get-theme-color(theme.$theme, primary, 40);
       }
 
       .progress-text {
-        color: mat.get-theme-color(theme.$theme, primary, 30);
+        color: mat.get-theme-color(theme.$theme, primary, 70);
       }
     }
 }

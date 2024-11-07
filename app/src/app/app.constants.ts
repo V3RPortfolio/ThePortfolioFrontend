@@ -6,6 +6,7 @@ export enum RoutePaths {
     post = 'post',
     notFound = '404',
     credits = 'credits',
+    about = 'about',
 }
 
 export const BACKEND_POST_SPECIFIC_STYLESHEET = "https://wpbackend.vip3rtech6069.com/wp-content/uploads/elementor/css/post-{id}.css";
