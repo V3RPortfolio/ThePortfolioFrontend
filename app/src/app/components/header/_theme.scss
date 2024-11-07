@@ -36,5 +36,9 @@
         .navigation-item {
             border-top: 1px solid mat.get-theme-color(theme.$theme, 'neutral', 60);
         }
+
+        .navigation-title.desktop {
+            font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+        }
     }
   }

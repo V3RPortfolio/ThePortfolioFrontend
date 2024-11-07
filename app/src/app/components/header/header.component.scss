@@ -149,7 +149,7 @@ $contractedPaddingValue: map-get(constants.$padding, md);
         .navigation-body {
             display: flex;
             flex-direction: column;
-            padding: map-get(constants.$padding, lg) 0;
+            padding: map-get(constants.$padding, lg) 0 50px 0; // 50px to account for the mobile's default footer nav
             width: 100%;
             position: fixed;
             left: 0;
