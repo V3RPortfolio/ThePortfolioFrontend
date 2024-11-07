@@ -46,6 +46,7 @@ export class HeaderComponent implements OnInit {
   menuItems:PostCategory[]=[];
 
   creditsRoute=`/${RoutePaths.credits}`;
+  aboutRoute=`/${RoutePaths.about}`;
 
   constructor(
     private backendService:WPBackendService,
@@ -72,7 +73,7 @@ export class HeaderComponent implements OnInit {
       });
   }
 
-  goToPage(name:string, id:number): void {
+  gotToPost(name:string, id:number): void {
     this.router.navigate([`/${RoutePaths.posts}`, id, name]);
   }
 

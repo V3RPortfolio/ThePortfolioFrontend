@@ -10,15 +10,15 @@
             <ul class="navigation-menu">
                 @for(item of menuItems; track item.id) {
                     <li class="navigation-item">
-                        <button class="navigation-link" (click)="goToPage(item.name, item.id)">{{item.name}}</button>
+                        <button class="navigation-link" (click)="gotToPost(item.name, item.id)">{{item.name}}</button>
                     </li>
                 }
                 <li class="navigation-item">
+                    <a class="navigation-link" href="{{aboutRoute}}">About</a>
+                </li>
+                <li class="navigation-item">
                     <a class="navigation-link" href="{{creditsRoute}}">Credits</a>
                 </li>
-                <!--<li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>-->
             </ul>
             <button mat-raised-button id="sign-in-button" class="menu-button authentication-button">Sign In</button>
             <button mat-stroked-button id="sign-up-button" class="menu-button authentication-button">Sign Up</button>
