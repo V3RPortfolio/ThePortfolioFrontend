@@ -21,6 +21,45 @@ $contractedPaddingValue: map-get(constants.$padding, md);
     }
 }
 
+@keyframes slideInMenu {
+    from {
+        transform: translateX(-300%);
+    }
+    to {
+        transform: translateX(0);
+
+    }
+}
+
+@-webkit-keyframes slideInMenu {
+    from {
+        transform: translateX(-300%);
+    }
+    to {
+        transform: translateX(0);
+
+    }
+}
+
+@keyframes slideOutMenu {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-300%);
+    }
+}
+
+@-webkit-keyframes slideOutMenu {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-300%);
+    }
+}
+
+
 #navigation-header {
     height: auto;
     position: fixed;
@@ -45,6 +84,12 @@ $contractedPaddingValue: map-get(constants.$padding, md);
         line-height: 2;
         cursor: pointer;
         max-width: 245px;
+
+        &.mobile {
+            display: none;
+            max-width: 100%;
+            text-align:  center;
+        }
 
         a {
             text-decoration: none;
@@ -90,29 +135,48 @@ $contractedPaddingValue: map-get(constants.$padding, md);
         }
 
         .navigation-title {
-            font-size: map-get(constants.$font-sizes-rem, md);
+            &.mobile {
+                display: block;
+            }
+        }
+
+        .navigation-item {
+            padding: 10px 10px;
+            width: 100%;
+            text-align: center;
         }
 
         .navigation-body {
-            display: none;
+            display: flex;
+            flex-direction: column;
+            padding: map-get(constants.$padding, lg) 0;
             width: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            transform: translateX(-300%);
 
-            &.show {
-                display: flex;
-                width: 100%;
-                padding: map-get(constants.$padding, lg) 0;
+            .navigation-menu {
                 flex-direction: column;
+                padding-left: 0;
+                margin-bottom: map-get($map: constants.$margin, $key: md);
+            }
 
-                .navigation-menu {
-                    flex-direction: column;
-                    padding-left: 0;
-                    margin-bottom: map-get($map: constants.$margin, $key: md);
-                }
+            .menu-button {
+                margin-right: 0;
+                margin-bottom: map-get($map: constants.$margin, $key: md);
+            }
 
-                #sign-in-button {
-                    margin-right: 0;
-                    margin-bottom: map-get($map: constants.$margin, $key: md);
-                }
+            &.hidden {
+                display: none;
+            }
+            &.show {
+                animation: slideInMenu 300ms linear forwards;
+            }
+
+            &.hide {
+                animation: slideOutMenu 300ms linear forwards;
             }
         }
     }

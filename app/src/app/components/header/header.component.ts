@@ -8,6 +8,7 @@ import { RoutePaths } from '../../app.constants';
 import { NgClass } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 @Component({
     selector: 'app-header',
@@ -30,12 +31,14 @@ import { MatIcon } from '@angular/material/icon';
     imports: [
       MatButton, 
       MatToolbar,
+      MatSidenavModule,
       MatIcon,
       NgClass
     ],
 })
 export class HeaderComponent implements OnInit {
   @ViewChild('navbar') navbar: ElementRef;
+  @ViewChild('slidingMenu') slidingMenu: ElementRef;
   
   showMenu = false;
   hasScrolled:boolean=false;
@@ -75,5 +78,18 @@ export class HeaderComponent implements OnInit {
 
   toggleMenu() {
     this.showMenu = !this.showMenu;
+    if(this.showMenu) {
+      // Add show class to slidingMenu
+      this.slidingMenu.nativeElement.classList.remove("hidden");
+      this.slidingMenu.nativeElement.classList.add('show');
+      this.slidingMenu.nativeElement.classList.remove('hide');
+    } else {
+      // Add hide class to slidingMenu
+      this.slidingMenu.nativeElement.classList.add('hide');
+      this.slidingMenu.nativeElement.classList.remove('show');
+      setTimeout(() => {
+        this.slidingMenu.nativeElement.classList.add("hidden");
+      }, 300);
+    }
   }
 }

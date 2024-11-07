@@ -5,7 +5,8 @@
             <mat-icon>menu</mat-icon>
         </button>
         <h2 class="navigation-title"><a href="/">Portfolio | Zohair Mehtab</a></h2>
-        <section class="navigation-body" [ngClass]="showMenu ? 'show': ''">
+        <section class="navigation-body hidden" #slidingMenu>
+            <h3 class="navigation-title mobile"><a href="/">Portfolio | Zohair Mehtab</a></h3>
             <ul class="navigation-menu">
                 @for(item of menuItems; track item.id) {
                     <li class="navigation-item">
@@ -19,12 +20,14 @@
                     <a class="nav-link" href="#">Contact</a>
                 </li>-->
             </ul>
-            <button mat-raised-button id="sign-in-button" class="authentication-button">Sign In</button>
-            <button mat-stroked-button id="sign-up-button" class="authentication-button">Sign Up</button>
+            <button mat-raised-button id="sign-in-button" class="menu-button authentication-button">Sign In</button>
+            <button mat-stroked-button id="sign-up-button" class="menu-button authentication-button">Sign Up</button>
+            <button mat-flat-button id="slide-out-button" class="menu-button navigation-toggle-button navigation-button close-button" (click)="toggleMenu()">Go Back</button>
         </section>
     </div>
   </div>
 </mat-toolbar>
+
 
 <div id="navigation-header-placeholder"></div>
 

@@ -24,7 +24,17 @@
         color: mat.get-theme-color(theme.$theme, 'on-primary');
     }
 
-    #sign-up-button {
+    #sign-up-button, #slide-out-button {
         color: mat.get-theme-color(theme.$theme, 'on-secondary');
+    }
+
+    @include breakpoint.mobile {
+        .navigation-body {
+            background-color: mat.get-theme-color(theme.$theme, 'primary');
+        }
+
+        .navigation-item {
+            border-top: 1px solid mat.get-theme-color(theme.$theme, 'neutral', 60);
+        }
     }
   }
