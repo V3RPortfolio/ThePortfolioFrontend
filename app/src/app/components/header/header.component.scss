@@ -83,7 +83,6 @@ $contractedPaddingValue: map-get(constants.$padding, md);
     .navigation-title {
         line-height: 2;
         cursor: pointer;
-        max-width: 245px;
 
         &.mobile {
             display: none;
@@ -99,7 +98,7 @@ $contractedPaddingValue: map-get(constants.$padding, md);
     .navigation-body {
         display: flex;
         flex-wrap: wrap;
-        width: calc(100% - 245px);
+        flex-grow: 1;
     }
 
     .navigation-menu {
