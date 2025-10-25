@@ -9,7 +9,7 @@ export enum RoutePaths {
     about = 'about',
 }
 
-export const BACKEND_POST_SPECIFIC_STYLESHEET = "https://wpbackend.vip3rtech6069.com/wp-content/uploads/elementor/css/post-{id}.css";
+export const BACKEND_POST_SPECIFIC_STYLESHEET = "https://gateway.vip3rtech6069.com/wp-content/uploads/elementor/css/post-{id}.css";
 export const AUTHOR_IMAGE_PLACEHOLDER="/images/common/image_placeholder.jpg";
 export const FEATURED_IMAGE_PLACEHOLDER="/images/common/image_placeholder.jpg";
 
