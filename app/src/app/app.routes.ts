@@ -6,6 +6,7 @@ import { PostComponent } from './pages/post/post.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { CreditsComponent } from './components/credits/credits.component';
 import { AboutComponent } from './pages/about/about.component';
+import { LoginComponent } from './pages/login/login.component';
 
 
 
@@ -17,6 +18,7 @@ export const routes: Routes = [
     {path: `${RoutePaths.post}/:catid/:catname/:id/:name`, component: PostComponent },
     {path: RoutePaths.credits, component: CreditsComponent},
     {path: RoutePaths.about, component: AboutComponent},
+    {path: RoutePaths.login, component: LoginComponent},
     {path: '**', component: PageNotFoundComponent}
 ];
 

@@ -47,6 +47,7 @@ export class HeaderComponent implements OnInit {
 
   creditsRoute=`/${RoutePaths.credits}`;
   aboutRoute=`/${RoutePaths.about}`;
+  loginRoute=`/${RoutePaths.login}`;
 
   constructor(
     private backendService:WPBackendService,
