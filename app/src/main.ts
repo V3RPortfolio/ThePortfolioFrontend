@@ -1,5 +1,5 @@
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +19,7 @@ import { provideNamedApollo } from 'apollo-angular';
 import { GraphQLClients } from './app/app.constants';
 import { ApolloService } from './app/services/apollo.service';
 import { CustomUrlSerializer } from './app/services/serializers/url-serializer.service';
+import { authenticationInterceptor } from './app/interceptors/authentication.interceptor';
 
 
 const materialComponents = [
@@ -39,7 +40,11 @@ bootstrapApplication(AppComponent, {
             CommonModule,            
         ),
         provideAnimationsAsync(),
-        provideHttpClient(),
+        provideHttpClient(
+            withInterceptors([
+                authenticationInterceptor
+            ])
+        ),
         provideAnimations(),
         provideRouter(routes),
         provideNamedApollo(() => {

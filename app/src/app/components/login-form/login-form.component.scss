@@ -1,0 +1,22 @@
+:host {
+	display: block;
+}
+
+.login-container {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.login-form {
+	width: 100%;
+	max-width: 420px;
+}
+
+.full-width {
+	width: 100%;
+}
+
+mat-card-title {
+	margin-bottom: 8px;
+}

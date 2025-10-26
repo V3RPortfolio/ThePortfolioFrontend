@@ -20,8 +20,12 @@
                     <a class="navigation-link" href="{{creditsRoute}}">Credits</a>
                 </li>
             </ul>
-            <a mat-raised-button id="sign-in-button" class="menu-button authentication-button" href="{{loginRoute}}">Sign In</a>
-            <button mat-stroked-button id="sign-up-button" class="menu-button authentication-button">Sign Up</button>
+                        @if (!isLoggedIn()) {
+                            <button mat-raised-button id="sign-in-button" class="menu-button authentication-button" (click)="goToLogin()">Sign In</button>
+                            <button mat-stroked-button id="sign-up-button" class="menu-button authentication-button">Sign Up</button>
+                        } @else {
+                            <button mat-raised-button color="warn" id="sign-out-button" class="menu-button authentication-button" (click)="signOut()">Sign out</button>
+                        }
             <button mat-flat-button id="slide-out-button" class="menu-button navigation-toggle-button navigation-button close-button" (click)="toggleMenu()">Hide menu</button>
         </section>
     </div>

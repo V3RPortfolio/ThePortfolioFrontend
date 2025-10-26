@@ -9,6 +9,7 @@ import { NgClass } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
     selector: 'app-header',
@@ -51,7 +52,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private backendService:WPBackendService,
-    private router:Router
+    private router:Router,
+    private authenticationService:AuthenticationService
   ) {
 
   }
@@ -76,6 +78,21 @@ export class HeaderComponent implements OnInit {
 
   gotToPost(name:string, id:number): void {
     this.router.navigate([`/${RoutePaths.posts}`, id, name]);
+  }
+
+  goToLogin(): void {
+    this.router.navigate([`/${RoutePaths.login}`]);
+  }
+
+  // Check auth status based on tokens in localStorage
+  isLoggedIn(): boolean {
+    return this.authenticationService.isAuthenticated();
+  }
+
+  // Basic sign-out clears tokens and navigates to home
+  signOut(): void {
+    this.authenticationService.clearTokens();
+    this.router.navigate(['/']);
   }
 
   toggleMenu() {
