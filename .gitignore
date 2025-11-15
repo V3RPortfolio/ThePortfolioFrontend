@@ -76,3 +76,7 @@ development/
 **/public/models/**
 # Include glb files
 !**/*.glb
+
+designs/
+
+Task.md

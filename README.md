@@ -41,3 +41,6 @@ This will create a new Angular project and save it in the app directory.
 3. [Environment variables in Angular](https://medium.com/@desinaoluseun/using-env-to-store-environment-variables-in-angular-20c15c7c0e6a)
 
 4. [Environment variables in Angular 2](https://medium.com/@philip.mutua/setting-up-environment-variables-for-an-angular-application-from-scratch-737028f8b7b3)
+
+
+**OpenApi Specification: [https://djadmin.vip3rtech6069.com/api/docs](https://djadmin.vip3rtech6069.com/api/docs) **
