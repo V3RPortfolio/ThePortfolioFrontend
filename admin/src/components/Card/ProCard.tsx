@@ -11,7 +11,7 @@ interface ProCardProps {
 const ProCard: React.FC<ProCardProps> = ({ className = '' }) => {
   return (
     <div className={`mx-7 mt-auto mb-6 ${className}`}>
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#4318FF] to-[#868CFF] p-6">
+      <div className="card relative overflow-hidden">
         {/* Decorative circle background */}
         <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10" />
         
@@ -33,15 +33,15 @@ const ProCard: React.FC<ProCardProps> = ({ className = '' }) => {
           </div>
 
           {/* Text content */}
-          <h3 className="text-white font-bold text-base mb-2">
+          <h3 className="text-title mb-2">
             Upgrade to PRO
           </h3>
-          <p className="text-white/80 text-xs mb-4 leading-relaxed">
+          <p className="text-body mb-4">
             Improve your development process and start doing more with Horizon UI!
           </p>
 
           {/* Button */}
-          <button className="w-full py-2.5 px-4 bg-white text-[#4318FF] rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors duration-200">
+          <button className="btn-primary">
             Upgrade to PRO
           </button>
         </div>

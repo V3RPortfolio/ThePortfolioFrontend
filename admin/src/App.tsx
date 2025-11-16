@@ -1,35 +1,41 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css'
-import Home from './pages/Home';
-import NotFound from './pages/404';
 import Sidebar from './components/Header/Sidebar';
+import {AllRoutes} from './Route';
+import TopHeader from './components/Header/TopHeader';
 
 function App() {
   return (
-    <div className='App min-h-screen flex flex-col bg-gray-50'>
-      {/* Header */}
-      <header className='fixed top-0 left-0 right-0 h-16 bg-white shadow-sm z-40 flex items-center px-6'>
-        {/* Header content will go here */}
-      </header>
+    <div className='App min-h-screen flex flex-col'>      
 
       {/* Main Layout: Sidebar + Content */}
-      <div className='flex flex-1 pt-16'>
+      <div className='flex flex-1'>
         {/* Sidebar */}
-        <Sidebar />
+        <Sidebar fixed={false} sidebarWidth={'w-[20%]'} />
 
         {/* Main Content Area */}
         {/* Body - Routes render here */}
-          <main className='flex-1 p-6'>
+        <div className='py-[var(--padding-md)] flex-1'>    
+          <TopHeader />        
+          <main className='p-[var(--padding-md)]'>
             <Routes>
-              <Route path='/' element={<Home />} />
-              <Route path='*' element={<NotFound />} />
+              {AllRoutes().map(({ path, component: Component, props }) => (
+                <Route 
+                  key={path} 
+                  path={path} 
+                  element={<Component />} 
+                  {...props} 
+                />
+              ))}
             </Routes>
           </main>
+        </div>
+        
       </div>
       {/* Footer */}
-          <footer className='bg-white border-t border-gray-200 py-4 px-6'>
-            {/* Footer content will go here */}
-          </footer>
+      <footer>
+        {/* Footer content will go here */}
+      </footer>
     </div>
   );
 }

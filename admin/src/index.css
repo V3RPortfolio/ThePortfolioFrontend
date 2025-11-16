@@ -1,70 +1,578 @@
 @import "tailwindcss";
+/*
+This is the default theme used across the admin panel. The theme contains the following styles:
+
+
+Level 1 (Variables):
+
+1. Font Family (Inter, sans-serif)
+2. Font Size (xs, sm, base, lg, xl)
+3. Color (Primary, Secondary, Tertiary)
+4. Margin (small, medium, large)
+5. Padding (small, medium, large)
+6. Border Radius (sm, md, base, lg, xl)
+7. Icon Size (small, medium, large)
+
+Level 2 (Styles):
+
+1. Button Styles (Primary, Secondary, Tertiary)
+2. Input Field Styles (Text, Password, Email)
+3. Text Styles (title, heading, subheading, body, caption)
+
+
+*/
+
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* ============================================
+     Level 1: CSS Variables
+     ============================================ */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* 1. Font Family */
+  --font-family-primary: 'DM Sans', sans-serif;
+  --font-family-secondary: 'Open Sans', sans-serif;
+
+  /* 2. Font Sizes */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+
+  /* 3. Colors - Primary (Based on #4318FF) */
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
+  --color-primary-500: #8b5cf6;
+  --color-primary-600: #4318FF;
+  --color-primary-700: #3614cc;
+  --color-primary-800: #2e11aa;
+  --color-primary-900: #260e88;
+
+  /* 3. Colors - Secondary (Based on #2B3674) */
+  --color-secondary-50: #EFF4FB;
+  --color-secondary-100: #E9EDF7;
+  --color-secondary-200: #E0E5F2;
+  --color-secondary-300: #B0BBD5;
+  --color-secondary-400: #A3AED0;
+  --color-secondary-500: #707EAE;
+  --color-secondary-600: #2B3674;
+  --color-secondary-700: #232c5d;
+  --color-secondary-800: #1B2559;
+  --color-secondary-900: #1a1f4d;
+
+  /* 3. Colors - Tertiary (Based on #05CD99) */
+  --color-tertiary-50: #ecfdf5;
+  --color-tertiary-100: #d1fae5;
+  --color-tertiary-200: #a7f3d0;
+  --color-tertiary-300: #6ee7b7;
+  --color-tertiary-400: #34d399;
+  --color-tertiary-500: #05CD99;
+  --color-tertiary-600: #04a77a;
+  --color-tertiary-700: #047857;
+  --color-tertiary-800: #065f46;
+  --color-tertiary-900: #064e3b;
+
+  /* Additional Semantic Colors */
+  --color-success: #01B574;
+  --color-warning: #FFCE20;
+  --color-error: #EE5D50;
+  --color-info: #6AD2FF;
+  
+  /* Neutral Colors */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-gray-50: #FAFCFE;
+  --color-gray-100: #F4F7FE;
+  --color-gray-200: #E9EDF7;
+  --color-gray-300: #E0E5F2;
+  --color-gray-400: #B0BBD5;
+  --color-gray-500: #A3AED0;
+  --color-gray-600: #707EAE;
+  --color-gray-700: #2B3674;
+  --color-gray-800: #1B2559;
+  --color-gray-900: #0f1535;
+
+  /* Background & Text Colors */
+  --color-background: #FFFFFF;
+  --color-background-secondary: #F4F7FE;
+  --color-background-tertiary: #FAFCFE;
+  --color-text-primary: #2B3674;
+  --color-text-secondary: #A3AED0;
+  --color-border: #E0E5F2;
+  --color-error-light: #FEEFEE;
+
+  /* 4. Margins */
+  --margin-xs: 0.25rem;   /* 4px */
+  --margin-sm: 0.5rem;    /* 8px */
+  --margin-md: 1rem;      /* 16px */
+  --margin-lg: 1.5rem;    /* 24px */
+  --margin-xl: 2rem;      /* 32px */
+  --margin-2xl: 2.5rem;   /* 40px */
+  --margin-3xl: 3rem;     /* 48px */
+
+  /* 5. Padding */
+  --padding-xs: 0.25rem;  /* 4px */
+  --padding-sm: 0.5rem;   /* 8px */
+  --padding-md: 1rem;     /* 16px */
+  --padding-lg: 1.5rem;   /* 24px */
+  --padding-xl: 2rem;     /* 32px */
+  --padding-2xl: 2.5rem;  /* 40px */
+  --padding-3xl: 3rem;    /* 48px */
+
+  /* 6. Border Radius */
+  --border-radius-sm: 0.25rem;   /* 4px */
+  --border-radius-md: 0.375rem;  /* 6px */
+  --border-radius-base: 0.5rem;  /* 8px */
+  --border-radius-lg: 0.75rem;   /* 12px */
+  --border-radius-xl: 1rem;      /* 16px */
+  --border-radius-2xl: 1.5rem;   /* 24px */
+  --border-radius-full: 9999px;
+
+  /* 7. Icon Sizes */
+  --icon-size-sm: 1rem;     /* 16px */
+  --icon-size-md: 1.25rem;  /* 20px */
+  --icon-size-lg: 1.5rem;   /* 24px */
+  --icon-size-xl: 2rem;     /* 32px */
+  --icon-size-2xl: 2.5rem;  /* 40px */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /* Light mode specific color overrides */
+    --color-background: var(--color-primary-50);
+    --color-background-secondary: var(--color-gray-600);
+    --color-background-tertiary: var(--color-gray-50);
+    --color-text-primary: var(--color-secondary-600);
+    --color-text-secondary: var(--color-secondary-400);
+    --color-border: var(--color-gray-300);
+
+    --color-fill-start: var(--color-primary-600);
+    --color-fill-end: var(--color-tertiary-500);
+
+    
   }
-  a:hover {
-    color: #747bff;
+}
+
+/* ============================================
+   Level 2: Component Styles
+   ============================================ */
+
+/* 1. Button Styles */
+.btn {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  padding: var(--padding-sm) var(--padding-lg);
+  border-radius: var(--border-radius-base);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--margin-sm);
+  outline: none;
+  text-decoration: none;
+}
+
+.btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Primary Button */
+.btn-primary {
+  background-color: var(--color-primary-600);
+  color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-700);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  background-color: var(--color-primary-800);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 3px var(--color-primary-200);
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-gray-300);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: var(--color-secondary-100);
+  color: var(--color-secondary-900);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary-200);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:active {
+  background-color: var(--color-secondary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:focus {
+  box-shadow: 0 0 0 3px var(--color-secondary-200);
+}
+
+.btn-secondary:disabled {
+  background-color: var(--color-gray-200);
+  color: var(--color-gray-400);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Tertiary Button */
+.btn-tertiary {
+  background-color: transparent;
+  color: var(--color-primary-600);
+  border: 1px solid var(--color-primary-600);
+}
+
+.btn-tertiary:hover {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-700);
+  color: var(--color-primary-700);
+}
+
+.btn-tertiary:active {
+  background-color: var(--color-primary-100);
+  border-color: var(--color-primary-800);
+  color: var(--color-primary-800);
+}
+
+.btn-tertiary:focus {
+  box-shadow: 0 0 0 3px var(--color-primary-200);
+}
+
+.btn-tertiary:disabled {
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-400);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Button Sizes */
+.btn-sm {
+  font-size: var(--font-size-sm);
+  padding: var(--padding-xs) var(--padding-md);
+}
+
+.btn-lg {
+  font-size: var(--font-size-lg);
+  padding: var(--padding-md) var(--padding-xl);
+}
+
+/* 2. Input Field Styles */
+.input {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  padding: var(--padding-sm) var(--padding-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-base);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  transition: all var(--transition-base);
+  outline: none;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.input:hover {
+  border-color: var(--color-gray-400);
+}
+
+.input:focus {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+.input:disabled {
+  background-color: var(--color-gray-100);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.input.error {
+  border-color: var(--color-error);
+}
+
+.input.error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px var(--color-error-light);
+}
+
+/* Input Password */
+.input-password {
+  letter-spacing: 0.1em;
+}
+
+.input-password::placeholder {
+  letter-spacing: normal;
+}
+
+/* Input Sizes */
+.input-sm {
+  font-size: var(--font-size-sm);
+  padding: var(--padding-xs) var(--padding-sm);
+}
+
+.input-lg {
+  font-size: var(--font-size-lg);
+  padding: var(--padding-md) var(--padding-lg);
+}
+
+/* Input Group */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-xs);
+  margin-bottom: var(--margin-md);
+}
+
+.input-label {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--margin-xs);
+}
+
+.input-error-message {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  margin-top: var(--margin-xs);
+}
+
+.input-helper-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--margin-xs);
+}
+
+/* 3. Text Styles */
+
+/* Title */
+.text-logo {
+  font-family: var(--font-family-secondary);
+  
+  font-size: var(--font-size-2xl);
+  font-weight: normal;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.text-title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+/* Heading */
+.text-heading {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+/* Subheading */
+.text-subheading {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Body */
+.text-body {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Caption */
+.text-caption {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+
+
+/* Text Modifiers */
+.text-muted {
+  color: var(--color-text-secondary);
+}
+
+.text-bold {
+  font-weight: 600;
+}
+
+.text-semibold {
+  font-weight: 500;
+}
+
+.text-light {
+  font-weight: 300;
+}
+
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+/* Link */
+.link, a {
+  color: var(--color-text-secondary);
+  padding: var(--padding-md);
+  text-decoration: none;
+}
+.link.active, .link:hover, a:hover {
+  color: var(--color-text-primary);
+}
+
+/* Card */
+.card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--padding-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--margin-lg) 0;
+}
+
+/* Logo */
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;  
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em var(--color-fill-start));
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em var(--color-fill-end));
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
   }
-  button {
-    background-color: #f9f9f9;
+  to {
+    transform: rotate(360deg);
   }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--padding-lg);
+}
+
+/* Flex Utilities */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-sm {
+  gap: var(--margin-sm);
+}
+
+.gap-md {
+  gap: var(--margin-md);
+}
+
+.gap-lg {
+  gap: var(--margin-lg);
 }

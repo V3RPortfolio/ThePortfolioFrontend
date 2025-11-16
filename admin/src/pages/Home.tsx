@@ -1,5 +1,5 @@
 const Home = () => {
-  return <div className="text text-black text-2xl">Welcome to the Admin Panel</div>;
+  return <section className="text text-black text-2xl">Welcome to the Admin Panel</section>;
 };
 
 export default Home;
