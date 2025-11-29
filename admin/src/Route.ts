@@ -89,5 +89,9 @@ export function AdditionalRoutes(): SidebarRoutesDTO[] {
 
 
 export const AllRoutes = (): SidebarRoutesDTO[] => {
-    return [...SidebarRoutes(), ...AdditionalRoutes()];
+    const baseUrl = import.meta.env.VITE_APP_BASE_URL || '';
+    return [...SidebarRoutes(), ...AdditionalRoutes()].map(route => ({
+        ...route,
+        path: `${baseUrl}${route.path.replace(/^\//, '')}`
+    }));
 }
