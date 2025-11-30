@@ -7,8 +7,6 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 import { CreditsComponent } from './components/credits/credits.component';
 import { AboutComponent } from './pages/about/about.component';
 import { LoginComponent } from './pages/login/login.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { authGuard } from './guards/auth.guard';
 
 
 
@@ -21,7 +19,6 @@ export const routes: Routes = [
     {path: RoutePaths.credits, component: CreditsComponent},
     {path: RoutePaths.about, component: AboutComponent},
     {path: RoutePaths.login, component: LoginComponent},
-    {path: RoutePaths.dashboard, component: DashboardComponent, canActivate: [authGuard]},
     {path: '**', component: PageNotFoundComponent}
 ];
 

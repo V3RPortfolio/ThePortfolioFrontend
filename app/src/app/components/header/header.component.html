@@ -16,9 +16,11 @@
                 <li class="navigation-item">
                     <a class="navigation-link" href="{{aboutRoute}}">About</a>
                 </li>
-                <!-- <li class="navigation-item">
-                    <a class="navigation-link" href="{{creditsRoute}}">Credits</a>
-                </li> -->
+                @if (!!isLoggedIn()) {
+                <li class="navigation-item">
+                    <a class="navigation-link" href="{{adminRoute}}">Admin</a>
+                </li>
+                }
             </ul>
                         @if (!isLoggedIn()) {
                             <button mat-raised-button id="sign-in-button" class="menu-button authentication-button" (click)="goToLogin()">Sign In</button>

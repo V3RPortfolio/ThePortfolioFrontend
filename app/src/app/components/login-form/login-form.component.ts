@@ -53,7 +53,7 @@ export class LoginFormComponent {
       .subscribe({
         next: (res) => {
           this.loggedIn.emit(res);
-          this.route.navigateByUrl(`/${RoutePaths.dashboard}`)
+          this.route.navigateByUrl(`/${RoutePaths.admin}`)
         },
         error: (err) => {
           const msg = err?.error?.message || err?.message || 'Login failed';
