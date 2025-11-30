@@ -9,7 +9,8 @@ export interface SidebarRoutesDTO {
     icon?: React.ReactNode;
 
     path: string;
-    component: React.JSX.ElementType;
+    component?: React.JSX.ElementType|undefined;
+    isRedirect?: boolean;
 
     props?: RouteProps;
 
@@ -19,11 +20,18 @@ export interface SidebarRoutesDTO {
 export function SidebarRoutes(): SidebarRoutesDTO[] {
     return [
         {
+            path: `${import.meta.env.VITE_APP_WEBSITE_URL || '/'}`,
+            isRedirect: true,
+            id: 'website',
+            label: 'Website',
+            ordering: 1
+        },
+        {
             path: '/',
             component: Home,
             id: 'dashboard',
             label: 'Dashboard',
-            ordering: 1
+            ordering: 2
         },
 
         {
@@ -71,6 +79,13 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
             component: Home,
             id: 'cloud-infrastructure',
             label: 'Cloud Infrastructure & Networking'
+        },
+        {
+            path: `${import.meta.env.VITE_APP_WEBSITE_URL || ''}/logout`,
+            isRedirect: true,
+            id: 'logout',
+            label: 'Logout',
+            ordering: 99999
         }
     ];
 }

@@ -19,8 +19,8 @@ function App() {
           <TopHeader />        
           <main className='p-[var(--padding-md)]'>
             <Routes>
-              {AllRoutes().map(({ path, component: Component, props }) => (
-                <Route 
+              {AllRoutes().filter(x => !!x.component).map(({ path, component: Component, props }) => (
+                !!Component && <Route 
                   key={path} 
                   path={path} 
                   element={<Component />} 

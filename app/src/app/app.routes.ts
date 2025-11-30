@@ -7,6 +7,7 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 import { CreditsComponent } from './components/credits/credits.component';
 import { AboutComponent } from './pages/about/about.component';
 import { LoginComponent } from './pages/login/login.component';
+import { LogoutComponent } from './components/logout/logout.component';
 
 
 
@@ -19,6 +20,9 @@ export const routes: Routes = [
     {path: RoutePaths.credits, component: CreditsComponent},
     {path: RoutePaths.about, component: AboutComponent},
     {path: RoutePaths.login, component: LoginComponent},
+    {path: RoutePaths.logout, component: LogoutComponent},
+    {path: RoutePaths.admin, redirectTo: `/${RoutePaths.admin}/`, pathMatch: 'full'},
+    
     {path: '**', component: PageNotFoundComponent}
 ];
 

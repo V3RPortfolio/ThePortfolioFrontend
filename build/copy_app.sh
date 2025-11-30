@@ -15,22 +15,25 @@
 # Environment variables you may override:
 #   SRC_BASE (default: ~/Apps/portfolio_app/ThePortfolioFrontend)
 #   TARGET_BASE (default: /public/www)
+
+
 ###############################################################################
 
 set -euo pipefail
 
 DRY_RUN="false"
+
 if [[ "${1:-}" == "--dry-run" ]]; then
 	DRY_RUN="true"
 fi
 
-SRC_BASE="${SRC_BASE:-~/Apps/portfolio_app/ThePortfolioFrontend}"
+SRC_BASE="${SRC_BASE:-/home/itachi/Apps/portfolio_app/ThePortfolioFrontend}"
 TARGET_BASE="${TARGET_BASE:-/var/www}"
+NPM_PACKAGE="${NPM_PACKAGE:-/home/itachi/.nvm/versions/node/v22.21.1/bin/npm}"
 APP_SRC="${APP_SRC:-$SRC_BASE/app/dist/my-app}"
 ADMIN_SRC="${ADMIN_SRC:-$SRC_BASE/admin/dist}"
 APP_DEST="$TARGET_BASE/app"
 ADMIN_DEST="$TARGET_BASE/admin"
-NODE="~/.nvm/versions/node/v22.21.1/bin/npm"
 
 log() { printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }
 err() { log "ERROR: $*" >&2; }
@@ -63,7 +66,7 @@ stop_nginx_if_needed() {
 remove_old_dirs() {
 	if [[ -d "$APP_DEST" ]]; then
 		log "Removing old app directory $APP_DEST";
-		$DRY_RUN || rm -rf "$APP_DEST"
+		$DRY_RUN || sudo rm -rf "$APP_DEST"
 	fi
 	if [[ -d "$ADMIN_DEST" ]]; then
 		log "Removing old admin directory $ADMIN_DEST";
@@ -101,12 +104,13 @@ test_and_start_nginx() {
 
 run_build() {
 	log "Running Angular build for app and admin panel...";
-	$DRY_RUN || (cd "$SRC_BASE/app" &&  $NODE install &&  $NODE run build)
-	$DRY_RUN || (cd "$SRC_BASE/admin" && $NODE install &&  $NODE run build)
+	$DRY_RUN || (cd "$SRC_BASE/app" &&  $NPM_PACKAGE install &&  $NPM_PACKAGE run build)
+	$DRY_RUN || (cd "$SRC_BASE/admin" && $NPM_PACKAGE install &&  $NPM_PACKAGE run build)
 }
 
 main() {
 	require_root
+	# run_build
 	check_sources
 	stop_nginx_if_needed
 	remove_old_dirs

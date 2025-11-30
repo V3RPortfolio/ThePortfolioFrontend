@@ -8,7 +8,8 @@ export enum RoutePaths {
     credits = 'credits',
     about = 'about',
     login = 'login',
-    admin = 'admin/',
+    logout = 'logout',
+    admin = 'admin',
 }
 
 export const BACKEND_POST_SPECIFIC_STYLESHEET = "https://gateway.vip3rtech6069.com/wp-content/uploads/elementor/css/post-{id}.css";

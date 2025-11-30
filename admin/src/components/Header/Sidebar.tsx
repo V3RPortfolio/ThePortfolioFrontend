@@ -25,6 +25,7 @@ const MenuItemComponent: React.FC<MenuItemProps> = ({ item, isActive, className 
   return (
     <Link
       to={item.path}
+      reloadDocument={!!item.isRedirect || false}
       className={`link${isActive ? ' active' : ''} ${className}`}
     >
       {item.icon && <span className="icon">{item.icon}</span>}
@@ -39,7 +40,7 @@ const MenuItemComponent: React.FC<MenuItemProps> = ({ item, isActive, className 
  */
 const MenuSection: React.FC = () => {
   const location = useLocation(); 
-  const menus = SidebarRoutes().sort((a, b) => a.ordering && b.ordering ? a.ordering - b.ordering : a.ordering ? -1 : b.ordering ? 1 : a.label.localeCompare(b.label));
+  const menus = SidebarRoutes().filter(r => !!r.component || r.isRedirect).sort((a, b) => (a.ordering || 9999) - (b.ordering || 9999) > 0 ? 1 : -1);
   return (
     <nav className="flex flex-col gap-2 mt-6">
       {menus.map((item, idx) => (

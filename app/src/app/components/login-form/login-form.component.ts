@@ -53,7 +53,10 @@ export class LoginFormComponent {
       .subscribe({
         next: (res) => {
           this.loggedIn.emit(res);
-          this.route.navigateByUrl(`/${RoutePaths.admin}`)
+          this.route.navigateByUrl(`/${RoutePaths.admin}/`).then(() => {
+            console.log('Navigation to admin panel successful, reloading page.');
+            window.location.reload();
+          });
         },
         error: (err) => {
           const msg = err?.error?.message || err?.message || 'Login failed';

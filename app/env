@@ -3,6 +3,6 @@ WORDPRESS_API_KEY="basic password"
 WORDPRESS_API_KEY_USERNAME="basic username"
 DJANGO_GITHUB_BACKEND_API=http://localhost:8000/github/graphql/v1
 DJANGO_ADMIN_BACKEND_API=http://localhost:8000
-DJANGO_GET_CSRF_PATH="http://localhost:8000/csrf"
+DJANGO_GET_CSRF_PATH="http://localhost:8000/csrf/"
 
 GATEWAY_BACKEND_API=https://gateway.vip3rtech6069.com
