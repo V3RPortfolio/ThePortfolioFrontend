@@ -5,15 +5,15 @@
 # Steps implemented (per specification):
 # 1. Check '/public/www/' for 'app' and 'admin'; if found, stop nginx and remove.
 # 2. Copy build outputs:
-#      - app:   /home/itachi/Apps/portfolio_app/ThePortfolioFrontend/app/dist/my-app/ -> /public/www/app/
-#      - admin: /home/itachi/Apps/portfolio_app/ThePortfolioFrontend/admin/dist/      -> /public/www/admin/
+#      - app:   ~/Apps/portfolio_app/ThePortfolioFrontend/app/dist/my-app/ -> /public/www/app/
+#      - admin: ~/Apps/portfolio_app/ThePortfolioFrontend/admin/dist/      -> /public/www/admin/
 # 3. chown -R www-data:www-data
 # 4. chmod -R 755
 # 5. Test nginx config and start nginx.
 #
 # Usage: sudo ./copy_app.sh [--dry-run]
 # Environment variables you may override:
-#   SRC_BASE (default: /home/itachi/Apps/portfolio_app/ThePortfolioFrontend)
+#   SRC_BASE (default: ~/Apps/portfolio_app/ThePortfolioFrontend)
 #   TARGET_BASE (default: /public/www)
 ###############################################################################
 
@@ -24,7 +24,7 @@ if [[ "${1:-}" == "--dry-run" ]]; then
 	DRY_RUN="true"
 fi
 
-SRC_BASE="${SRC_BASE:-/home/itachi/Apps/portfolio_app/ThePortfolioFrontend}"
+SRC_BASE="${SRC_BASE:-~/Apps/portfolio_app/ThePortfolioFrontend}"
 TARGET_BASE="${TARGET_BASE:-/var/www}"
 APP_SRC="${APP_SRC:-$SRC_BASE/app/dist/my-app}"
 ADMIN_SRC="${ADMIN_SRC:-$SRC_BASE/admin/dist}"
