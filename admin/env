@@ -1,0 +1,4 @@
+VITE_APP_BASE_URL="/admin"
+VITE_GATEWAY_API="http://localhost"
+VITE_APP_WEBSITE_URL="http://localhost:4200"
+VITE_AUTHENTICATE=false
