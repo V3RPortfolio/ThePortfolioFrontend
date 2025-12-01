@@ -3,6 +3,20 @@ import './App.css'
 import Sidebar from './components/Header/Sidebar';
 import {AllRoutes} from './Route';
 import TopHeader from './components/Header/TopHeader';
+import authService from './services/authentication.service';
+
+import {loginPath, requireAuth } from './constants';
+
+
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const token = typeof window !== 'undefined' ? authService.getAccessToken() : null;
+  if(!token && requireAuth) {
+    window.location.href = loginPath;
+    return null;
+  }
+  return <>{children}</>;
+}
 
 function App() {
   return (
@@ -23,7 +37,7 @@ function App() {
                 !!Component && <Route 
                   key={path} 
                   path={path} 
-                  element={<Component />} 
+                  element={<ProtectedRoute><Component /></ProtectedRoute>} 
                   {...props} 
                 />
               ))}

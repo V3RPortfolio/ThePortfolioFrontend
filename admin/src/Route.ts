@@ -20,18 +20,11 @@ export interface SidebarRoutesDTO {
 export function SidebarRoutes(): SidebarRoutesDTO[] {
     return [
         {
-            path: `${import.meta.env.VITE_APP_WEBSITE_URL || '/'}`,
-            isRedirect: true,
-            id: 'website',
-            label: 'Website',
-            ordering: 1
-        },
-        {
             path: '/',
             component: Home,
             id: 'dashboard',
             label: 'Dashboard',
-            ordering: 2
+            ordering: 1
         },
 
         {
@@ -81,10 +74,10 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
             label: 'Cloud Infrastructure & Networking'
         },
         {
-            path: `${import.meta.env.VITE_APP_WEBSITE_URL || ''}/logout`,
+            path: `${import.meta.env.VITE_APP_WEBSITE_URL || '/'}`,
             isRedirect: true,
-            id: 'logout',
-            label: 'Logout',
+            id: 'website',
+            label: 'Website',
             ordering: 99999
         }
     ];
