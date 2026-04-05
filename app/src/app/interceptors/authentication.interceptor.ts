@@ -31,7 +31,7 @@ function addAuthHeader(req: HttpRequest<unknown>, token: string, tokenType?: str
   const type = tokenType || 'Bearer';
   return req.clone({
     setHeaders: {
-      Authorization: `${type} ${token}`,
+      [`${environment.GATEWAY_JWT_HEADER}`]: `${type} ${token}`,
     },
   });
 }

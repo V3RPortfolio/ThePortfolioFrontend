@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_KEY, TOKEN_TYPE_KEY } from '../constants';
+import { ACCESS_TOKEN_KEY, TOKEN_TYPE_KEY, jwtHeader } from '../constants';
 class HttpService {
 
     private getAccessToken(): string | null {
@@ -14,7 +14,7 @@ class HttpService {
         const accessToken = this.getAccessToken();
         if(!tokenType || !accessToken) return false;
 
-        headers['Authorization'] = `${tokenType} ${accessToken}`;
+        headers[jwtHeader] = `${tokenType} ${accessToken}`;
         return true;
     }
     

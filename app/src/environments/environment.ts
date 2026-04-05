@@ -5,7 +5,9 @@ export const environment = {
 
     ADMIN_GITHUB_API: process.env['DJANGO_GITHUB_BACKEND_API'] || 'http://localhost:8000/github/graphql/v1',
     ADMIN_CSRF_API: process.env['DJANGO_GET_CSRF_PATH'] || 'http://localhost:8000/csrf/',
-    ADMIN_BACKEND_API: process.env['DJANGO_ADMIN_BACKEND_API'] || 'http://localhost:8000',
+    ADMIN_BACKEND_API: process.env['DJANGO_ADMIN_BACKEND_API'] || 'http://localhost:8000/admin',
     // Derived auth API base for convenience in services/interceptors
-    GATEWAY_BACKEND_API: process.env['GATEWAY_BACKEND_API'] || 'http://localhost:8005',
+    GATEWAY_BACKEND_API: process.env['GATEWAY_BACKEND_API'] || 'http://localhost:8000',
+    ADMIN_FRONTEND_URL: process.env['ADMIN_FRONTEND_URL'] || '',
+    GATEWAY_JWT_HEADER: process.env['GATEWAY_JWT_HEADER'] || 'Authorization',
 };

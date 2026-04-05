@@ -1,6 +1,8 @@
 import NotFound from "./pages/404";
 import type { RouteProps } from "react-router-dom";
 import Home from "./pages/Home";
+import DataEngineeringPage from "./pages/DataEngineering";
+import { baseUrl } from "./constants";
 
 
 export interface SidebarRoutesDTO {
@@ -18,9 +20,10 @@ export interface SidebarRoutesDTO {
 }
 
 export function SidebarRoutes(): SidebarRoutesDTO[] {
+    const base = `${baseUrl.replace(/\/$/, '')}`;
     return [
         {
-            path: '/',
+            path: `${base}/`,
             component: Home,
             id: 'dashboard',
             label: 'Dashboard',
@@ -28,47 +31,47 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
         },
 
         {
-            path: '/frontend-components',
+            path: `${base}/frontend-components`,
             component: Home,
             id: 'frontend-components',
             label: 'Frontend Components'
         },
 
         {
-            path: '/backend-components',
+            path: `${base}/backend-components`,
             component: Home,
             id: 'backend-components',
             label: 'Backend Components'
         },
 
         {
-            path: '/system-designs',
+            path: `${base}/system-designs`,
             component: Home,
             id: 'system-designs',
             label: 'System Designs'
         },
 
         {
-            path: '/artificial-intelligence',
+            path: `${base}/artificial-intelligence`,
             component: Home,
             id: 'artificial-intelligence',
             label: 'Artificial Intelligence'
         },
 
         {
-            path: '/data-engineering',
-            component: Home,
+            path: `${base}/data-engineering/`,
+            component: DataEngineeringPage,
             id: 'data-engineering',
             label: 'Data Engineering'
         },
         {
-            path: '/deployment-pipelines',
+            path: `${base}/deployment-pipelines`,
             component: Home,
             id: 'deployment-pipelines',
             label: 'Deployment Pipelines'
         },
         {
-            path: '/cloud-infrastructure',
+            path: `${base}/cloud-infrastructure`,
             component: Home,
             id: 'cloud-infrastructure',
             label: 'Cloud Infrastructure & Networking'
@@ -95,11 +98,9 @@ export function AdditionalRoutes(): SidebarRoutesDTO[] {
     ];
 }
 
-
 export const AllRoutes = (): SidebarRoutesDTO[] => {
-    const baseUrl = import.meta.env.VITE_APP_BASE_URL || '';
     return [...SidebarRoutes(), ...AdditionalRoutes()].map(route => ({
         ...route,
-        path: `${baseUrl}${route.path.replace(/^\//, '')}`
+        path: route.path
     }));
 }
