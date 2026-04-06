@@ -15,3 +15,9 @@ export const devRefreshToken = import.meta.env.VITE_DEV_REFRESH_TOKEN;
 export const devTokenType = import.meta.env.VITE_DEV_TOKEN_TYPE;
 
 export const elasticsearchEndpoint = `${import.meta.env.VITE_GATEWAY_API}/elastic`;
+export const elasticIndices = {
+    processExecutions: 'process_executions',
+    processTree: 'process_tree',
+    ioDevices: 'io_devices',
+    deviceMetrics: 'device_metrics'
+}

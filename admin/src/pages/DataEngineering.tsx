@@ -3,6 +3,15 @@ import MetricsCard from "../components/Card/MetricsCard";
 import { useEffect, useState } from "react";
 import DataTable from "../components/Table/DataTable";
 import LineChart from "../components/Charts/LineChart";
+import elasticsearchService from "../services/elasticsearch.service";
+import { elasticIndices } from "../constants";
+import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUniqueDevicesResponse } from "../queries/fetchUniqueDevices";
+import { buildFetchTotalIoDevicesQuery, type FetchTotalIoDevicesResponse } from "../queries/fetchTotalIoDevices";
+import Dropdown from "../components/Filters/Dropdown";
+import TimeRange from "../components/Filters/TimeRange";
+import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsResponse } from "../queries/fetchDeviceMetrics";
+import { buildFetchMemoryIntenseProcessQuery, parseFetchMemoryIntenseProcessResponse, type FetchMemoryIntenseProcessResponse, type MemoryIntenseProcess } from "../queries/fetchMemoryIntenseProcess";
+import { fetchUniqueProcessNamesQuery, parseFetchUniqueProcessNamesResponse, type FetchUniqueProcessNamesAggregation } from "../queries/fetchUniqueProcessNames";
 
 
 interface CardRowProps {
@@ -16,24 +25,24 @@ const CardRow: React.FC<CardRowProps> = ({ memoryUsagePercent, cpuUsagePercent, 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <MetricsCard
                 title="Total Memory Usage"
-                value={memoryUsagePercent}
+                value={memoryUsagePercent.toFixed(1)}
                 unit="%"
                 isPercentage
             />
             <MetricsCard
                 title="Total CPU Usage"
-                value={cpuUsagePercent}
+                value={cpuUsagePercent.toFixed(1)}
                 unit="%"
                 isPercentage
             />
             <MetricsCard
                 title="Total Memory Usage"
-                value={memoryUsageGB}
+                value={memoryUsageGB.toFixed(2)}
                 unit="GB"
             />
             <MetricsCard
                 title="I/O Devices Connected"
-                value={ioDevicesConnected}
+                value={ioDevicesConnected.toString()}
                 unit="devices"
             />
         </div>
@@ -55,51 +64,172 @@ const CardRow: React.FC<CardRowProps> = ({ memoryUsagePercent, cpuUsagePercent, 
  * @returns
  */
 const DataEngineeringPage: React.FC = () => {
-    const [memoryUsagePercent, setMemoryUsagePercent] = useState(0);
-    const [cpuUsagePercent, setCpuUsagePercent] = useState(0);
-    const [memoryUsageGB, setMemoryUsageGB] = useState(0);
+    const [memoryUsagePercent, setMemoryUsagePercent] = useState(0.0);
+    const [cpuUsagePercent, setCpuUsagePercent] = useState(0.0);
+    const [memoryUsageGB, setMemoryUsageGB] = useState(0.0);
     const [ioDevicesConnected, setIoDevicesConnected] = useState(0);
 
-    const [index, selectedIndex] = useState("");
+    const [availableDevices, setAvailableDevices] = useState<string[]>([]);
     const [device, selectedDevice] = useState("");
+
+    const today = new Date();
+    const past24Hours = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+    const [fromDate, setFromDate] = useState(past24Hours.toISOString());
+    const [toDate, setToDate] = useState(today.toISOString());
+
+    const [memoryIntenseProcesses, setMemoryIntenseProcesses] = useState<MemoryIntenseProcess[]>([]);
+    const [activePageMemoryIntense, setActivePageMemoryIntense] = useState(1);
+    const [totalMemoryIntenseProcess, setTotalMemoryIntenseProcess] = useState(1);
+    const totalItemsPerPage = 10;
 
 
     /**
      * Elasticsearch Data Processing
      */
-    const fetchElasticIndices = async () => {
-
-    };
 
     const fetchUniqueDevices = async () => {
+        const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
+            fetchUniqueDevicesQuery(1, 10),
+            elasticIndices.ioDevices
+        );
+        if(!result || !result.aggregations) {
+            console.error("Failed to fetch unique devices:", result);
+            return;
+        }
+        const devices = parseFetchUniqueDevicesResponse(result.aggregations);
+        setAvailableDevices(devices);
+        if(!devices.includes(device)) {
+            selectedDevice(devices[0] || "");
+        }
     };
 
-    const fetchProcessExecutions = async () => {
+    const fetchDeviceMetrics = async () => {
+        const result = await elasticsearchService.search<FetchDeviceMetricsResponse>(buildFetchDeviceMetricsQuery({
+            deviceId: device,
+            from: fromDate,
+            to: toDate
+        }), elasticIndices.deviceMetrics);
+        if(!result || !result.hits || !result.hits.hits || result.hits.hits.length === 0) {
+            console.error("Failed to fetch device metrics:", result);
+            return;
+        }
+        const latestMetrics = result.hits.hits[0]._source;
+        setMemoryUsagePercent(latestMetrics.memory_usage);
+        setCpuUsagePercent(latestMetrics.cpu_usage);
+        setMemoryUsageGB(latestMetrics.memory_megabytes / 1024);
     };
 
-    const fetchProcessTree = async () => {
-
+    const fetchTotalProcesses = async () => {
+        const result = await elasticsearchService.aggregate<null, FetchUniqueProcessNamesAggregation>(
+            fetchUniqueProcessNamesQuery(
+                device,
+                fromDate,
+                toDate
+            ),
+            elasticIndices.processExecutions
+        );
+        if(!result || !result.aggregations) {
+            console.error("Failed to fetch total processes:", result);
+            return;
+        }
+        const totalProcesses = result.aggregations ? parseFetchUniqueProcessNamesResponse(result.aggregations) : 0;
+        console.log("Total unique processes:", totalProcesses);
+        setTotalMemoryIntenseProcess(totalProcesses);
     };
 
-    const feetchIODevices = () => {
+    const fetchMemoryIntensiveProcesses = async () => {
+        const result = await elasticsearchService.aggregate<null, FetchMemoryIntenseProcessResponse>(
+            buildFetchMemoryIntenseProcessQuery({
+                deviceId: device,
+                from: fromDate,
+                to: toDate,
+                page: activePageMemoryIntense,
+                pageSize: totalItemsPerPage
+            }),
+            elasticIndices.processExecutions
+        );
+        if(!result || !result.aggregations || 
+            !result.aggregations.processes || 
+            !result.aggregations.processes.buckets?.length ||
+            !result.aggregations.processes.buckets[0].top_hit?.hits?.hits?.length
+        ) {
+            console.error("Failed to fetch memory intensive processes:", result);
+            return;
+        }
+        const processes = result.aggregations ? parseFetchMemoryIntenseProcessResponse(result.aggregations) : [];
+        setMemoryIntenseProcesses(processes);
+    };
 
+    const fetchTotalIODevices = async () => {
+        const result = await elasticsearchService.aggregate<null, FetchTotalIoDevicesResponse>(
+            buildFetchTotalIoDevicesQuery({
+                deviceId: device,
+                from: fromDate,
+                to: toDate
+            }),
+            elasticIndices.ioDevices
+        );
+        if(!result || !result.aggregations) {
+            console.error("Failed to fetch total I/O devices:", result);
+            return;
+        }
+        const ioDevices = result.aggregations ? result.aggregations.unique_io_devices.buckets.length : 0;
+        setIoDevicesConnected(ioDevices);
     };
 
     /**
      * Component Display related functions
      */
-    const onPageChange = (pageNumber: number) => {
-        console.log("Page changed to:", pageNumber);
-    };
     
 
     useEffect(() => {
-        fetchElasticIndices();
         fetchUniqueDevices();
     }, []);
+
+    useEffect(() => {
+        fetchTotalIODevices();
+        fetchDeviceMetrics();
+        fetchTotalProcesses();
+    }, [fromDate, toDate, device])
+
+    useEffect(() => {
+        fetchMemoryIntensiveProcesses();
+    }, [device, fromDate, toDate, activePageMemoryIntense])
     
 
     return <div className="p-6 flex flex-col gap-6">
+        <div className="flex flex-row flex-wrap flex-start gap-4 display-unique-device-dropdown">
+            {availableDevices.length > 0 ? (
+                    <Dropdown 
+                        items={availableDevices.map((d) => ({ name: d, value: d }))}
+                        value={device}
+                        handler={(item) => selectedDevice(item)}
+                        placeholder="Select Device"
+                        label="Select Device"
+                        disabled={availableDevices.length === 0}
+                        className="w-auto"
+
+                    />
+                ) : (
+                    <p>No devices found.</p>
+                )   
+            }
+
+            <TimeRange 
+                label="Select Time Range"
+                from={fromDate}
+                to={toDate}
+                handler={({from, to}) => {
+                    if (from) setFromDate(from);
+                    if (to) setToDate(to);
+                }}
+                className="w-auto"
+
+            />
+
+
+        </div>
         <CardRow
             memoryUsagePercent={memoryUsagePercent}
             cpuUsagePercent={cpuUsagePercent}
@@ -112,17 +242,21 @@ const DataEngineeringPage: React.FC = () => {
                 { name: "Process Name", key: "processName" },
                 { name: "Memory Usage (GB)", key: "memoryUsageGB" }
             ]}
-            data={[
-                { processName: "Process A", memoryUsageGB: 2.5 },
-                { processName: "Process B", memoryUsageGB: 1.8 },
-                { processName: "Process C", memoryUsageGB: 0.9 },
-            ]}
-            pagination={[
-                { pageNumber: 1, isActive: true },
-                { pageNumber: 2 },
-                { pageNumber: 3 },
-            ]}
-            paginationHandler={onPageChange}
+            data={memoryIntenseProcesses.map(p => ({
+                processName: p.process_name,
+                memoryUsageGB: (p.memory_megabytes/1024).toFixed(2)
+            }))}
+            pagination={
+                Array.from({ length: Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage) }, (_, i) => ({
+                    pageNumber: i + 1,
+                    isActive: activePageMemoryIntense === (i + 1)
+                }))
+            }
+            paginationHandler={(page) => {
+                setActivePageMemoryIntense(page);
+            }}
+            clipLongText={true}
+            totalPages={Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage)}
         />
 
         <DataTable 
@@ -142,7 +276,7 @@ const DataEngineeringPage: React.FC = () => {
                 { pageNumber: 2 },
                 { pageNumber: 3 },
             ]}
-            paginationHandler={onPageChange}
+            paginationHandler={(page) => {}}
         />
 
         <LineChart 

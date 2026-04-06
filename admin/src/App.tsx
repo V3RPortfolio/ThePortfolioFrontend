@@ -3,14 +3,14 @@ import './App.css'
 import Sidebar from './components/Header/Sidebar';
 import {AllRoutes} from './Route';
 import TopHeader from './components/Header/TopHeader';
-import authService from './services/authentication.service';
 
 import {loginPath, requireAuth } from './constants';
+import httpService from './services/http.service';
 
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const token = typeof window !== 'undefined' ? authService.getAccessToken() : null;
+  const token = typeof window !== 'undefined' ? httpService.getAccessToken() : null;
   if(!token && requireAuth) {
     window.location.href = loginPath;
     return null;
@@ -29,7 +29,7 @@ function App() {
 
         {/* Main Content Area */}
         {/* Body - Routes render here */}
-        <div className='py-[var(--padding-md)] flex-1'>    
+        <div className='py-[var(--padding-md)] flex-1 max-w-[80%]'>    
           <TopHeader />        
           <main className='p-[var(--padding-md)]'>
             <Routes>

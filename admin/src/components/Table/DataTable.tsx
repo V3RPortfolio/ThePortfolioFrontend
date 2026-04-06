@@ -10,11 +10,13 @@ interface DataTableProps {
         isActive?: boolean;
     }[];
     paginationHandler?: (pageNumber:number) => void; // Optional click handler for page buttons
+    totalPages?: number; // Optional total pages for better pagination control
+    clipLongText?: boolean; // Optional prop to enable text clipping in cells
 }
 
-const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler }) => {
+const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler, totalPages, clipLongText }) => {
     const [activePage, setActivePage] = useState<number>(1);
-
+    const [displayedPagination, setDisplayedPagination] = useState<{ pageNumber: number; isActive?: boolean }[]>([]);
     const handlePageClick = (pageNumber: number) => {
         setActivePage(pageNumber);
         if (paginationHandler) {
@@ -23,11 +25,28 @@ const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination,
     };
 
     useEffect(() => {
+        // Set active page
         const activePageObj = pagination.find((p) => p.isActive);
         if (activePageObj) {
             setActivePage(activePageObj.pageNumber);
         }
-    })
+
+        // Set the list of displayed page - show max 5 page numbers at a time for better UX
+        const maxDisplayed = 5;
+        let startPage = Math.max(1, activePage - Math.floor(maxDisplayed / 2));
+        let endPage = Math.min(totalPages || activePage, startPage + maxDisplayed - 1);
+
+        // Adjust startPage if we are near the end
+        if (endPage - startPage < maxDisplayed - 1) {
+            startPage = Math.max(1, endPage - maxDisplayed + 1);
+        }
+
+        const newPagination = [];
+        for (let i = startPage; i <= endPage; i++) {
+            newPagination.push({ pageNumber: i, isActive: i === activePage });
+        }
+        setDisplayedPagination(newPagination);
+    }, [pagination, activePage, totalPages]);
 
     return (
         <div className="card overflow-hidden p-0">
@@ -94,7 +113,10 @@ const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination,
                                             className="px-5 py-3 text-sm whitespace-nowrap"
                                             style={{ color: "var(--color-text-primary)" }}
                                         >
-                                            {row[col.key] ?? "—"}
+                                            <span
+                                            className={clipLongText ? "block max-w-xs truncate" : ""}
+                                            title={row[col.key] ? String(row[col.key]) : undefined}
+                                            >{row[col.key] ?? "—"}</span>
                                         </td>
                                     ))}
                                 </tr>
@@ -105,14 +127,14 @@ const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination,
             </div>
 
             {/* Pagination */}
-            {pagination.length > 0 && (
+            {displayedPagination.length > 0 && (
                 <div
                     className="flex items-center justify-between px-5 py-3"
                     style={{ borderTop: "1px solid var(--color-border)" }}
                 >
                     {/* Results summary */}
                     <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-                        Page {activePage} of {pagination.length}
+                        Page {activePage} of {totalPages || pagination.length}
                     </span>
 
                     {/* Page buttons */}
@@ -135,7 +157,7 @@ const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination,
                         </button>
 
                         {/* Page numbers */}
-                        {pagination.map(({ pageNumber, isActive }) => {
+                        {displayedPagination.map(({ pageNumber, isActive }) => {
                             return (
                                 <button
                                     key={pageNumber}

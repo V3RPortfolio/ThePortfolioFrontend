@@ -4,12 +4,12 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { devAccessToken, devRefreshToken, devTokenType } from './constants';
-import authService from './services/authentication.service';
+import httpService from './services/http.service.ts'
 
-const token = typeof window !== 'undefined' ? authService.getAccessToken() : null;
+const token = typeof window !== 'undefined' ? httpService.getAccessToken() : null;
 if (!token && !!devAccessToken && !!devRefreshToken && !!devTokenType) {
   console.info('Using development tokens from environment variables');
-  authService.setTokens({
+  httpService.setTokens({
     access_token: devAccessToken,
     refresh_token: devRefreshToken,
     token_type: devTokenType,

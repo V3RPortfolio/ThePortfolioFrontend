@@ -19,7 +19,7 @@ export class ElasticsearchService {
             return Promise.reject(new Error("Invalid JSON query"));
         }
 
-        const url = `${elasticsearchEndpoint}/${index}/_search`;
+        const url = `${elasticsearchEndpoint}${index.length ? `/${index}` : ""}/_search`;
         return httpService.post<ElasticSearchResponse<T>>(url, {
             method: 'POST',
             body: JSON.stringify(jsonData),
@@ -32,7 +32,7 @@ export class ElasticsearchService {
             return Promise.reject(new Error("Invalid JSON query"));
         }
 
-        const url = `${elasticsearchEndpoint}/${index}/_search`;
+        const url = `${elasticsearchEndpoint}${index.length ? `/${index}` : ""}/_search`;
         return httpService.post<ElasticSearchAggregationResponse<P,Q>>(url, {
             method: 'POST',
             body: JSON.stringify(jsonData),
