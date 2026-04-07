@@ -1,10 +1,11 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 
+type TableData = { [key: string]: any}; // Generic type for table data, can be extended with specific fields as needed
 interface DataTableProps {
     title: string;
-    columns: { name: string; key:string }[];
-    data: any[]; // You can replace 'any' with a more specific type based on your data structure
+    columns: { name: string; key: string }[];
+    data: TableData[]; // You can replace 'any' with a more specific type based on your data structure
     pagination: {
         pageNumber: number;
         isActive?: boolean;
@@ -12,11 +13,13 @@ interface DataTableProps {
     paginationHandler?: (pageNumber:number) => void; // Optional click handler for page buttons
     totalPages?: number; // Optional total pages for better pagination control
     clipLongText?: boolean; // Optional prop to enable text clipping in cells
+    onRowClick?: (row: TableData) => void; // Optional click handler for table rows
 }
 
-const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler, totalPages, clipLongText }) => {
+const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler, totalPages, clipLongText, onRowClick }: DataTableProps) => {
     const [activePage, setActivePage] = useState<number>(1);
     const [displayedPagination, setDisplayedPagination] = useState<{ pageNumber: number; isActive?: boolean }[]>([]);
+    const rowsAreClickable = Boolean(onRowClick);
     const handlePageClick = (pageNumber: number) => {
         setActivePage(pageNumber);
         if (paginationHandler) {
@@ -85,7 +88,7 @@ const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination,
                             data.map((row, rowIndex) => (
                                 <tr
                                     key={rowIndex}
-                                    className="group transition-colors duration-150"
+                                    className={`group transition-colors duration-150 ${rowsAreClickable ? "cursor-pointer" : ""}`}
                                     style={{
                                         borderBottom:
                                             rowIndex < data.length - 1
@@ -96,15 +99,34 @@ const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination,
                                                 ? "var(--color-gray-50)"
                                                 : "transparent",
                                     }}
-                                    onMouseEnter={(e) =>
-                                        (e.currentTarget.style.backgroundColor =
-                                            "var(--color-primary-50)")
+                                    onClick={rowsAreClickable ? () => onRowClick?.(row) : undefined}
+                                    role={rowsAreClickable ? "button" : undefined}
+                                    tabIndex={rowsAreClickable ? 0 : undefined}
+                                    onKeyDown={
+                                        rowsAreClickable
+                                            ? (e) => {
+                                                  if (e.key === "Enter" || e.key === " ") {
+                                                      e.preventDefault();
+                                                      onRowClick?.(row);
+                                                  }
+                                              }
+                                            : undefined
                                     }
-                                    onMouseLeave={(e) =>
-                                        (e.currentTarget.style.backgroundColor =
-                                            rowIndex % 2 !== 0
-                                                ? "var(--color-gray-50)"
-                                                : "transparent")
+                                    onMouseEnter={
+                                        rowsAreClickable
+                                            ? (e) =>
+                                                  (e.currentTarget.style.backgroundColor =
+                                                      "var(--color-primary-50)")
+                                            : undefined
+                                    }
+                                    onMouseLeave={
+                                        rowsAreClickable
+                                            ? (e) =>
+                                                  (e.currentTarget.style.backgroundColor =
+                                                      rowIndex % 2 !== 0
+                                                          ? "var(--color-gray-50)"
+                                                          : "transparent")
+                                            : undefined
                                     }
                                 >
                                     {columns.map((col) => (
@@ -114,7 +136,7 @@ const DataTable: React.FC<DataTableProps> = ({ title, columns, data, pagination,
                                             style={{ color: "var(--color-text-primary)" }}
                                         >
                                             <span
-                                            className={clipLongText ? "block max-w-xs truncate" : ""}
+                                            className={`${clipLongText ? "block max-w-xs truncate" : ""} ${rowsAreClickable ? "group-hover:underline underline-offset-2" : ""}`}
                                             title={row[col.key] ? String(row[col.key]) : undefined}
                                             >{row[col.key] ?? "—"}</span>
                                         </td>

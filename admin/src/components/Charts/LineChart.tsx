@@ -3,19 +3,24 @@ import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
+    TimeScale,
     PointElement,
     LineElement,
     Title,
     Tooltip,
     Legend,
+    type ChartOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import 'chartjs-adapter-date-fns';
+import {da, enUS} from 'date-fns/locale';
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
+    TimeScale,
     Title,
     Tooltip,
     Legend
@@ -25,23 +30,28 @@ ChartJS.register(
 interface LineChartProps {
     title: string;
     data: {
-        x: number[];
+        x: (number|Date)[];
         y: number[];
         label: string;
     }[];
+    timeSeriesUnit?: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
     xLabels?: string[];
     yLabels?: string[];
 
     xAxisTitle?: string;
     yAxisTitle?: string;
+
 }
 const LineChart: React.FC<LineChartProps> = ({
     title,
     data,
+    xLabels,
+    yLabels,
     xAxisTitle,
-    yAxisTitle
+    yAxisTitle,
+    timeSeriesUnit
 }) => {
-    const options = {
+    const options:ChartOptions<'line'> = {
         responsive: true,
         plugins: {
             legend: {
@@ -54,17 +64,25 @@ const LineChart: React.FC<LineChartProps> = ({
         },
         scales: {
             x: {
-                type: 'linear' as const,
+                type: !!timeSeriesUnit ? 'time' : 'linear',
                 title: {
                     display: !!xAxisTitle,
                     text: xAxisTitle,
                 },
+                time: !!timeSeriesUnit ?{
+                    unit: timeSeriesUnit
+                }: undefined
             },
             y: {
                 title: {
                     display: !!yAxisTitle,
                     text: yAxisTitle,
                 },
+                adapters: {
+                    date: {
+                        locale: enUS
+                    }
+                }
             },
         },
     };
@@ -72,9 +90,12 @@ const LineChart: React.FC<LineChartProps> = ({
     const dataset = data.map((series) => {
         const randomBorderColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`;
         const randomBackgroundColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.2)`;
+        
         return {
             label: series.label,
-            data: series.y.map((yValue, index) => ({ x: series.x[index], y: yValue })),
+            data: series.y.map((yValue, index) => {
+                return { x: series.x[index], y: yValue }
+            }),
             borderColor: randomBorderColor,
             backgroundColor: randomBackgroundColor,
         }
@@ -84,6 +105,8 @@ const LineChart: React.FC<LineChartProps> = ({
         options={options}
         data={{
             datasets: dataset,
+            xLabels,
+            yLabels,
         }}
     />;
 }

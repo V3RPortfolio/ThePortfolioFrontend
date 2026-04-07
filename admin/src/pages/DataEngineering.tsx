@@ -69,6 +69,14 @@ interface HourlyProcessData {
     memoryIncreaseRate: number;
     avgMemoryUsage: number;
 }
+
+interface MemoryLeakData {
+    processName: string;
+    memoryUsageGB: string;
+    memoryIncreaseRate: string;
+    index: number;
+}
+
 const DataEngineeringPage: React.FC = () => {
     const [memoryUsagePercent, setMemoryUsagePercent] = useState(0.0);
     const [cpuUsagePercent, setCpuUsagePercent] = useState(0.0);
@@ -88,8 +96,25 @@ const DataEngineeringPage: React.FC = () => {
     const [activePageMemoryIntense, setActivePageMemoryIntense] = useState(1);
     const [totalMemoryIntenseProcess, setTotalMemoryIntenseProcess] = useState(1);
 
-    const [hourlyProcessData, setHourlyProcessData] = useState<{name:string, data: HourlyProcessData}[]>([]);
+    const [hourlyProcessData, setHourlyProcessData] = useState<{name:string, data: HourlyProcessData, index:number}[]>([]);
     const [activePageHourlyProcess, setActivePageHourlyProcess] = useState(1);
+
+    const [memoryLeakGraphProcess, setMemoryLeakGraphProcess] = useState<number[]>([]);
+    const addToMemoryLeakGraphProcess = (index: number) => {
+        setMemoryLeakGraphProcess(prev => {
+            if(prev.includes(index)) {
+                return prev.filter(i => i !== index);
+            } else {
+                return [...prev, index];
+            }
+        });
+    }
+    const removeFromMemoryLeakGraphProcess = (index: number) => {
+        setMemoryLeakGraphProcess(prev => prev.filter(i => i !== index));
+    }
+    const existsInMemoryLeakGraphProcess = (index: number) => {
+        return memoryLeakGraphProcess.includes(index);
+    }
 
     const totalItemsPerPage = 10;
 
@@ -144,7 +169,6 @@ const DataEngineeringPage: React.FC = () => {
             return;
         }
         const totalProcesses = result.aggregations ? parseFetchUniqueProcessNamesResponse(result.aggregations) : 0;
-        console.log("Total unique processes:", totalProcesses);
         setTotalMemoryIntenseProcess(totalProcesses);
     };
 
@@ -239,8 +263,8 @@ const DataEngineeringPage: React.FC = () => {
         }
 
         return Object.keys(processes)
-                                .map((name) => ({data: processes[name], name}))
-                                .sort((a, b) => b.data.memoryIncreaseRate - a.data.memoryIncreaseRate);
+                                .sort((a, b) => processes[b].memoryIncreaseRate - processes[a].memoryIncreaseRate)
+                                .map((name, index) => ({data: processes[name], name, index}))
     }, [fromDate, toDate, device, totalMemoryIntenseProcess]);
 
     /**
@@ -260,6 +284,9 @@ const DataEngineeringPage: React.FC = () => {
             if(data) {
                 setHourlyProcessData(data);
                 setActivePageHourlyProcess(1);
+                if(data.length > 0 && memoryLeakGraphProcess.length == 0) {
+                    setMemoryLeakGraphProcess([0])
+                }
             }
         });
     }, [fromDate, toDate, device])
@@ -344,13 +371,14 @@ const DataEngineeringPage: React.FC = () => {
             ]}
             data={hourlyProcessData
                 .slice((activePageHourlyProcess - 1) * totalItemsPerPage, (activePageHourlyProcess - 1) * totalItemsPerPage + totalItemsPerPage)
-                .map(({ name, data }) => {
+                .map(({ name, data, index }) => {
                     return {
                         processName: name,
                         memoryUsageGB: (data.avgMemoryUsage/1024).toFixed(2),
-                        memoryIncreaseRate: data.memoryIncreaseRate.toFixed(2)
+                        memoryIncreaseRate: data.memoryIncreaseRate.toFixed(2),
+                        index
                     }
-                })}
+                }) as MemoryLeakData[]}
             pagination={Array.from({ length: Math.ceil(hourlyProcessData.length/totalItemsPerPage) }, (_, i) => ({
                 pageNumber: i + 1,
                 isActive: activePageHourlyProcess === (i + 1)
@@ -358,24 +386,31 @@ const DataEngineeringPage: React.FC = () => {
             paginationHandler={(page) => { setActivePageHourlyProcess(page); }}
             clipLongText={true}
             totalPages={Math.ceil(hourlyProcessData.length/totalItemsPerPage)}
+            onRowClick={(row) => {
+                const process = row as MemoryLeakData;
+                if(!process || !process.index) return;
+                if(!existsInMemoryLeakGraphProcess(process.index)) {
+                    addToMemoryLeakGraphProcess(process.index);
+                } else {
+                    removeFromMemoryLeakGraphProcess(process.index);
+                }
+            }}
         />}
 
         <LineChart 
             title="Memory Consumption of Process A Over Time"
-            data={[
-                {
-                    label: "Process A",
-                    x: [0, 5, 10, 15, 20],
-                    y: [0.5, 1.0, 1.8, 2.5, 3.0]
-                },
-                {
-                    label: "Process B",
-                    x: [0, 5, 10, 15, 20],
-                    y: [0.3, 0.8, 1.2, 1.8, 2.5]
-                }
-            ]}
+            data={memoryLeakGraphProcess.map(index => {
+                if(hourlyProcessData.length <= index) return {};
+                const process = hourlyProcessData[index];
+                return {
+                    label: process.name,
+                    x: process.data.processes.map(x => x.timestamp), // Assuming 5-minute intervals
+                    y: process.data.processes.map(d => d.avg_usage)
+                };
+            }).filter(d => typeof d.x !== "undefined" && typeof d.y !== "undefined")}
+            timeSeriesUnit="hour"
             xAxisTitle="Time"
-            yAxisTitle="Memory Usage (GB)"
+            yAxisTitle="Memory Usage (MB)"
         />
     </div>;
 };
