@@ -1,0 +1,98 @@
+<mat-card appearance="outlined" class="dt-card">
+
+  <!-- Title -->
+  <mat-card-header>
+    <mat-card-title>{{ title }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-divider></mat-divider>
+
+  <!-- Table -->
+  <mat-card-content class="p-0">
+    <table mat-table [dataSource]="data" class="w-100">
+
+      <!-- Dynamic column definitions -->
+      <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+        <th mat-header-cell *matHeaderCellDef>{{ col.name }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span
+            [class.cell-truncate]="clipLongText"
+            [class.cell-link]="rowsAreClickable"
+            [title]="getCellTooltip(row, col.key)"
+          >{{ getCellValue(row, col.key) }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Empty state column -->
+      <ng-container matColumnDef="__empty">
+        <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length" class="text-center py-5 dt-empty">
+          No data available
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.clickable-row]="rowsAreClickable"
+        [attr.role]="rowsAreClickable ? 'button' : null"
+        [attr.tabindex]="rowsAreClickable ? 0 : null"
+        (click)="onRowClick(row)"
+        (keydown)="onRowKeyDown($event, row)"
+      ></tr>
+
+      <tr mat-footer-row *matFooterRowDef="['__empty']" [hidden]="data.length > 0"></tr>
+
+    </table>
+  </mat-card-content>
+
+  <!-- Pagination -->
+  <ng-container *ngIf="displayedPagination.length > 0">
+    <mat-divider></mat-divider>
+    <mat-card-actions class="dt-pagination">
+
+      <span class="dt-page-info">
+        Page {{ activePage }} of {{ totalPages || pagination.length }}
+      </span>
+
+      <div class="dt-page-buttons">
+
+        <!-- Previous -->
+        <button
+          mat-icon-button
+          [disabled]="isPrevDisabled"
+          (click)="prevPage()"
+          aria-label="Previous page"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <!-- Page numbers -->
+        <button
+          *ngFor="let page of displayedPagination"
+          mat-flat-button
+          [color]="page.isActive ? 'primary' : undefined"
+          class="dt-page-number-btn"
+          (click)="handlePageClick(page.pageNumber)"
+          [attr.aria-label]="'Page ' + page.pageNumber"
+          [attr.aria-current]="page.isActive ? 'page' : null"
+        >
+          {{ page.pageNumber }}
+        </button>
+
+        <!-- Next -->
+        <button
+          mat-icon-button
+          [disabled]="isNextDisabled"
+          (click)="nextPage()"
+          aria-label="Next page"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+      </div>
+    </mat-card-actions>
+  </ng-container>
+
+</mat-card>

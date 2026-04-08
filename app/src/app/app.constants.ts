@@ -10,9 +10,10 @@ export enum RoutePaths {
     login = 'login',
     logout = 'logout',
     admin = 'admin',
+    dataEngineering = 'data-engineering',
 }
 
-export const BACKEND_POST_SPECIFIC_STYLESHEET = "https://gateway.vip3rtech6069.com/wp-content/uploads/elementor/css/post-{id}.css";
+export const BACKEND_POST_SPECIFIC_STYLESHEET = "https://gateway.zohairmehtab.com/wp-content/uploads/elementor/css/post-{id}.css";
 export const AUTHOR_IMAGE_PLACEHOLDER="/images/common/image_placeholder.jpg";
 export const FEATURED_IMAGE_PLACEHOLDER="/images/common/image_placeholder.jpg";
 
@@ -32,7 +33,6 @@ export const GraphQLClients = {
         uri: environment.ADMIN_GITHUB_API,
     },
 };
-export const ADMIN_BACKEND_API = environment.ADMIN_BACKEND_API;
 export const ADMIN_BACKEND_XCSRF_KEY = "X-CSRFToken";
 
 

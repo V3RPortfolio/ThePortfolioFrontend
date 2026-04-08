@@ -10,6 +10,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { AuthenticationService } from '../../services/authentication.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-header',
@@ -49,7 +50,8 @@ export class HeaderComponent implements OnInit {
   creditsRoute=`/${RoutePaths.credits}`;
   aboutRoute=`/${RoutePaths.about}`;
   loginRoute=`/${RoutePaths.login}`;
-  adminRoute=`/${RoutePaths.admin}`;
+  adminRoute=`${environment.ADMIN_FRONTEND_URL}/${RoutePaths.admin}`;
+  dataEngineeringRoute=`/${RoutePaths.dataEngineering}`;
 
   constructor(
     private backendService:WPBackendService,

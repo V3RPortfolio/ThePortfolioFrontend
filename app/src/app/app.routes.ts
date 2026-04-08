@@ -8,7 +8,8 @@ import { CreditsComponent } from './components/credits/credits.component';
 import { AboutComponent } from './pages/about/about.component';
 import { LoginComponent } from './pages/login/login.component';
 import { LogoutComponent } from './components/logout/logout.component';
-import { environment } from '../environments/environment.development';
+import { environment } from '../environments/environment';
+import { DataEngineeringComponent } from './pages/data-engineering/data-engineering.component';
 
 
 
@@ -22,6 +23,8 @@ export const routes: Routes = [
     {path: RoutePaths.about, component: AboutComponent},
     {path: RoutePaths.login, component: LoginComponent},
     {path: RoutePaths.logout, component: LogoutComponent},
+    {path: RoutePaths.dataEngineering, component: DataEngineeringComponent},
+
     {path: RoutePaths.admin, redirectTo: `${environment.ADMIN_FRONTEND_URL}/${RoutePaths.admin}/`, pathMatch: 'full'},
     
     {path: '**', component: PageNotFoundComponent}

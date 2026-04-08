@@ -1,0 +1,32 @@
+<div id="data-engineering-page">
+    <div class="container">
+        <div class="row">
+            <h2 class="data-engineering-title">Data Engineering Pipeline</h2>
+        </div>
+
+        <div class="row metrics">
+            @for (metric of sampleMetrics; track metric.title) {
+                <app-metrics-card
+                    [title]="metric.title"
+                    [value]="metric.value"
+                    [unit]="metric.unit"
+                    [isPercentage]="metric.isPercentage"
+                    class="metric-card-wrapper"
+                ></app-metrics-card>
+            }
+        </div>
+        <div class="row memory-intensive-processes">
+            <div class="col-12">
+                <app-data-table
+                    [columns]="columns"
+                    [data]="sampleData"
+                    [title]="'Sample Data Table'"
+                    [pagination]="pagination"
+                    [totalPages]="pagination.length"
+                    [clipLongText]="true"
+                />
+            </div>
+            
+        </div>
+    </div>
+</div>

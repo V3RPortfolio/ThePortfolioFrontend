@@ -1,6 +1,6 @@
 @use '@angular/material' as mat;
-@use '../../../../styles/theme/theme' as theme;
-@use '../../../../styles/theme/constants' as constants;
+@use '../../../../../styles/theme/theme' as theme;
+@use '../../../../../styles/theme/constants' as constants;
 
 
 $lightColor: mat.get-theme-color(theme.$theme, 'neutral', 98);

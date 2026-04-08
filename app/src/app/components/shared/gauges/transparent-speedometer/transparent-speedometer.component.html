@@ -1,0 +1,27 @@
+<svg
+    width="130"
+    height="72"
+    viewBox="0 0 120 72"
+    fill="none"
+    aria-hidden="true"
+    class="transparent-speedometer"
+>
+    <path
+    d="M 12 60 A 48 48 0 0 1 108 60"
+    stroke-width="10"
+    strok-linecap="round"
+    class="speedometer-outer"
+    />
+
+    <path
+    d="M 12 60 A 48 48 0 0 1 108 60"
+    stroke-width="10"
+    stroke-line-cap="round"
+    [attr.stroke-dasharray]="halfCircumference"
+    [attr.stroke-dashoffset]="strokeDashoffset"
+    [ngStyle]='{transition: "stroke-dashoffset 0.8s ease-in-out"}'
+    class="speedometer-inner"
+    />
+
+    
+</svg>

@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+@use '../../../../../styles/theme/theme' as theme;
+@use '../../../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../../../styles/theme/constants' as constants;
+
+.metrics-card {
+	$card-bg: mat.get-theme-color(theme.$theme, 'primary', 100);
+	$card-border: mat.get-theme-color(theme.$theme, 'primary', 60);
+
+	$text-primary: mat.get-theme-color(theme.$theme, 'primary', 20);
+	$text-secondary: mat.get-theme-color(theme.$theme, 'primary', 70);
+
+	.card {
+		background-color: $card-bg;
+		border-color: $card-border;
+	}
+
+	.text-caption,
+	.text-muted {
+		color: $text-secondary;
+	}
+
+	.metric-value {
+		color: $text-primary;
+	}
+}

@@ -3,7 +3,7 @@ import { GithubIssueMetric } from '../../../interfaces/djadmin/github.interface'
 import { GithubIssueMetricGQL } from '../../../services/djadmin/github-graphql.service';
 import { NgFor } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { SpeedometerComponent } from '../speedometer/speedometer.component';
+import { SpeedometerComponent } from '../../shared/gauges/speedometer/speedometer.component';
 
 @Component({
   selector: 'app-github-issue-metrics',
@@ -44,5 +44,9 @@ export class GithubIssueMetricsComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if(this.metricsSubscription) this.metricsSubscription.unsubscribe();
+  }
+
+  speedometerValue(metric:GithubIssueMetric):number {
+    return metric.all > 0 ? (metric.closed / metric.all) * 100 : 0;
   }
 }

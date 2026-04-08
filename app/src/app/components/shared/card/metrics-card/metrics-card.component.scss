@@ -1,0 +1,87 @@
+@use '../../../../../styles/theme/breakpoint' as breakpoint;
+@import 'theme';
+.metrics-card {
+	width: 100%;
+    height: 100%;
+
+	/* === Tailwind utility parity (scoped) === */
+	.flex {
+		display: flex;
+	}
+
+	.flex-col {
+		flex-direction: column;
+	}
+
+	.items-center {
+		align-items: center;
+	}
+
+	.items-baseline {
+		align-items: baseline;
+	}
+
+	.justify-end {
+		justify-content: flex-end;
+	}
+
+	.gap-1 {
+		gap: 0.25rem; /* 4px */
+	}
+
+	.gap-2 {
+		gap: 0.5rem; /* 8px */
+	}
+
+	/* Tailwind class name contains a dot; escape it in CSS */
+	.gap-1\.5 {
+		gap: 0.375rem; /* 6px */
+	}
+
+	.w-full {
+		width: 100%;
+	}
+
+	.self-start {
+		align-self: flex-start;
+	}
+
+	.mt-auto {
+		margin-top: auto;
+	}
+
+	.-mt-3 {
+		margin-top: -0.75rem; /* -12px */
+	}
+
+	/* === Admin/Tailwind card + typography semantics (scoped) === */
+	.card {
+		border-width: 1px;
+        border-style: solid;
+		border-radius: var(--border-radius-lg, 0.75rem);
+		padding: var(--padding-lg, 1.5rem);
+        height: 100%;
+	}
+
+	.card:hover {
+		box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1));
+	}
+
+	.text-caption {
+		font-family: var(--font-family-primary, 'DM Sans', sans-serif);
+		font-size: var(--font-size-sm, 0.875rem);
+		font-weight: 400;
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	.text-muted {}
+
+	.metric-value {
+		font-family: var(--font-family-primary, 'DM Sans', sans-serif);
+		font-size: var(--font-size-3xl, 1.875rem);
+		font-weight: 600;
+		line-height: 1.1;
+		letter-spacing: -0.015em;
+	}
+}

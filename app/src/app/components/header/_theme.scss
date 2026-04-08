@@ -24,6 +24,18 @@
         color: mat.get-theme-color(theme.$theme, 'on-primary');
     }
 
+    .navigation-sub-menu {
+        background-color: mat.get-theme-color(theme.$theme, 'primary', 50);
+
+        .navigation-item {
+            border-bottom: 1px solid mat.get-theme-color(theme.$theme, 'primary', 100);
+
+            &:last-of-type {
+                border-bottom: none;
+            }
+        }
+    }
+
     #sign-up-button, #slide-out-button {
         color: mat.get-theme-color(theme.$theme, 'on-secondary');
     }
@@ -35,6 +47,10 @@
 
         .navigation-item {
             border-top: 1px solid mat.get-theme-color(theme.$theme, 'neutral', 60);
+        }
+
+        .navigation-sub-menu .navigation-item {
+            border-bottom: 1px solid mat.get-theme-color(theme.$theme, 'neutral', 60);
         }
 
         .navigation-title.desktop {

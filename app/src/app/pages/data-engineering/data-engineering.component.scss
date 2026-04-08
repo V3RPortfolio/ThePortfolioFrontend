@@ -1,0 +1,27 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+
+#data-engineering-page {
+    .metrics {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .metric-card-wrapper {
+        width: calc(25% - 0.5rem);
+    }
+
+    .memory-intensive-processes {
+        margin-top: 20px;
+    }
+
+    @include breakpoint.tablet {
+        .metric-card-wrapper {
+            width: calc(50% - 0.5rem);
+        }
+    }
+
+    @include breakpoint.mobile {
+        .metric-card-wrapper {
+            width: 100%;
+        }
+    }
+}

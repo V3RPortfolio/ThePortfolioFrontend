@@ -23,8 +23,7 @@ function isBypassed(url: string): boolean {
 }
 
 function shouldAttachAuth(url: string): boolean {
-  // Only attach to ADMIN_BACKEND_API origin
-  return !!environment.ADMIN_BACKEND_API && url.startsWith(environment.ADMIN_BACKEND_API);
+  return !!environment.GATEWAY_BACKEND_API && url.startsWith(environment.GATEWAY_BACKEND_API);
 }
 
 function addAuthHeader(req: HttpRequest<unknown>, token: string, tokenType?: string) {

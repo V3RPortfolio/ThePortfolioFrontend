@@ -16,6 +16,14 @@
                 <li class="navigation-item">
                     <a class="navigation-link" href="{{aboutRoute}}">About</a>
                 </li>
+                <li class="navigation-item">
+                    <a class="navigation-link" href="#">My Works</a>
+                    <ul class="navigation-sub-menu">
+                        <li class="navigation-item">
+                            <a class="navigation-link" href="{{dataEngineeringRoute}}">Data Engineering</a>
+                        </li>
+                    </ul> 
+                </li>
                 @if (!!isLoggedIn()) {
                 <li class="navigation-item">
                     <a class="navigation-link" href="{{adminRoute}}">Admin</a>

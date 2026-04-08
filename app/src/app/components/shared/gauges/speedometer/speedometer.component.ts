@@ -12,9 +12,8 @@ import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@
   styleUrl: './speedometer.component.scss'
 })
 export class SpeedometerComponent implements OnInit {
-  @Input('closed') closed: number;
-  @Input('open') open: number;
-  @Input('total') total: number;
+  @Input('value') value: number;
+  @Input('setOnScroll') setOnScroll: boolean = true;
 
   @ViewChild('pointer') pointer: ElementRef;
   private animationPlayer: AnimationPlayer;
@@ -29,6 +28,12 @@ export class SpeedometerComponent implements OnInit {
 
   ngOnInit(): void {
       
+  }
+
+  ngAfterViewInit(): void {
+    if(!this.setOnScroll) {
+      this.setSpeedometer();
+    }
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -61,7 +66,7 @@ export class SpeedometerComponent implements OnInit {
 
 
   setSpeedometer() {
-    const rotationDegree = this.rotateSpeedometer(this.closed, this.total);
+    const rotationDegree = this.rotateSpeedometer(this.value);
     this.animateSpeedometer(`rotateZ(${rotationDegree}deg)`);
     this.animationComplete = true;
     if(this.animationPlayer) this.animationPlayer.play();
@@ -73,14 +78,15 @@ export class SpeedometerComponent implements OnInit {
     if(this.animationPlayer) this.animationPlayer.play();
   }
 
-  rotateSpeedometer(closed:number, total:number):number {
+  rotateSpeedometer(value:number):number {
     /**
      * This funtion receives the number of issue closed and the total number of issues raised.
      * The current rotation of pointer is 0 and it is pointed at the top of a speedometer.
      * When the percentage of issue completed is 0, the rotation will be -133deg. When the percentage is 100, the rotation will be 124deg.
      * Calculate the percentage of issue completed and rotate the pointer accordingly.
      */
-    if(total === 0) return 0;
+    if(value <= 0) value = 0;
+    if(value > 100) value = 100;
     const minMetric = 0;
     const maxMetric = 100;
     const metricRange = maxMetric - minMetric;
@@ -89,8 +95,7 @@ export class SpeedometerComponent implements OnInit {
     const maxDegree = 124;
     const degreeRange = maxDegree - minDegree;
 
-    let percentage = (closed / total) * 100;
-    const normalizedMetric = (percentage - minMetric) / metricRange;
+    const normalizedMetric = (value - minMetric) / metricRange;
 
 
     let rotation = minDegree + normalizedMetric * degreeRange;

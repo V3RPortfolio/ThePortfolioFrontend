@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@use '../../../../../styles/theme/theme' as theme;
+@use '../../../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../../../styles/theme/constants' as constants;
+
+.transparent-speedometer {
+    .speedometer-outer {
+        stroke: mat.get-theme-color(theme.$theme, 'primary', 50)
+    }
+    .speedometer-inner {
+        stroke: mat.get-theme-color(theme.$theme, 'primary', 90);
+    }
+}
