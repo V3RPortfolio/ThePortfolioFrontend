@@ -9,7 +9,7 @@ import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUni
 import { buildFetchTotalIoDevicesQuery, type FetchTotalIoDevicesResponse } from "../queries/fetchTotalIoDevices";
 import Dropdown from "../components/Filters/Dropdown";
 import TimeRange from "../components/Filters/TimeRange";
-import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsResponse } from "../queries/fetchDeviceMetrics";
+import { buildFetchDeviceMetricsQuery, type FetchDeviceMetricsResponse } from "../queries/fetchDeviceMetrics";
 import { buildFetchMemoryIntenseProcessQuery, parseFetchMemoryIntenseProcessResponse, type FetchMemoryIntenseProcessResponse, type MemoryIntenseProcess } from "../queries/fetchMemoryIntenseProcess";
 import { fetchUniqueProcessNamesQuery, parseFetchUniqueProcessNamesResponse, type FetchUniqueProcessNamesAggregation } from "../queries/fetchUniqueProcessNames";
 import { buildFetchProcessesByHourQuery, parseFetchProcessesByHourResponse, type FetchProcessesByHourResponse, type ProcessesByHour } from "../queries/fetchProcessesByHour";

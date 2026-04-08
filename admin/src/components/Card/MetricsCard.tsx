@@ -29,12 +29,6 @@ const Gauge: React.FC<GaugeProps> = ({ percentage }) => {
       ? "var(--color-warning)"
       : "var(--color-success)";
 
-  // End-point angle labels (0 % on the left, 100 % on the right)
-  const labelStyle: React.CSSProperties = {
-    fontFamily: "var(--font-family-primary)",
-    fontSize: "var(--font-size-xs)",
-    fill: "var(--color-gray-500)",
-  };
 
   return (
     <svg
