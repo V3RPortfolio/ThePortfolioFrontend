@@ -7,7 +7,7 @@ import { AuthResponse, TokenPayload, RefreshTokenPayload, GoogleOAuth2RedirectUr
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private readonly baseUrl = environment.GATEWAY_BACKEND_API;
-  private readonly authApi = `${this.baseUrl}/api/auth/v1`;
+  private readonly authApi = `${this.baseUrl}/auth`;
 
   private readonly TOKEN_TYPE_KEY = 'auth.token_type';
   private readonly ACCESS_TOKEN_KEY = 'auth.access_token';
