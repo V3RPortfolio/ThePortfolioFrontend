@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AuthResponse, TokenPayload, RefreshTokenPayload } from '../interfaces/backend/auth.interface';
+import { AuthResponse, TokenPayload, RefreshTokenPayload, GoogleOAuth2RedirectUrlPayload, GoogleOAuth2CallbackParams } from '../interfaces/backend/auth.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private readonly baseUrl = environment.GATEWAY_BACKEND_API;
-  private readonly authApi = `${this.baseUrl}/auth`;
+  private readonly authApi = `${this.baseUrl}/api/auth/v1`;
 
   private readonly TOKEN_TYPE_KEY = 'auth.token_type';
   private readonly ACCESS_TOKEN_KEY = 'auth.access_token';
@@ -37,6 +37,21 @@ export class AuthenticationService {
     const url = `${this.authApi}/me`;
     return this.http.get<T>(url);
   }
+
+  // GET /auth/oauth2/login/google — returns the Google OAuth2 redirect URL
+  fetchRedirectUrl(): Observable<GoogleOAuth2RedirectUrlPayload> {
+    const url = `${this.authApi}/oauth2/login/google`;
+    return this.http.get<GoogleOAuth2RedirectUrlPayload>(url);
+  }
+
+  // GET /auth/oauth2/callback/google — exchanges Google callback params for access & refresh tokens
+  fetchAccessToken(payload: GoogleOAuth2CallbackParams): Observable<AuthResponse> {
+    const url = `${this.authApi}/oauth2/callback/google`;
+    return this.http.get<AuthResponse>(url, { params: payload as Record<string, string> }).pipe(
+      tap((res) => this.setTokens(res))
+    );
+  }
+
 
   // Token helpers
   getAccessToken(): string | null {

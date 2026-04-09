@@ -17,6 +17,14 @@
 	width: 100%;
 }
 
+.login-form-buttons {
+	flex-direction: column;
+}
+
+.google-oauth2-login {
+	margin-top: 16px;
+}
+
 mat-card-title {
 	margin-bottom: 8px;
 }
