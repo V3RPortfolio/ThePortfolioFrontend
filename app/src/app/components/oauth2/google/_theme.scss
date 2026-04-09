@@ -1,0 +1,7 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/theme/theme' as theme;
+
+.google-oauth2-login-button {
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 60);
+    color: mat.get-theme-color(theme.$theme, 'primary', 100);
+}

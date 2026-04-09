@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { RoutePaths } from '../../app.constants';
+import { GoogleComponent } from '../oauth2/google/google.component';
 
 @Component({
   selector: 'app-login-form',
@@ -23,6 +24,7 @@ import { RoutePaths } from '../../app.constants';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    GoogleComponent
   ],
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.scss']

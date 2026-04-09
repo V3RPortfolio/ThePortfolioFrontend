@@ -21,6 +21,7 @@ export const routes: Routes = [
     {path: RoutePaths.credits, component: CreditsComponent},
     {path: RoutePaths.about, component: AboutComponent},
     {path: RoutePaths.login, component: LoginComponent},
+    {path: RoutePaths.oauth2CallbackGoogle, component: LoginComponent},
     {path: RoutePaths.logout, component: LogoutComponent},
     {path: RoutePaths.admin, redirectTo: `${environment.ADMIN_FRONTEND_URL}/${RoutePaths.admin}/`, pathMatch: 'full'},
     

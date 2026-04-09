@@ -1,0 +1,7 @@
+<button mat-raised-button color="primary" [disabled]="loading" (click)="onSignInWithGoogle()" class="google-oauth2-login-button full-width">
+    <ng-container *ngIf="!loading">Sign in with Google</ng-container>
+    <ng-container *ngIf="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="16" strokeWidth="3"></mat-progress-spinner>
+    <span style="margin-left: 8px;">Signing in...</span>
+    </ng-container>
+</button>

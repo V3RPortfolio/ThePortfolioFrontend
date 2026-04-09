@@ -1,5 +1,26 @@
 <section class="py-5">
-    <div class="container">
-    <app-login-form (loggedIn)="onLoggedIn($event)"></app-login-form>
-    </div>
+  <div class="container">
+
+    <!-- Normal login form -->
+    <ng-container *ngIf="!isOAuth2Callback">
+      <app-login-form (loggedIn)="onLoggedIn($event)"></app-login-form>
+    </ng-container>
+
+    <!-- OAuth2 callback: loading / error state -->
+    <ng-container *ngIf="isOAuth2Callback">
+      <div class="oauth2-callback-container">
+
+        <ng-container *ngIf="callbackLoading">
+          <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+          <p class="callback-message">Completing sign-in, please wait&hellip;</p>
+        </ng-container>
+
+        <ng-container *ngIf="!callbackLoading && callbackError">
+          <p class="callback-error">{{ callbackError }}</p>
+        </ng-container>
+
+      </div>
+    </ng-container>
+
+  </div>
 </section>
