@@ -19,5 +19,6 @@ export const elasticIndices = {
     processExecutions: 'process_executions',
     processTree: 'process_tree',
     ioDevices: 'io_devices',
-    deviceMetrics: 'device_metrics'
+    deviceMetrics: 'device_metrics',
+    runningProcesses: 'running_processes'
 }

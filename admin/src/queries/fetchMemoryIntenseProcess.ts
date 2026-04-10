@@ -1,47 +1,36 @@
 /**
- * Elasticsearch DSL Query: Fetch the most memory-intensive processes from the process_executions index.
- * Processes are grouped by process_name, ordered by their peak memory_usage descending.
- * The top document (highest memory_usage) is returned for each group as a paginated list.
- * URL Path: /process_executions/_search
+ * Elasticsearch DSL Query: Fetch the most memory-intensive processes from the running_processes index.
+ * The running_processes index stores one pre-aggregated document per process per device,
+ * so no terms aggregation is needed. Documents are filtered by device_id and timestamp range,
+ * then sorted by avg_memory_megabytes descending and paginated with from/size.
+ * URL Path: /running_processes/_search
  * Method: POST
  * Response:
  * {
- *   "aggregations": {
- *     "processes": {
- *       "buckets": [
- *         {
- *           "key": "my_process",
- *           "doc_count": 250,
- *           "peak_memory_usage": { "value": 92.4 },
- *           "top_hit": {
- *             "hits": {
- *               "hits": [
- *                 {
- *                   "_source": {
- *                     "process_name": "my_process",
- *                     "executed_by": "root",
- *                     "cpu_usage": 18.3,
- *                     "memory_usage": 92.4,
- *                     "memory_megabytes": 3072.0,
- *                     "timestamp": "2026-04-07T10:00:00Z"
- *                   }
- *                 }
- *               ]
- *             }
- *           }
+ *   "hits": {
+ *     "total": { "value": 100, "relation": "eq" },
+ *     "hits": [
+ *       {
+ *         "_source": {
+ *           "process_name": "my_process",
+ *           "avg_memory_megabytes": 3072.0,
+ *           "deviation_memory_consumption": 12.5,
+ *           "avg_cpu_consumption": 18.3
  *         }
- *       ]
- *     }
+ *       }
+ *     ]
  *   }
  * }
  */
+
+import type { ElasticSearchResponse } from "../interfaces/elasticsearch.interface";
 
 export interface FetchMemoryIntenseProcessParams {
     deviceId: string;
     from: string;     // ISO 8601 date string, e.g. "2026-01-01T00:00:00Z"
     to: string;       // ISO 8601 date string, e.g. "2026-12-31T23:59:59Z"
-    page: number;     // 0-based page index
-    pageSize: number; // number of process groups per page
+    page: number;     // 1-based page index
+    pageSize: number; // number of processes per page
 }
 
 export const buildFetchMemoryIntenseProcessQuery = ({
@@ -51,7 +40,8 @@ export const buildFetchMemoryIntenseProcessQuery = ({
     page,
     pageSize
 }: FetchMemoryIntenseProcessParams) => ({
-    "size": 0,
+    "size": pageSize,
+    "from": (page - 1) * pageSize,
     "query": {
         "bool": {
             "filter": [
@@ -71,107 +61,61 @@ export const buildFetchMemoryIntenseProcessQuery = ({
             ]
         }
     },
-    "aggs": {
-        "processes": {
-            "terms": {
-                "field": "process_name",
-                "size": 10000, // large enough to allow bucket_sort to paginate
-                "order": {
-                    "peak_memory_usage": "desc"
-                }
-            },
-            "aggs": {
-                // Used to order the terms buckets by peak memory usage
-                "peak_memory_usage": {
-                    "max": {
-                        "field": "memory_megabytes"
-                    }
-                },
-                // Returns the single document with the highest memory_usage per process
-                "top_hit": {
-                    "top_hits": {
-                        "size": 1,
-                        "sort": [
-                            {
-                                "memory_megabytes": {
-                                    "order": "desc"
-                                }
-                            }
-                        ],
-                        "_source": [
-                            "process_name",
-                            "memory_usage",
-                            "memory_megabytes",
-                            "timestamp"
-                        ]
-                    }
-                },
-                // Applies offset-based pagination to the buckets
-                "pagination": {
-                    "bucket_sort": {
-                        "from": (page - 1) * pageSize,
-                        "size": pageSize
-                    }
-                }
+    "sort": [
+        {
+            "avg_memory_megabytes": {
+                "order": "desc"
             }
         }
-    }
+    ],
+    "_source": [
+        "process_name",
+        "avg_memory_megabytes",
+        "deviation_memory_consumption",
+        "avg_cpu_consumption"
+    ]
 });
 
 export interface MemoryIntenseProcess {
     process_name: string;
-    memory_usage: number;
-    memory_megabytes: number;
-    timestamp: string;
+    /** Pre-aggregated average memory consumption in megabytes */
+    avg_memory_megabytes: number;
+    /** Average deviation of memory consumption from the mean (percentage) */
+    deviation_memory_consumption: number;
+    /** Pre-aggregated average CPU usage percentage */
+    avg_cpu_consumption: number;
 }
 
-export interface FetchMemoryIntenseProcessResponse {
-    processes: {
-        buckets: Array<{
-            key: string;
-            doc_count: number;
-            peak_memory_usage: { value: number };
-            top_hit: {
-                hits: {
-                    hits: Array<{
-                        _source: MemoryIntenseProcess;
-                    }>;
-                };
-            };
-        }>;
-    };
+export interface FetchMemoryIntenseProcessResult {
+    items: MemoryIntenseProcess[];
+    /** Total number of matching documents (from hits.total.value) */
+    total: number;
 }
 
 export const parseFetchMemoryIntenseProcessResponse = (
-    response: FetchMemoryIntenseProcessResponse
-): MemoryIntenseProcess[] => {
+    response: ElasticSearchResponse<MemoryIntenseProcess>
+): FetchMemoryIntenseProcessResult => {
     if (
-        typeof response !== 'object' ||
-        !response.processes ||
-        !Array.isArray(response.processes.buckets)
+        !response ||
+        !response.hits ||
+        !Array.isArray(response.hits.hits)
     ) {
         console.error("Invalid response format for buildFetchMemoryIntenseProcessQuery:", response);
-        return [];
+        return { items: [], total: 0 };
     }
 
-    return response.processes.buckets
-        .filter(
-            (b: any) =>
-                b &&
-                typeof b === 'object' &&
-                typeof b.key === 'string' &&
-                b.top_hit?.hits?.hits?.length > 0 &&
-                b.top_hit.hits.hits[0]._source
-        )
-        .map((b: any) => {
-            const source = b.top_hit.hits.hits[0]._source;
-            return {
-                process_name: source.process_name,
-                executed_by: source.executed_by,
-                cpu_usage: source.cpu_usage,
-                memory_usage: source.memory_usage,
-                memory_megabytes: source.memory_megabytes,
-                timestamp: source.timestamp
-            } as MemoryIntenseProcess;
-        });
+    const items = response.hits.hits
+        .filter((h) => h && h._source)
+        .map((h) => ({
+            process_name: h._source.process_name,
+            avg_memory_megabytes: h._source.avg_memory_megabytes ?? 0,
+            deviation_memory_consumption: h._source.deviation_memory_consumption ?? 0,
+            avg_cpu_consumption: h._source.avg_cpu_consumption ?? 0
+        }));
+
+    return {
+        items,
+        total: response.hits.total?.value ?? items.length
+    };
 };
+

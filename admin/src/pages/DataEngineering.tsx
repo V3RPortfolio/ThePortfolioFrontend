@@ -2,7 +2,6 @@ import type React from "react";
 import MetricsCard from "../components/Card/MetricsCard";
 import { useEffect, useMemo, useState } from "react";
 import DataTable from "../components/Table/DataTable";
-import LineChart from "../components/Charts/LineChart";
 import elasticsearchService from "../services/elasticsearch.service";
 import { elasticIndices } from "../constants";
 import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUniqueDevicesResponse } from "../queries/fetchUniqueDevices";
@@ -10,9 +9,8 @@ import { buildFetchTotalIoDevicesQuery, type FetchTotalIoDevicesResponse } from 
 import Dropdown from "../components/Filters/Dropdown";
 import TimeRange from "../components/Filters/TimeRange";
 import { buildFetchDeviceMetricsQuery, type FetchDeviceMetricsResponse } from "../queries/fetchDeviceMetrics";
-import { buildFetchMemoryIntenseProcessQuery, parseFetchMemoryIntenseProcessResponse, type FetchMemoryIntenseProcessResponse, type MemoryIntenseProcess } from "../queries/fetchMemoryIntenseProcess";
-import { fetchUniqueProcessNamesQuery, parseFetchUniqueProcessNamesResponse, type FetchUniqueProcessNamesAggregation } from "../queries/fetchUniqueProcessNames";
-import { buildFetchProcessesByHourQuery, parseFetchProcessesByHourResponse, type FetchProcessesByHourResponse, type ProcessesByHour } from "../queries/fetchProcessesByHour";
+import { buildFetchMemoryIntenseProcessQuery, parseFetchMemoryIntenseProcessResponse, type MemoryIntenseProcess } from "../queries/fetchMemoryIntenseProcess";
+import { buildFetchMemoryLeakProcessesQuery, parseFetchMemoryLeakProcessesResponse, type MemoryLeakProcess } from "../queries/fetchProcessesByHour";
 
 
 interface CardRowProps {
@@ -64,19 +62,6 @@ const CardRow: React.FC<CardRowProps> = ({ memoryUsagePercent, cpuUsagePercent, 
  * 9. CPU Consumption of single process over time (Line Chart)
  * @returns
  */
-interface HourlyProcessData {
-    processes: ProcessesByHour[];
-    memoryIncreaseRate: number;
-    avgMemoryUsage: number;
-}
-
-interface MemoryLeakData {
-    processName: string;
-    memoryUsageGB: string;
-    memoryIncreaseRate: string;
-    index: number;
-}
-
 const DataEngineeringPage: React.FC = () => {
     const [memoryUsagePercent, setMemoryUsagePercent] = useState(0.0);
     const [cpuUsagePercent, setCpuUsagePercent] = useState(0.0);
@@ -96,25 +81,9 @@ const DataEngineeringPage: React.FC = () => {
     const [activePageMemoryIntense, setActivePageMemoryIntense] = useState(1);
     const [totalMemoryIntenseProcess, setTotalMemoryIntenseProcess] = useState(1);
 
-    const [hourlyProcessData, setHourlyProcessData] = useState<{name:string, data: HourlyProcessData, index:number}[]>([]);
-    const [activePageHourlyProcess, setActivePageHourlyProcess] = useState(1);
-
-    const [memoryLeakGraphProcess, setMemoryLeakGraphProcess] = useState<number[]>([]);
-    const addToMemoryLeakGraphProcess = (index: number) => {
-        setMemoryLeakGraphProcess(prev => {
-            if(prev.includes(index)) {
-                return prev.filter(i => i !== index);
-            } else {
-                return [...prev, index];
-            }
-        });
-    }
-    const removeFromMemoryLeakGraphProcess = (index: number) => {
-        setMemoryLeakGraphProcess(prev => prev.filter(i => i !== index));
-    }
-    const existsInMemoryLeakGraphProcess = (index: number) => {
-        return memoryLeakGraphProcess.includes(index);
-    }
+    const [memoryLeakProcesses, setMemoryLeakProcesses] = useState<MemoryLeakProcess[]>([]);
+    const [activePageMemoryLeak, setActivePageMemoryLeak] = useState(1);
+    const [totalMemoryLeakProcesses, setTotalMemoryLeakProcesses] = useState(1);
 
     const totalItemsPerPage = 10;
 
@@ -155,25 +124,8 @@ const DataEngineeringPage: React.FC = () => {
         setMemoryUsageGB(latestMetrics.memory_megabytes / 1024);
     };
 
-    const fetchTotalProcesses = async () => {
-        const result = await elasticsearchService.aggregate<null, FetchUniqueProcessNamesAggregation>(
-            fetchUniqueProcessNamesQuery(
-                device,
-                fromDate,
-                toDate
-            ),
-            elasticIndices.processExecutions
-        );
-        if(!result || !result.aggregations) {
-            console.error("Failed to fetch total processes:", result);
-            return;
-        }
-        const totalProcesses = result.aggregations ? parseFetchUniqueProcessNamesResponse(result.aggregations) : 0;
-        setTotalMemoryIntenseProcess(totalProcesses);
-    };
-
     const fetchMemoryIntensiveProcesses = useMemo(async () => {
-        const result = await elasticsearchService.aggregate<null, FetchMemoryIntenseProcessResponse>(
+        const result = await elasticsearchService.search<MemoryIntenseProcess>(
             buildFetchMemoryIntenseProcessQuery({
                 deviceId: device,
                 from: fromDate,
@@ -181,19 +133,15 @@ const DataEngineeringPage: React.FC = () => {
                 page: activePageMemoryIntense,
                 pageSize: totalItemsPerPage
             }),
-            elasticIndices.processExecutions
+            elasticIndices.runningProcesses
         );
-        if(!result || !result.aggregations || 
-            !result.aggregations.processes || 
-            !result.aggregations.processes.buckets?.length ||
-            !result.aggregations.processes.buckets[0].top_hit?.hits?.hits?.length
-        ) {
+        if(!result || !result.hits || !result.hits.hits?.length) {
             console.error("Failed to fetch memory intensive processes:", result);
             return;
         }
-        return result.aggregations ? parseFetchMemoryIntenseProcessResponse(result.aggregations) : [];
+        return parseFetchMemoryIntenseProcessResponse(result);
         
-    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, totalMemoryIntenseProcess]);
+    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage]);
 
     const fetchTotalIODevices = async () => {
         const result = await elasticsearchService.aggregate<null, FetchTotalIoDevicesResponse>(
@@ -212,60 +160,23 @@ const DataEngineeringPage: React.FC = () => {
         setIoDevicesConnected(ioDevices);
     };
 
-    const fetchHourlyProcessData = useMemo(async () => {
-        const result = await elasticsearchService.aggregate<null, FetchProcessesByHourResponse>(
-            buildFetchProcessesByHourQuery({
+    const fetchMemoryLeakProcesses = useMemo(async () => {
+        const result = await elasticsearchService.search<MemoryLeakProcess>(
+            buildFetchMemoryLeakProcessesQuery({
                 deviceId: device,
                 from: fromDate,
                 to: toDate,
-                sortField: "memory_megabytes",
-                sortOrder: "desc"
+                page: activePageMemoryLeak,
+                pageSize: totalItemsPerPage
             }),
-            elasticIndices.processExecutions
+            elasticIndices.runningProcesses
         );
-        if(!result || !result.aggregations) {
-            console.error("Failed to fetch hourly process data:", result);
+        if(!result || !result.hits || !result.hits.hits?.length) {
+            console.error("Failed to fetch memory leak processes:", result);
             return;
         }
-        
-        const processes = parseFetchProcessesByHourResponse(result.aggregations).sort(
-                (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-            ).reduce((acc, curr) => {
-                if (!acc[curr.process_name]) {
-                    acc[curr.process_name] = {
-                        processes: [],
-                        memoryIncreaseRate: 0,
-                        avgMemoryUsage: 0
-                    };
-                }
-                acc[curr.process_name].processes.push(curr);
-                return acc;
-            }, {} as {[key:string]: HourlyProcessData});
-
-        for (const processName in processes) {
-            processes[processName].processes = processes[processName].processes.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            processes[processName].avgMemoryUsage = processes[processName].processes.reduce((sum, p) => sum + p.avg_usage, 0) / processes[processName].processes.length;
-
-            let memorySlopes = processes[processName].processes.map((p, index) => {
-                if(index == 0) return 0;
-                // Compute slope if time difference between the two indices is less than 1 hour
-                if((new Date(processes[processName].processes[index].timestamp).getTime() - new Date(processes[processName].processes[index-1].timestamp).getTime()) > 60 * 60 * 1000) {
-                    return null;    
-                }
-                return p.avg_usage - processes[processName].processes[index - 1].avg_usage;
-            }).filter(x => x !== null) as number[];
-            if(memorySlopes.length > 1) {
-                for(let i=1; i<memorySlopes.length; i++) {
-                    processes[processName].memoryIncreaseRate += memorySlopes[i] - memorySlopes[i-1];
-                }
-                processes[processName].memoryIncreaseRate /= (memorySlopes.length - 1);
-            }
-        }
-
-        return Object.keys(processes)
-                                .sort((a, b) => processes[b].memoryIncreaseRate - processes[a].memoryIncreaseRate)
-                                .map((name, index) => ({data: processes[name], name, index}))
-    }, [fromDate, toDate, device, totalMemoryIntenseProcess]);
+        return parseFetchMemoryLeakProcessesResponse(result);
+    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage]);
 
     /**
      * Component Display related functions
@@ -279,26 +190,34 @@ const DataEngineeringPage: React.FC = () => {
     useEffect(() => {
         fetchTotalIODevices();
         fetchDeviceMetrics();
-        fetchTotalProcesses();
-        fetchHourlyProcessData.then(data => {
-            if(data) {
-                setHourlyProcessData(data);
-                setActivePageHourlyProcess(1);
-                if(data.length > 0 && memoryLeakGraphProcess.length == 0) {
-                    setMemoryLeakGraphProcess([0])
-                }
-            }
-        });
     }, [fromDate, toDate, device])
 
+    // Reset both paginated tables to page 1 whenever the filters change.
+    useEffect(() => {
+        setActivePageMemoryIntense(1);
+        setActivePageMemoryLeak(1);
+    }, [device, fromDate, toDate]);
+
+    // Fires exactly once per unique (device + dateRange + page) combination for
+    // the memory-intense table. The memo reference encodes all deps.
     useEffect(() => {
         fetchMemoryIntensiveProcesses.then(data => {
             if(data) {
-                setMemoryIntenseProcesses(data);
-                setActivePageMemoryIntense(1);
+                setMemoryIntenseProcesses(data.items);
+                setTotalMemoryIntenseProcess(data.total);
             }
         });
-    }, [device, fromDate, toDate, activePageMemoryIntense])
+    }, [fetchMemoryIntensiveProcesses]);
+
+    // Same pattern for the memory-leak table.
+    useEffect(() => {
+        fetchMemoryLeakProcesses.then(data => {
+            if(data) {
+                setMemoryLeakProcesses(data.items);
+                setTotalMemoryLeakProcesses(data.total);
+            }
+        });
+    }, [fetchMemoryLeakProcesses])
     
 
     return <div className="p-6 flex flex-col gap-6">
@@ -343,11 +262,15 @@ const DataEngineeringPage: React.FC = () => {
             title="Highest memory consuming processes"
             columns={[
                 { name: "Process Name", key: "processName" },
-                { name: "Memory Usage (GB)", key: "memoryUsageGB" }
+                { name: "Average Memory Usage (GB)", key: "avgMemoryUsageGB" },
+                { name: "Avg. Deviation from Mean (%)", key: "deviationMemoryConsumption" },
+                { name: "Average CPU Usage (%)", key: "avgCpuConsumption" }
             ]}
             data={memoryIntenseProcesses.map(p => ({
                 processName: p.process_name,
-                memoryUsageGB: (p.memory_megabytes/1024).toFixed(2)
+                avgMemoryUsageGB: (p.avg_memory_megabytes / 1024).toFixed(2),
+                deviationMemoryConsumption: p.deviation_memory_consumption.toFixed(2),
+                avgCpuConsumption: p.avg_cpu_consumption.toFixed(2)
             }))}
             pagination={
                 Array.from({ length: Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage) }, (_, i) => ({
@@ -362,56 +285,26 @@ const DataEngineeringPage: React.FC = () => {
             totalPages={Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage)}
         />}
 
-        {activePageHourlyProcess && <DataTable 
+        {activePageMemoryLeak && <DataTable
             title="Processes with Memory Leak"
             columns={[
                 { name: "Process Name", key: "processName" },
-                { name: "Average Memory Usage (GB)", key: "memoryUsageGB" },
-                { name: "Rate of Increase (MB Per hour)", key: "memoryIncreaseRate" }
+                { name: "Avg. Memory Leak (MB)", key: "avgMemoryLeak" },
+                { name: "Deviation of Memory Leak", key: "deviationMemoryLeak" }
             ]}
-            data={hourlyProcessData
-                .slice((activePageHourlyProcess - 1) * totalItemsPerPage, (activePageHourlyProcess - 1) * totalItemsPerPage + totalItemsPerPage)
-                .map(({ name, data, index }) => {
-                    return {
-                        processName: name,
-                        memoryUsageGB: (data.avgMemoryUsage/1024).toFixed(2),
-                        memoryIncreaseRate: data.memoryIncreaseRate.toFixed(2),
-                        index
-                    }
-                }) as MemoryLeakData[]}
-            pagination={Array.from({ length: Math.ceil(hourlyProcessData.length/totalItemsPerPage) }, (_, i) => ({
-                pageNumber: i + 1,
-                isActive: activePageHourlyProcess === (i + 1)
+            data={memoryLeakProcesses.map(p => ({
+                processName: p.process_name,
+                avgMemoryLeak: p.avg_memory_leak.toFixed(2),
+                deviationMemoryLeak: p.deviation_memory_leak.toFixed(2)
             }))}
-            paginationHandler={(page) => { setActivePageHourlyProcess(page); }}
+            pagination={Array.from({ length: Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage) }, (_, i) => ({
+                pageNumber: i + 1,
+                isActive: activePageMemoryLeak === (i + 1)
+            }))}
+            paginationHandler={(page) => { setActivePageMemoryLeak(page); }}
             clipLongText={true}
-            totalPages={Math.ceil(hourlyProcessData.length/totalItemsPerPage)}
-            onRowClick={(row) => {
-                const process = row as MemoryLeakData;
-                if(!process || !process.index) return;
-                if(!existsInMemoryLeakGraphProcess(process.index)) {
-                    addToMemoryLeakGraphProcess(process.index);
-                } else {
-                    removeFromMemoryLeakGraphProcess(process.index);
-                }
-            }}
+            totalPages={Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage)}
         />}
-
-        <LineChart 
-            title="Memory Consumption of Process A Over Time"
-            data={memoryLeakGraphProcess.map(index => {
-                if(hourlyProcessData.length <= index) return {};
-                const process = hourlyProcessData[index];
-                return {
-                    label: process.name,
-                    x: process.data.processes.map(x => x.timestamp), // Assuming 5-minute intervals
-                    y: process.data.processes.map(d => d.avg_usage)
-                };
-            }).filter(d => typeof d.x !== "undefined" && typeof d.y !== "undefined")}
-            timeSeriesUnit="hour"
-            xAxisTitle="Time"
-            yAxisTitle="Memory Usage (MB)"
-        />
     </div>;
 };
 
