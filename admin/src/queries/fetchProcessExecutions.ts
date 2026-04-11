@@ -60,11 +60,23 @@ export const buildFetchProcessExecutionsQuery = ({
         },
         "sort": [
             {"timestamp": {"order": "desc"}}
+        ],
+        "_source": [
+            "process_name",
+            "device_id",
+            "memory_megabytes",
+            "cpu_usage",
+            "memory_usage",
+            "timestamp",
+            "processing_status",
+            "process_id",
+            "processing_timestamp"
         ]
     }
 };
 
 export interface ProcessExecutionProcess {
+    _id: string;
     process_name: string;
     device_id: string;
     memory_megabytes: number;
@@ -72,6 +84,8 @@ export interface ProcessExecutionProcess {
     memory_usage: number;
     timestamp: string; // ISO 8601 date string
     processing_status: string;
+    process_id: string;
+    processing_timestamp: string; // ISO 8601 date string
 }
 
 export interface FetchProcessExecutionsResponse extends ElasticSearchResponse<ProcessExecutionProcess> {
@@ -79,5 +93,5 @@ export interface FetchProcessExecutionsResponse extends ElasticSearchResponse<Pr
 }   
 
 export const parseFetchProcessExecutionsResponse = (response: FetchProcessExecutionsResponse) => {
-    return response.hits.hits.map(hit => hit._source);
+    return response.hits.hits.map(hit => ({...hit._source, _id: hit._id}));
 }

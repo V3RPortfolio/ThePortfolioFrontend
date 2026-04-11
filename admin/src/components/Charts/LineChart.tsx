@@ -32,6 +32,7 @@ interface LineChartProps {
     data: {
         x: (number|Date)[];
         y: number[];
+        dataPointId: string[];
         label: string;
     }[];
     timeSeriesUnit?: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
@@ -41,6 +42,8 @@ interface LineChartProps {
     xAxisTitle?: string;
     yAxisTitle?: string;
 
+    onDataPointClick?: (row:any) => void;
+
 }
 const LineChart: React.FC<LineChartProps> = ({
     title,
@@ -49,7 +52,8 @@ const LineChart: React.FC<LineChartProps> = ({
     yLabels,
     xAxisTitle,
     yAxisTitle,
-    timeSeriesUnit
+    timeSeriesUnit,
+    onDataPointClick
 }) => {
     const options:ChartOptions<'line'> = {
         responsive: true,
@@ -102,6 +106,23 @@ const LineChart: React.FC<LineChartProps> = ({
             backgroundColor: randomBackgroundColor,
         }
     });
+
+    if(onDataPointClick) {
+        options.onClick = (event, elements, chart) => {
+            if (elements.length > 0) {
+                // Retrieve the data point index
+                const dataIndex = elements[0].index;
+                const datasetIndex = elements[0].datasetIndex;
+                
+                // Access label and value
+                if(dataIndex < data[datasetIndex].dataPointId.length) {
+                    onDataPointClick(data[datasetIndex].dataPointId[dataIndex]);
+                }
+                
+                
+            }
+        }
+    }
 
     return <div className="relative h-auto w-full line-chart-container">
         <Line

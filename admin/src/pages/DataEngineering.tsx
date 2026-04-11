@@ -14,6 +14,8 @@ import { buildFetchMemoryIntenseProcessQuery, parseFetchMemoryIntenseProcessResp
 import { buildFetchMemoryLeakProcessesQuery, parseFetchMemoryLeakProcessesResponse, type MemoryLeakProcess } from "../queries/fetchMemoryLeak";
 import { buildFetchProcessExecutionsQuery, parseFetchProcessExecutionsResponse, type FetchProcessExecutionsResponse } from "../queries/fetchProcessExecutions";
 import SidePanel from "../components/Panels/Sidepanel";
+import { fetchProcessTreeQuery, mapProcessTreeResponse, type fetchProcessTreeResponse, type ProcessTreeInfo } from "../queries/fetchProcessTree";
+import ProcessTreeDiagram from "../components/Trees/ProcessTree";
 
 
 interface CardRowProps {
@@ -91,8 +93,12 @@ const DataEngineeringPage: React.FC = () => {
     const totalItemsPerPage = 10;
 
     const [selectedProcessName, setSelectedProcessName] = useState<string | null>(null);
-    const [processExecutionChartData, setProcessExecutionChartData] = useState<{ x: Date[]; memoryUsage: number[], cpuUsage: number[] } | null>(null);
+    const [processExecutionChartData, setProcessExecutionChartData] = useState<{ x: Date[]; memoryUsage: number[], cpuUsage: number[], processName: string, processId: string[], processingTimestamp: string[] } | null>(null);
     const [isFetchingExecutions, setIsFetchingExecutions] = useState(false);
+
+    const [processTreeData, setProcessTreeData] = useState<ProcessTreeInfo[]>([]);
+    const [processTreeHighlightPid, setProcessTreeHighlightPid] = useState<string | null>(null);
+    const [isFetchingProcessTree, setIsFetchingProcessTree] = useState(false);
 
 
     /**
@@ -189,7 +195,9 @@ const DataEngineeringPage: React.FC = () => {
         setIsFetchingExecutions(true);
         setSelectedProcessName(processName);
         setProcessExecutionChartData(null);
+        setProcessTreeData([]);
         try {
+            // Fetch Process Executions
             const result = await elasticsearchService.search<FetchProcessExecutionsResponse>(
                 buildFetchProcessExecutionsQuery({
                     deviceId: device,
@@ -203,24 +211,47 @@ const DataEngineeringPage: React.FC = () => {
             );
             if (!result || !result.hits?.hits?.length) {
                 console.error("No process executions found for:", processName);
-                setProcessExecutionChartData({ x: [], memoryUsage: [], cpuUsage: [] });
+                setProcessExecutionChartData({ x: [], memoryUsage: [], cpuUsage: [], processingTimestamp: [], processName: "", processId: [] });
+                setProcessTreeData([]);
                 return;
             }
             let executions = parseFetchProcessExecutionsResponse(result as any);
-            // if(executions?.length) {
-            //     executions = executions
-            //     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-            // }
 
+            // Set chart data
             setProcessExecutionChartData({
                 x: executions.map(e => new Date(e.timestamp)),
                 memoryUsage: executions.map(e => e.memory_megabytes),
-                cpuUsage: executions.map(e => e.cpu_usage)
+                cpuUsage: executions.map(e => e.cpu_usage),
+                processName,
+                processId: executions.map(e => e.process_id),
+                processingTimestamp: executions.map(e => e.processing_timestamp)
             });
         } finally {
             setIsFetchingExecutions(false);
         }
     };
+
+    const fetchProcessTree = async (processId:string, deviceId:string, processing_timestamp:string) => {
+        try {
+            setIsFetchingProcessTree(true);
+            const result = await elasticsearchService.search<fetchProcessTreeResponse>(
+                fetchProcessTreeQuery(deviceId, processing_timestamp),
+                elasticIndices.processTree
+            );
+            if(!result || !result.hits?.hits?.length) {
+                console.error("No process tree data found for:", {processId, deviceId, processing_timestamp});
+                setProcessTreeData([]);
+                return;
+            }
+            const processTree = mapProcessTreeResponse(result as any);
+            setProcessTreeData(processTree);
+            setProcessTreeHighlightPid(processId);
+        } catch (error) {
+            console.error("Error fetching process tree:", error);
+            setProcessTreeData([]);
+        }
+        setIsFetchingProcessTree(false);
+    }
 
     /**
      * Component Display related functions
@@ -242,6 +273,7 @@ const DataEngineeringPage: React.FC = () => {
         setActivePageMemoryLeak(1);
         setSelectedProcessName(null);
         setProcessExecutionChartData(null);
+        setProcessTreeData([]);
     }, [device, fromDate, toDate]);
 
     // Fires exactly once per unique (device + dateRange + page) combination for
@@ -312,13 +344,15 @@ const DataEngineeringPage: React.FC = () => {
                     { name: "Process Name", key: "processName" },
                     { name: "Average Memory Usage (GB)", key: "avgMemoryUsageGB" },
                     { name: "Avg. Deviation from Mean (%)", key: "deviationMemoryConsumption" },
-                    { name: "Average CPU Usage (%)", key: "avgCpuConsumption" }
+                    { name: "Average CPU Usage (%)", key: "avgCpuConsumption" },
+                    { name: "Processed At", key: "processingTimestamp"}
                 ]}
                 data={memoryIntenseProcesses.map(p => ({
                     processName: p.process_name,
                     avgMemoryUsageGB: (p.avg_memory_megabytes / 1024).toFixed(2),
                     deviationMemoryConsumption: p.deviation_memory_consumption.toFixed(2),
-                    avgCpuConsumption: p.avg_cpu_consumption.toFixed(2)
+                    avgCpuConsumption: p.avg_cpu_consumption.toFixed(2),
+                    processingTimestamp: new Date(p.processing_timestamp).toLocaleString()
                 }))}
                 pagination={
                     Array.from({ length: Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage) }, (_, i) => ({
@@ -375,28 +409,55 @@ const DataEngineeringPage: React.FC = () => {
                         <LineChart
                             title={`Memory Usage over Time — ${selectedProcessName}`}
                             data={[{
-                                label: "Memory (MB)",
+                                label: processExecutionChartData.processName,
                                 x: processExecutionChartData.x,
-                                y: processExecutionChartData.memoryUsage
+                                y: processExecutionChartData.memoryUsage,
+                                dataPointId: processExecutionChartData.processId
                             }]}
                             xAxisTitle="Time"
                             yAxisTitle="Memory (MB)"
                             timeSeriesUnit="hour"
+                            onDataPointClick={(datapointId:string) => {
+                                const index = processExecutionChartData.processId.findIndex(id => id === datapointId);
+                                if(index !== -1) {
+                                    const processId = processExecutionChartData.processId[index];
+                                    const processingTimestamp = processExecutionChartData.processingTimestamp[index];
+                                    fetchProcessTree(processId, device, processingTimestamp);
+                                }
+                            }}
                         />
                     )}
                     {!isFetchingExecutions && processExecutionChartData && processExecutionChartData.x.length > 0 && (
                         <LineChart
                             title={`CPU Usage over Time — ${selectedProcessName}`}
                             data={[{
-                                label: "CPU (%)",
+                                label: processExecutionChartData.processName,
                                 x: processExecutionChartData.x,
+                                dataPointId: processExecutionChartData.processId,
                                 y: processExecutionChartData.cpuUsage
                             }]}
                             xAxisTitle="Time"
                             yAxisTitle="CPU (%)"
                             timeSeriesUnit="hour"
+                            onDataPointClick={(datapointId:string) => {
+                                const index = processExecutionChartData.processId.findIndex(id => id === datapointId);
+                                if(index !== -1) {
+                                    const processId = processExecutionChartData.processId[index];
+                                    const processingTimestamp = processExecutionChartData.processingTimestamp[index];
+                                    fetchProcessTree(processId, device, processingTimestamp);
+                                }
+                            }}
                         />
                     )}
+                    {
+                        !isFetchingProcessTree && processTreeData && processTreeData.length > 0 && (
+                            <ProcessTreeDiagram 
+                                deviceId={device}
+                                processId={processTreeHighlightPid || ""}
+                                processes={processTreeData}
+                            />
+                        )
+                    }
                 </div>
             )}
         </SidePanel>
