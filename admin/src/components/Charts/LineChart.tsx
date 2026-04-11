@@ -109,6 +109,7 @@ const LineChart: React.FC<LineChartProps> = ({
 
     if(onDataPointClick) {
         options.onClick = (event, elements, chart) => {
+            console.debug('Data point clicked:', { event, elements, chart });
             if (elements.length > 0) {
                 // Retrieve the data point index
                 const dataIndex = elements[0].index;
