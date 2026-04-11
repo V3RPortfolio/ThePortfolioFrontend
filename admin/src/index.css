@@ -532,6 +532,19 @@ Level 2 (Styles):
   height: auto !important;
   max-width: 1024px;
 }
+
+/* Probability Distribution Chart */
+.probability-distribution-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--padding-lg);
+}
+.probability-distribution-chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 1024px;
+}
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
