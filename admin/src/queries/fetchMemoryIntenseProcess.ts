@@ -52,7 +52,7 @@ export const buildFetchMemoryIntenseProcessQuery = ({
                 },
                 {
                     "range": {
-                        "timestamp": {
+                        "processing_timestamp": {
                             "gte": from,
                             "lte": to
                         }
@@ -72,7 +72,8 @@ export const buildFetchMemoryIntenseProcessQuery = ({
         "process_name",
         "avg_memory_megabytes",
         "deviation_memory_consumption",
-        "avg_cpu_consumption"
+        "avg_cpu_consumption",
+        "processing_timestamp"
     ]
 });
 
@@ -84,6 +85,7 @@ export interface MemoryIntenseProcess {
     deviation_memory_consumption: number;
     /** Pre-aggregated average CPU usage percentage */
     avg_cpu_consumption: number;
+    processing_timestamp: string; // ISO 8601 date string
 }
 
 export interface FetchMemoryIntenseProcessResult {
@@ -110,7 +112,8 @@ export const parseFetchMemoryIntenseProcessResponse = (
             process_name: h._source.process_name,
             avg_memory_megabytes: h._source.avg_memory_megabytes ?? 0,
             deviation_memory_consumption: h._source.deviation_memory_consumption ?? 0,
-            avg_cpu_consumption: h._source.avg_cpu_consumption ?? 0
+            avg_cpu_consumption: h._source.avg_cpu_consumption ?? 0,
+            processing_timestamp: h._source.processing_timestamp ?? ""
         }));
 
     return {

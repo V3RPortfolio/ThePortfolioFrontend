@@ -1,5 +1,6 @@
 VITE_APP_BASE_URL="/admin"
 VITE_GATEWAY_API="http://localhost"
+VITE_ELASTIC_ENDPOINT="http://localhost:9200"
 VITE_APP_WEBSITE_URL="http://localhost:4200"
 VITE_AUTHENTICATE=false
 VITE_JWT_HEADER="Authorization"

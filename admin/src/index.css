@@ -520,6 +520,18 @@ Level 2 (Styles):
   filter: drop-shadow(0 0 2em var(--color-fill-end));
 }
 
+/* Line Chart */
+.line-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--padding-lg);
+}
+.line-chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 1024px;
+}
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);

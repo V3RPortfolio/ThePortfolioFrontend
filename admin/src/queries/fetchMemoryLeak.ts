@@ -51,7 +51,7 @@ export const buildFetchMemoryLeakProcessesQuery = ({
                 },
                 {
                     "range": {
-                        "timestamp": {
+                        "processing_timestamp": {
                             "gte": from,
                             "lte": to
                         }
@@ -70,7 +70,8 @@ export const buildFetchMemoryLeakProcessesQuery = ({
     "_source": [
         "process_name",
         "avg_memory_leak",
-        "deviation_memory_leak"
+        "deviation_memory_leak",
+        "processing_timestamp"
     ]
 });
 
