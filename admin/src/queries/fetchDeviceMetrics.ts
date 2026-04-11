@@ -44,7 +44,7 @@ export const buildFetchDeviceMetricsQuery = ({ deviceId, from, to }: FetchDevice
                 },
                 {
                     "range": {
-                        "timestamp": {
+                        "processing_timestamp": {
                             "gte": from,
                             "lte": to
                         }

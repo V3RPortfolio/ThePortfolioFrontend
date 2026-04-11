@@ -36,7 +36,7 @@ export const buildFetchTotalIoDevicesQuery = ({ deviceId, from, to }: FetchTotal
                 },
                 {
                     "range": {
-                        "timestamp": {
+                        "processing_timestamp": {
                             "gte": from,
                             "lte": to
                         }

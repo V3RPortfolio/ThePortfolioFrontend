@@ -53,6 +53,8 @@ const LineChart: React.FC<LineChartProps> = ({
 }) => {
     const options:ChartOptions<'line'> = {
         responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 2,
         plugins: {
             legend: {
                 position: 'top' as const,
@@ -101,14 +103,16 @@ const LineChart: React.FC<LineChartProps> = ({
         }
     });
 
-    return <Line
-        options={options}
-        data={{
-            datasets: dataset,
-            xLabels,
-            yLabels,
-        }}
-    />;
+    return <div className="relative h-auto w-full line-chart-container">
+        <Line
+            options={options}
+            data={{
+                datasets: dataset,
+                xLabels,
+                yLabels,
+            }}
+        />
+    </div>;
 }
 
 export default LineChart;

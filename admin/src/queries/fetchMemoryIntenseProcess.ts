@@ -52,7 +52,7 @@ export const buildFetchMemoryIntenseProcessQuery = ({
                 },
                 {
                     "range": {
-                        "timestamp": {
+                        "processing_timestamp": {
                             "gte": from,
                             "lte": to
                         }
@@ -72,7 +72,8 @@ export const buildFetchMemoryIntenseProcessQuery = ({
         "process_name",
         "avg_memory_megabytes",
         "deviation_memory_consumption",
-        "avg_cpu_consumption"
+        "avg_cpu_consumption",
+        "processing_timestamp"
     ]
 });
 
