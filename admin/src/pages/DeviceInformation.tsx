@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ProbabilityDistributionChart from "../components/Charts/ProbabilityDistributionChart";
-import TimeRange from "../components/Filters/TimeRange";
+// import TimeRange from "../components/Filters/TimeRange";
 import elasticsearchService from "../services/elasticsearch.service";
 import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUniqueDevicesResponse } from "../queries/fetchUniqueDevices";
 import { elasticIndices } from "../constants";
