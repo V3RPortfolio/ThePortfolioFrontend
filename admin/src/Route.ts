@@ -1,8 +1,9 @@
 import NotFound from "./pages/404";
 import type { RouteProps } from "react-router-dom";
 import Home from "./pages/Home";
-import DataEngineeringPage from "./pages/DataEngineering";
+import ProcessInformationPage from "./pages/ProcessInformation";
 import { baseUrl } from "./constants";
+import DeviceInformationPage from "./pages/DeviceInformation";
 
 
 export interface SidebarRoutesDTO {
@@ -31,50 +32,16 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
         },
 
         {
-            path: `${base}/frontend-components`,
-            component: Home,
-            id: 'frontend-components',
-            label: 'Frontend Components'
-        },
-
-        {
-            path: `${base}/backend-components`,
-            component: Home,
-            id: 'backend-components',
-            label: 'Backend Components'
-        },
-
-        {
-            path: `${base}/system-designs`,
-            component: Home,
-            id: 'system-designs',
-            label: 'System Designs'
-        },
-
-        {
-            path: `${base}/artificial-intelligence`,
-            component: Home,
-            id: 'artificial-intelligence',
-            label: 'Artificial Intelligence'
-        },
-
-        {
-            path: `${base}/data-engineering/`,
-            component: DataEngineeringPage,
-            id: 'data-engineering',
-            label: 'Data Engineering'
+            path: `${base}/process-information/`,
+            component: ProcessInformationPage,
+            id: 'process-information',
+            label: 'Process Information'
         },
         {
-            path: `${base}/deployment-pipelines`,
-            component: Home,
-            id: 'deployment-pipelines',
-            label: 'Deployment Pipelines'
-        },
-        {
-            path: `${base}/cloud-infrastructure`,
-            component: Home,
-            id: 'cloud-infrastructure',
-            label: 'Cloud Infrastructure & Networking'
+            path: `${base}/device-information/`,
+            component: DeviceInformationPage,
+            id: 'device-information',
+            label: 'Device Information'
         },
         {
             path: `${import.meta.env.VITE_APP_WEBSITE_URL || '/'}`,
