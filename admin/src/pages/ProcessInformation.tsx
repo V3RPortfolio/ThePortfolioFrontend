@@ -67,7 +67,7 @@ const CardRow: React.FC<CardRowProps> = ({ memoryUsagePercent, cpuUsagePercent, 
  * 9. CPU Consumption of single process over time (Line Chart)
  * @returns
  */
-const DataEngineeringPage: React.FC = () => {
+const ProcessInformationPage: React.FC = () => {
     const [memoryUsagePercent, setMemoryUsagePercent] = useState(0.0);
     const [cpuUsagePercent, setCpuUsagePercent] = useState(0.0);
     const [memoryUsageGB, setMemoryUsageGB] = useState(0.0);
@@ -465,4 +465,4 @@ const DataEngineeringPage: React.FC = () => {
     </>;
 };
 
-export default DataEngineeringPage;
+export default ProcessInformationPage;
