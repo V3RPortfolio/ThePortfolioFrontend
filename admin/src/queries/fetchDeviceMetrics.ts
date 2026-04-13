@@ -1,39 +1,41 @@
 /**
- * Elasticsearch DSL Query: Fetch the latest device metrics from the process_executions index,
+ * Elasticsearch DSL Query: Fetch the latest device metrics from the device_metrics index,
  * filtered by device_id and a timestamp range, sorted by timestamp descending.
- * URL Path: /process_executions/_search
+ * URL Path: /device_metrics/_search
  * Method: POST
  * Response: Returns the most recent document matching the filters.
  * {
- *   "hits": {
- *     "total": { "value": 1, "relation": "eq" },
- *     "hits": [
- *       {
- *         "_source": {
- *           "device_id": "device-abc-123",
- *           "process_name": "my_process",
- *           "executed_by": "root",
- *           "cpu_usage": 12.5,
- *           "memory_usage": 45.3,
- *           "memory_megabytes": 1024.0,
- *           "timestamp": "2026-04-07T10:00:00Z"
- *         }
- *       }
- *     ]
+ *  "aggs": {
+ *   "metrics_over_time": {
+ *      "buckets": [
+ *          {
+ *              "key_as_string": "2026-04-07T10:00:00Z",
+ *             "average_cpu_usage": {
+ *                "value": 25.5
+ *              },
+ *              "average_memory_usage": {
+ *                "value": 45.3
+ *              },
+ *              "average_memory_megabytes": {
+ *                "value": 1024.0
+ *              }
+ *          }
+ *      ]
  *   }
  * }
  */
 
-import type { ElasticSearchResponse } from "../interfaces/elasticsearch.interface";
+import type { ElasticSearchAggregationResponse } from "../interfaces/elasticsearch.interface";
 
 export interface FetchDeviceMetricsParams {
     deviceId: string;
     from: string; // ISO 8601 date string, e.g. "2026-01-01T00:00:00Z"
     to: string;   // ISO 8601 date string, e.g. "2026-12-31T23:59:59Z"
+    unit?: "minute" | "hour" | "day" | "week" | "month" | "year";
 }
 
-export const buildFetchDeviceMetricsQuery = ({ deviceId, from, to }: FetchDeviceMetricsParams) => ({
-    "size": 1,
+export const buildFetchDeviceMetricsQuery = ({ deviceId, from, to, unit }: FetchDeviceMetricsParams) => ({
+    "size": 0,
     "query": {
         "bool": {
             "filter": [
@@ -53,66 +55,80 @@ export const buildFetchDeviceMetricsQuery = ({ deviceId, from, to }: FetchDevice
             ]
         }
     },
-    "sort": [
-        {
-            "timestamp": {
-                "order": "desc"
-            }
+    "aggs": {
+        "metrics_over_time": {
+                "date_histogram": {
+                    "field": "processing_timestamp",
+                    "calendar_interval": unit || "hour",
+                    "format": "yyyy-MM-dd'T'HH:mm:ssZ",
+                },
+                "aggs": {
+                    "average_cpu_usage": {
+                        "avg": {
+                            "field": "cpu_usage"
+                        }
+                    },
+                    "average_memory_usage": {
+                        "avg": {
+                            "field": "memory_usage"
+                        }
+                    },
+                    "average_memory_megabytes": {
+                        "avg": {
+                            "field": "memory_megabytes"
+                        }
+                    }
+                }            
         }
-    ],
+    },
     "_source": [
-        "device_id",
-        "process_name",
-        "executed_by",
         "cpu_usage",
         "memory_usage",
         "memory_megabytes",
-        "timestamp"
+        "processing_timestamp",
     ]
 });
 
 export interface FetchDeviceMetricsResponse {
-    device_id: string;
-    process_name: string;
-    executed_by: string;
     cpu_usage: number;
     memory_usage: number;
     memory_megabytes: number;
-    timestamp: string;
+    processing_timestamp: string;
 }
 
-export const parseFetchDeviceMetricsResponse = (response: ElasticSearchResponse<FetchDeviceMetricsResponse>): FetchDeviceMetricsResponse | null => {
+export interface FetchDeviceMetricsAggregationResponse extends ElasticSearchAggregationResponse<null, FetchDeviceMetricsResponse> {
+    metrics_over_time: {
+        buckets: {
+            key_as_string: string; // e.g. "2026-04-07T10:00:00Z"
+            key: number; // timestamp in milliseconds
+            average_memory_usage: {
+                value: number;
+            };
+            average_memory_megabytes: {
+                value: number;
+            };
+            average_cpu_usage: {
+                value: number;
+            };
+        }[];
+    }
+}
+
+export const parseFetchDeviceMetricsResponse = (response: FetchDeviceMetricsAggregationResponse): FetchDeviceMetricsResponse[] => {
     if (
         typeof response !== 'object' ||
-        !response.hits ||
-        !Array.isArray(response.hits.hits) ||
-        response.hits.hits.length === 0
+        !response?.metrics_over_time?.buckets?.length
     ) {
         console.error("Invalid or empty response format for buildFetchFetchDeviceMetricsResponseQuery:", response);
-        return null;
+        return [];
     }
 
-    const hit = response.hits.hits[0];
-
-    if (
-        !hit._source ||
-        typeof hit._source.device_id !== 'string' ||
-        typeof hit._source.cpu_usage !== 'number' ||
-        typeof hit._source.memory_usage !== 'number' ||
-        typeof hit._source.memory_megabytes !== 'number' ||
-        typeof hit._source.timestamp !== 'string'
-    ) {
-        console.error("Unexpected _source shape in fetchFetchDeviceMetricsResponse response:", hit);
-        return null;
-    }
-
-    return {
-        device_id: hit._source.device_id,
-        process_name: hit._source.process_name,
-        executed_by: hit._source.executed_by,
-        cpu_usage: hit._source.cpu_usage,
-        memory_usage: hit._source.memory_usage,
-        memory_megabytes: hit._source.memory_megabytes,
-        timestamp: hit._source.timestamp
-    };
+    return response.metrics_over_time.buckets.map(bucket => {
+        return {
+            cpu_usage: bucket.average_cpu_usage.value || 0,
+            memory_usage: bucket.average_memory_usage.value || 0,
+            memory_megabytes: bucket.average_memory_megabytes.value || 0,
+            processing_timestamp: bucket.key_as_string
+        }
+    });
 };

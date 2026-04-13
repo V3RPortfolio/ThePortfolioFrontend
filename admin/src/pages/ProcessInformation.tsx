@@ -9,7 +9,7 @@ import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUni
 import { buildFetchTotalIoDevicesQuery, type FetchTotalIoDevicesResponse } from "../queries/fetchTotalIoDevices";
 import Dropdown from "../components/Filters/Dropdown";
 import TimeRange from "../components/Filters/TimeRange";
-import { buildFetchDeviceMetricsQuery, type FetchDeviceMetricsResponse } from "../queries/fetchDeviceMetrics";
+import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../queries/fetchDeviceMetrics";
 import { buildFetchMemoryIntenseProcessQuery, parseFetchMemoryIntenseProcessResponse, type MemoryIntenseProcess } from "../queries/fetchMemoryIntenseProcess";
 import { buildFetchMemoryLeakProcessesQuery, parseFetchMemoryLeakProcessesResponse, type MemoryLeakProcess } from "../queries/fetchMemoryLeak";
 import { buildFetchProcessExecutionsQuery, parseFetchProcessExecutionsResponse, type FetchProcessExecutionsResponse } from "../queries/fetchProcessExecutions";
@@ -122,19 +122,28 @@ const ProcessInformationPage: React.FC = () => {
     };
 
     const fetchDeviceMetrics = async () => {
-        const result = await elasticsearchService.search<FetchDeviceMetricsResponse>(buildFetchDeviceMetricsQuery({
+        const result = await elasticsearchService.aggregate<null, FetchDeviceMetricsAggregationResponse>(buildFetchDeviceMetricsQuery({
             deviceId: device,
             from: fromDate,
             to: toDate
         }), elasticIndices.deviceMetrics);
-        if(!result || !result.hits || !result.hits.hits || result.hits.hits.length === 0) {
+        
+        if(!result || !result.aggregations) {
             console.error("Failed to fetch device metrics:", result);
             return;
         }
-        const latestMetrics = result.hits.hits[0]._source;
+        const metrics = parseFetchDeviceMetricsResponse(result.aggregations);
+        if(metrics.length === 0) {
+            setMemoryUsagePercent(0);
+            setCpuUsagePercent(0);
+            setMemoryUsageGB(0);
+            return;
+        }
+        // Assuming the last bucket is the most recent one due to chronological ordering of buckets
+        const latestMetrics = metrics[metrics.length - 1];
         setMemoryUsagePercent(latestMetrics.memory_usage);
         setCpuUsagePercent(latestMetrics.cpu_usage);
-        setMemoryUsageGB(latestMetrics.memory_megabytes / 1024);
+        setMemoryUsageGB(latestMetrics.memory_megabytes / 1024); // Convert MB to GB
     };
 
     const fetchMemoryIntensiveProcesses = useMemo(async () => {
