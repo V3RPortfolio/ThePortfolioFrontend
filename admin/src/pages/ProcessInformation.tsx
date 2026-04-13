@@ -10,8 +10,7 @@ import { buildFetchTotalIoDevicesQuery, type FetchTotalIoDevicesResponse } from 
 import Dropdown from "../components/Filters/Dropdown";
 import TimeRange from "../components/Filters/TimeRange";
 import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../queries/fetchDeviceMetrics";
-import { buildFetchMemoryIntenseProcessQuery, parseFetchMemoryIntenseProcessResponse, type MemoryIntenseProcess } from "../queries/fetchMemoryIntenseProcess";
-import { buildFetchMemoryLeakProcessesQuery, parseFetchMemoryLeakProcessesResponse, type MemoryLeakProcess } from "../queries/fetchMemoryLeak";
+import { buildFetchRunningDevicesStatsQuery, parseFetchRunningDevicesStatsResponse, type RunningDevicesStatsResponse } from "../queries/fetchRunningDeviceStats";
 import { buildFetchProcessExecutionsQuery, parseFetchProcessExecutionsResponse, type FetchProcessExecutionsResponse } from "../queries/fetchProcessExecutions";
 import SidePanel from "../components/Panels/Sidepanel";
 import { fetchProcessTreeQuery, mapProcessTreeResponse, type fetchProcessTreeResponse, type ProcessTreeInfo } from "../queries/fetchProcessTree";
@@ -82,11 +81,11 @@ const ProcessInformationPage: React.FC = () => {
     const [fromDate, setFromDate] = useState(past24Hours.toISOString());
     const [toDate, setToDate] = useState(today.toISOString());
 
-    const [memoryIntenseProcesses, setMemoryIntenseProcesses] = useState<MemoryIntenseProcess[]>([]);
+    const [memoryIntenseProcesses, setMemoryIntenseProcesses] = useState<RunningDevicesStatsResponse[]>([]);
     const [activePageMemoryIntense, setActivePageMemoryIntense] = useState(1);
     const [totalMemoryIntenseProcess, setTotalMemoryIntenseProcess] = useState(1);
 
-    const [memoryLeakProcesses, setMemoryLeakProcesses] = useState<MemoryLeakProcess[]>([]);
+    const [memoryLeakProcesses, setMemoryLeakProcesses] = useState<RunningDevicesStatsResponse[]>([]);
     const [activePageMemoryLeak, setActivePageMemoryLeak] = useState(1);
     const [totalMemoryLeakProcesses, setTotalMemoryLeakProcesses] = useState(1);
 
@@ -147,13 +146,14 @@ const ProcessInformationPage: React.FC = () => {
     };
 
     const fetchMemoryIntensiveProcesses = useMemo(async () => {
-        const result = await elasticsearchService.search<MemoryIntenseProcess>(
-            buildFetchMemoryIntenseProcessQuery({
+        const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
+            buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
                 from: fromDate,
                 to: toDate,
                 page: activePageMemoryIntense,
-                pageSize: totalItemsPerPage
+                pageSize: totalItemsPerPage,
+                order_by: "avg_memory_megabytes"
             }),
             elasticIndices.runningProcesses
         );
@@ -161,7 +161,7 @@ const ProcessInformationPage: React.FC = () => {
             console.error("Failed to fetch memory intensive processes:", result);
             return;
         }
-        return parseFetchMemoryIntenseProcessResponse(result);
+        return parseFetchRunningDevicesStatsResponse(result);
         
     }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage]);
 
@@ -183,21 +183,22 @@ const ProcessInformationPage: React.FC = () => {
     };
 
     const fetchMemoryLeakProcesses = useMemo(async () => {
-        const result = await elasticsearchService.search<MemoryLeakProcess>(
-            buildFetchMemoryLeakProcessesQuery({
+        const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
+            buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
                 from: fromDate,
                 to: toDate,
-                page: activePageMemoryLeak,
-                pageSize: totalItemsPerPage
+                page: activePageMemoryIntense,
+                pageSize: totalItemsPerPage,
+                order_by: "avg_memory_megabytes"
             }),
             elasticIndices.runningProcesses
         );
         if(!result || !result.hits || !result.hits.hits?.length) {
-            console.error("Failed to fetch memory leak processes:", result);
+            console.error("Failed to fetch memory intensive processes:", result);
             return;
         }
-        return parseFetchMemoryLeakProcessesResponse(result);
+        return parseFetchRunningDevicesStatsResponse(result);
     }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage]);
 
     const fetchProcessExecutions = async (processName: string) => {
@@ -358,9 +359,9 @@ const ProcessInformationPage: React.FC = () => {
                 ]}
                 data={memoryIntenseProcesses.map(p => ({
                     processName: p.process_name,
-                    avgMemoryUsageGB: (p.avg_memory_megabytes / 1024).toFixed(2),
-                    deviationMemoryConsumption: p.deviation_memory_consumption.toFixed(2),
-                    avgCpuConsumption: p.avg_cpu_consumption.toFixed(2),
+                    avgMemoryUsageGB: ((p.avg_memory_megabytes || 0) / 1024).toFixed(2),
+                    deviationMemoryConsumption: (p.deviation_memory_consumption || 0).toFixed(2),
+                    avgCpuConsumption: (p.avg_cpu_consumption || 0).toFixed(2),
                     processingTimestamp: new Date(p.processing_timestamp).toLocaleString()
                 }))}
                 pagination={
@@ -385,8 +386,8 @@ const ProcessInformationPage: React.FC = () => {
                 ]}
                 data={memoryLeakProcesses.map(p => ({
                     processName: p.process_name,
-                    avgMemoryLeak: p.avg_memory_leak.toFixed(2),
-                    deviationMemoryLeak: p.deviation_memory_leak.toFixed(2)
+                    avgMemoryLeak: (p.avg_memory_leak || 0).toFixed(2),
+                    deviationMemoryLeak: (p.deviation_memory_leak || 0).toFixed(2)
                 }))}
                 pagination={Array.from({ length: Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage) }, (_, i) => ({
                     pageNumber: i + 1,
