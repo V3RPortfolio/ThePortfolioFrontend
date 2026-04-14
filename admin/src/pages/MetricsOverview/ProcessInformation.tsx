@@ -1,20 +1,20 @@
 import type React from "react";
-import MetricsCard from "../components/Card/MetricsCard";
+import MetricsCard from "../../components/Card/MetricsCard";
 import { useEffect, useMemo, useState } from "react";
-import LineChart from "../components/Charts/LineChart";
-import DataTable from "../components/Table/DataTable";
-import elasticsearchService from "../services/elasticsearch.service";
-import { elasticIndices } from "../constants";
-import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUniqueDevicesResponse } from "../queries/fetchUniqueDevices";
-import { buildFetchTotalIoDevicesQuery, type FetchTotalIoDevicesResponse } from "../queries/fetchTotalIoDevices";
-import Dropdown from "../components/Filters/Dropdown";
-import TimeRange from "../components/Filters/TimeRange";
-import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../queries/fetchDeviceMetrics";
-import { buildFetchRunningDevicesStatsQuery, parseFetchRunningDevicesStatsResponse, type RunningDevicesStatsResponse } from "../queries/fetchRunningDeviceStats";
-import { buildFetchProcessExecutionsQuery, parseFetchProcessExecutionsResponse, type FetchProcessExecutionsResponse } from "../queries/fetchProcessExecutions";
-import SidePanel from "../components/Panels/Sidepanel";
-import { fetchProcessTreeQuery, mapProcessTreeResponse, type fetchProcessTreeResponse, type ProcessTreeInfo } from "../queries/fetchProcessTree";
-import ProcessTreeDiagram from "../components/Trees/ProcessTree";
+import LineChart from "../../components/Charts/LineChart";
+import DataTable from "../../components/Table/DataTable";
+import elasticsearchService from "../../services/elasticsearch.service";
+import { elasticIndices } from "../../constants";
+import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUniqueDevicesResponse } from "../../queries/fetchUniqueDevices";
+import { buildFetchTotalIoDevicesQuery, type FetchTotalIoDevicesResponse } from "../../queries/fetchTotalIoDevices";
+import Dropdown from "../../components/Filters/Dropdown";
+import TimeRange from "../../components/Filters/TimeRange";
+import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../../queries/fetchDeviceMetrics";
+import { buildFetchRunningDevicesStatsQuery, parseFetchRunningDevicesStatsResponse, type RunningDevicesStatsResponse } from "../../queries/fetchRunningDeviceStats";
+import { buildFetchProcessExecutionsQuery, parseFetchProcessExecutionsResponse, type FetchProcessExecutionsResponse } from "../../queries/fetchProcessExecutions";
+import SidePanel from "../../components/Panels/Sidepanel";
+import { fetchProcessTreeQuery, mapProcessTreeResponse, type fetchProcessTreeResponse, type ProcessTreeInfo } from "../../queries/fetchProcessTree";
+import ProcessTreeDiagram from "../../components/Trees/ProcessTree";
 
 
 interface CardRowProps {

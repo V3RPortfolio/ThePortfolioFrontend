@@ -1,9 +1,10 @@
 import NotFound from "./pages/404";
 import type { RouteProps } from "react-router-dom";
 import Home from "./pages/Home";
-import ProcessInformationPage from "./pages/ProcessInformation";
+import ProcessInformationPage from "./pages/MetricsOverview/ProcessInformation";
 import { baseUrl } from "./constants";
-import DeviceInformationPage from "./pages/DeviceInformation";
+import DeviceInformationPage from "./pages/MetricsOverview/DeviceInformation";
+import OrganizationSettingsPage from "./pages/OrganizationSettings";
 
 
 export interface SidebarRoutesDTO {
@@ -12,6 +13,7 @@ export interface SidebarRoutesDTO {
     icon?: React.ReactNode;
 
     path: string;
+    parentRoute?: string;
     component?: React.JSX.ElementType|undefined;
     isRedirect?: boolean;
 
@@ -49,6 +51,18 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
             id: 'website',
             label: 'Website',
             ordering: 99999
+        },
+        {
+            path: '',
+            id: 'settings',
+            label: 'Settings',
+        },
+        {
+            path: `${base}/settings/organization/`,
+            component: OrganizationSettingsPage,
+            id: 'organization-settings',
+            label: 'Organization Settings',
+            parentRoute: 'settings',
         }
     ];
 }

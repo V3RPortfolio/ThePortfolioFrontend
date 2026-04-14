@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
-import ProbabilityDistributionChart from "../components/Charts/ProbabilityDistributionChart";
+import ProbabilityDistributionChart from "../../components/Charts/ProbabilityDistributionChart";
 // import TimeRange from "../components/Filters/TimeRange";
-import elasticsearchService from "../services/elasticsearch.service";
-import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUniqueDevicesResponse } from "../queries/fetchUniqueDevices";
-import { elasticIndices } from "../constants";
-import { fetchDistributionDataQuery, parseFetchDistributionDataResponse, type DistributionInfo, type fetchDistributionDataResponse } from "../queries/fetchDistributionData";
-import Dropdown from "../components/Filters/Dropdown";
+import elasticsearchService from "../../services/elasticsearch.service";
+import { fetchUniqueDevicesQuery, parseFetchUniqueDevicesResponse, type FetchUniqueDevicesResponse } from "../../queries/fetchUniqueDevices";
+import { elasticIndices } from "../../constants";
+import { fetchDistributionDataQuery, parseFetchDistributionDataResponse, type DistributionInfo, type fetchDistributionDataResponse } from "../../queries/fetchDistributionData";
+import Dropdown from "../../components/Filters/Dropdown";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import TimeRange from "../components/Filters/TimeRange";
-import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../queries/fetchDeviceMetrics";
-import LineChart from "../components/Charts/LineChart";
+import TimeRange from "../../components/Filters/TimeRange";
+import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../../queries/fetchDeviceMetrics";
+import LineChart from "../../components/Charts/LineChart";
 
 
 const DeviceInformationPage:React.FC = () => {
