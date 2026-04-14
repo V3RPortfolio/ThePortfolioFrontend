@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import ProcessInformationPage from "./pages/MetricsOverview/ProcessInformation";
 import { baseUrl } from "./constants";
 import DeviceInformationPage from "./pages/MetricsOverview/DeviceInformation";
-import OrganizationSettingsPage from "./pages/OrganizationSettings";
+import OrganizationSettingsPage from "./pages/Settings/Organization/OrganizationSettings";
 
 
 export interface SidebarRoutesDTO {
