@@ -55,7 +55,7 @@ const NotificationsPreviewPage: React.FC = () => {
 
     const handleMarkAsRead = async (notification: NotificationOut) => {
         try {
-            await notificationService.markNotificationsAsRead([Number(notification.id)]);
+            await notificationService.markNotificationsAsRead([notification.id]);
             addToast(`Marked "${notification.title}" as read`, "success");
             fetchNotifications(currentPage);
         } catch {

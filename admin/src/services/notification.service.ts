@@ -31,7 +31,7 @@ export class NotificationService {
         }
     }
 
-    async markNotificationsAsRead(notificationIds: number[]): Promise<NotificationReadStatusUpdate> {
+    async markNotificationsAsRead(notificationIds: string[]): Promise<NotificationReadStatusUpdate> {
         return httpService.post<NotificationReadStatusUpdate>(
             `${notificationApi}/mark-read`,
             {
