@@ -1,4 +1,5 @@
-import httpService from "./http.service";
+
+import httpService from "./http.service";
 import { organizationApi } from "../constants";
 import type {
     OrganizationOut,
@@ -7,6 +8,7 @@ import type {
     OrganizationUserOut,
     OrganizationUserIn,
     OrganizationUserUpdateIn,
+    OrganizationInvitationOut,
 } from "../interfaces/organization.interface";
 
 export class OrganizationService {
@@ -56,12 +58,6 @@ export class OrganizationService {
         }
     }
 
-    async addOrganizationUser(orgId: string, data: OrganizationUserIn): Promise<OrganizationUserOut> {
-        return httpService.post<OrganizationUserOut>(`${organizationApi}/${orgId}/users`, {
-            body: JSON.stringify(data),
-        }, true);
-    }
-
     async updateOrganizationUserRole(orgId: string, userEmail: string, data: OrganizationUserUpdateIn): Promise<OrganizationUserOut> {
         return httpService.fetch<OrganizationUserOut>(`${organizationApi}/${orgId}/users/${encodeURIComponent(userEmail)}`, {
             method: "PATCH",
@@ -72,6 +68,28 @@ export class OrganizationService {
     async removeOrganizationUser(orgId: string, userEmail: string): Promise<void> {
         return httpService.delete<void>(`${organizationApi}/${orgId}/users/${encodeURIComponent(userEmail)}`, {}, true);
     }
+
+    async leaveOrganization(orgId: string): Promise<void> {
+        return httpService.post<void>(`${organizationApi}/${orgId}/leave`, {}, true);
+    }
+
+    async inviteUser(orgId: string, data: OrganizationUserIn): Promise<OrganizationInvitationOut> {
+        return httpService.post<OrganizationInvitationOut>(`${organizationApi}/invitations/${orgId}/invite`, {
+            body: JSON.stringify(data),
+        }, true);
+    }
+
+    async respondToInvitation(orgId: string, accept: boolean): Promise<OrganizationInvitationOut> {
+        return httpService.post<OrganizationInvitationOut>(`${organizationApi}/invitations/${orgId}/respond`, {
+            body: JSON.stringify({ accept }),
+        }, true);
+    }
+
+    async listInvitations(): Promise<OrganizationInvitationOut[]> {
+        return httpService.get<OrganizationInvitationOut[]>(`${organizationApi}/invitations/pending`, {}, true);
+    }
+
+
 }
 
 export default new OrganizationService();

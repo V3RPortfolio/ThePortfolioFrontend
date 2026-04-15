@@ -35,7 +35,6 @@ const TopHeader: React.FC<{className?: string}> = ({className}) => {
             currentPath += location.pathname[i];
             i += 1
         }
-        console.log(paths);
         setCurrentPaths(paths);
 
         const notification = Object.values(allRoutes).find(route => route.id === "notification-settings");

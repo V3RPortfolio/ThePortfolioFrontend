@@ -1,3 +1,5 @@
+import type { NotificationType } from "../constants";
+
 export interface NotificationOut {
     id: string;
     title: string;
@@ -5,16 +7,14 @@ export interface NotificationOut {
     image_url: string | null;
     link_url: string | null;
     is_read: boolean;
-    notification_type: string | null;
+    notification_type: NotificationType | null;
     created_at: string;
     updated_at: string;
 }
 
 export interface PaginatedNotificationOut {
     items: NotificationOut[];
-    total: number;
-    page: number;
-    page_size: number;
+    count: number;
 }
 
 export interface NotificationReadStatusUpdateOut {

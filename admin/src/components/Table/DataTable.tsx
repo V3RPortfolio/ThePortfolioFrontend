@@ -14,9 +14,10 @@ interface DataTableProps {
     totalPages?: number; // Optional total pages for better pagination control
     clipLongText?: boolean; // Optional prop to enable text clipping in cells
     onRowClick?: (row: TableData) => void; // Optional click handler for table rows
+    actions?: {name: string, handler: (row: TableData) => void, className?: string}[]; // Optional actions for each row, e.g., edit, delete
 }
 
-const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler, totalPages, clipLongText, onRowClick }: DataTableProps) => {
+const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler, totalPages, clipLongText, onRowClick, actions }: DataTableProps) => {
     const rowsAreClickable = Boolean(onRowClick);
 
     return (
@@ -39,6 +40,17 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                     {col.name}
                                 </th>
                             ))}
+                            {actions && actions.length > 0 && (
+                                <th
+                                    className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap"
+                                    style={{
+                                        color: "var(--color-text-secondary)",
+                                        borderBottom: "1px solid var(--color-border)",
+                                    }}
+                                >
+                                    Actions
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
@@ -109,6 +121,24 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                             >{row[col.key] ?? "—"}</span>
                                         </td>
                                     ))}
+                                    {actions && actions.length > 0 && (
+                                        <td className="px-5 py-3 text-sm whitespace-nowrap">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {actions.map((action, actionIndex) => (
+                                                    <button
+                                                        key={actionIndex}
+                                                        className={action.className || 'btn btn-primary btn-small'}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Prevent row click
+                                                            action.handler(row);
+                                                        }}
+                                                    >
+                                                        {action.name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         )}

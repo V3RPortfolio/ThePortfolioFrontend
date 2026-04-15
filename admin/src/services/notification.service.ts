@@ -11,24 +11,24 @@ export class NotificationService {
     async listNotifications(page: number = 1, pageSize: number = 10): Promise<PaginatedNotificationOut> {
         try {
             return await httpService.get<PaginatedNotificationOut>(
-                `${notificationApi}/?page=${page}&page_size=${pageSize}`,
+                `${notificationApi}/?offset=${(page - 1) * pageSize}&limit=${pageSize}`,
                 {},
                 true
             );
         } catch {
-            return { items: [], total: 0, page, page_size: pageSize };
+            return { items: [], count: 0 };
         }
     }
 
     async listUnreadNotifications(page: number = 1, pageSize: number = 10): Promise<PaginatedNotificationOut> {
         try {
             return await httpService.get<PaginatedNotificationOut>(
-                `${notificationApi}/unread?page=${page}&page_size=${pageSize}`,
+                `${notificationApi}/unread/?offset=${(page - 1) * pageSize}&limit=${pageSize}`,
                 {},
                 true
             );
         } catch {
-            return { items: [], total: 0, page, page_size: pageSize };
+            return { items: [], count: 0 };
         }
     }
 

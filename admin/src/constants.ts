@@ -27,3 +27,6 @@ export const elasticIndices = {
     deviceMetrics: 'device_metrics',
     runningProcesses: 'running_processes'
 }
+
+export type NotificationType = 'invitation' | 'alert';
+export const TOAST_DURATION = 4000;

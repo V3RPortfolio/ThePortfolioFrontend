@@ -1,33 +1,26 @@
 import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import notificationService from "../../../services/notification.service";
 import type { NotificationOut } from "../../../interfaces/notification.interface";
 import ViewNotification from "./components/ViewNotification";
 import Pagination from "../../../components/Pagination/Pagination";
+import { ToastContext } from "../../../contexts/toast.context";
 
-const PAGE_SIZE = 10;
-const TOAST_DURATION = 4000;
+const PAGE_SIZE = 20;
 
-interface Toast {
-    id: number;
-    message: string;
-    type: "success" | "error";
-}
 
 const NotificationsPreviewPage: React.FC = () => {
     const [notifications, setNotifications] = useState<NotificationOut[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(false);
-    const [toasts, setToasts] = useState<Toast[]>([]);
+    const toastContext = useContext(ToastContext);
 
-    const toastCounterRef = useRef(0);
     const addToast = (message: string, type: "success" | "error") => {
-        const id = ++toastCounterRef.current;
-        setToasts((prev) => [...prev, { id, message, type }]);
-        setTimeout(() => {
-            setToasts((prev) => prev.filter((t) => t.id !== id));
-        }, TOAST_DURATION);
+        toastContext?.addToast({
+            message,
+            type,
+        })
     };
 
     const fetchNotifications = useCallback(async (page: number) => {
@@ -35,8 +28,8 @@ const NotificationsPreviewPage: React.FC = () => {
         try {
             const data = await notificationService.listNotifications(page, PAGE_SIZE);
             setNotifications(data.items);
-            setCurrentPage(data.page);
-            setTotalPages(Math.max(1, Math.ceil(data.total / data.page_size)));
+            setCurrentPage(page);
+            setTotalPages(Math.max(1, Math.ceil(data.count / PAGE_SIZE)));
         } catch {
             addToast("Failed to load notifications", "error");
         } finally {
@@ -128,29 +121,6 @@ const NotificationsPreviewPage: React.FC = () => {
                         totalPages={totalPages}
                     />
                 </div>
-            </div>
-
-            {/* Toast notifications */}
-            <div className="fixed bottom-6 right-6 flex flex-col gap-2" style={{ zIndex: 9999 }}>
-                {toasts.map((toast) => (
-                    <div
-                        key={toast.id}
-                        className="card flex items-center gap-3 px-5 py-3 text-sm"
-                        style={{
-                            backgroundColor:
-                                toast.type === "error"
-                                    ? "var(--color-error-light)"
-                                    : "var(--color-tertiary-100)",
-                            color:
-                                toast.type === "error"
-                                    ? "var(--color-error)"
-                                    : "var(--color-tertiary-700)",
-                            minWidth: "260px",
-                        }}
-                    >
-                        {toast.message}
-                    </div>
-                ))}
             </div>
         </>
     );
