@@ -17,7 +17,11 @@ export interface PaginatedNotificationOut {
     page_size: number;
 }
 
-export interface NotificationReadStatusUpdate {
+export interface NotificationReadStatusUpdateOut {
     is_read: boolean;
     total_updated: number;
+}
+
+export interface NotificationReadStatusUpdateIn {
+    notification_ids: string[];
 }

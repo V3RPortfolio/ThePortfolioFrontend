@@ -1022,8 +1022,8 @@
     },
     "/api/notification/v1/mark-read": {
       "post": {
-        "operationId": "notification_views_notifications_mark_notifications_as_read",
-        "summary": "Mark Notifications As Read",
+        "operationId": "notification_views_notifications_mark_as_read",
+        "summary": "Mark As Read",
         "parameters": [],
         "responses": {
           "200": {
@@ -1031,7 +1031,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NotificationReadStatusUpdate"
+                  "$ref": "#/components/schemas/NotificationReadStatusUpdateOut"
                 }
               }
             }
@@ -1054,11 +1054,54 @@
           "content": {
             "application/json": {
               "schema": {
-                "items": {
-                  "type": "integer"
-                },
-                "title": "Notification Ids",
-                "type": "array"
+                "$ref": "#/components/schemas/NotificationReadStatusUpdatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
+    "/api/notification/v1/create": {
+      "post": {
+        "operationId": "notification_views_examples_create_notifications",
+        "summary": "Create Notifications",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notification"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationIn"
               }
             }
           },
@@ -1522,7 +1565,7 @@
         "title": "PaginatedNotificationOut",
         "type": "object"
       },
-      "NotificationReadStatusUpdate": {
+      "NotificationReadStatusUpdateOut": {
         "properties": {
           "is_read": {
             "title": "Is Read",
@@ -1537,7 +1580,23 @@
           "is_read",
           "total_updated"
         ],
-        "title": "NotificationReadStatusUpdate",
+        "title": "NotificationReadStatusUpdateOut",
+        "type": "object"
+      },
+      "NotificationReadStatusUpdatIn": {
+        "properties": {
+          "notification_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notification Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "notification_ids"
+        ],
+        "title": "NotificationReadStatusUpdatIn",
         "type": "object"
       },
       "NotificationIn": {

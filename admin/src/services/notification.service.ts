@@ -2,7 +2,8 @@ import httpService from "./http.service";
 import { notificationApi } from "../constants";
 import type {
     PaginatedNotificationOut,
-    NotificationReadStatusUpdate,
+    NotificationReadStatusUpdateOut,
+    NotificationReadStatusUpdateIn,
 } from "../interfaces/notification.interface";
 
 export class NotificationService {
@@ -31,11 +32,11 @@ export class NotificationService {
         }
     }
 
-    async markNotificationsAsRead(notificationIds: string[]): Promise<NotificationReadStatusUpdate> {
-        return httpService.post<NotificationReadStatusUpdate>(
+    async markNotificationsAsRead(data:NotificationReadStatusUpdateIn): Promise<NotificationReadStatusUpdateOut> {
+        return httpService.post<NotificationReadStatusUpdateOut>(
             `${notificationApi}/mark-read`,
             {
-                body: JSON.stringify(notificationIds),
+                body: JSON.stringify(data),
             },
             true
         );
