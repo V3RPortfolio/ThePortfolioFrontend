@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface NavigationLink {
+export interface NavigationLink {
   label: string;
   href?: string;
 }
@@ -8,11 +8,12 @@ interface NavigationLink {
 interface BreadCrumbProps {
   navigationLinks: NavigationLink[];
   pageTitle: string;
+  className?: string;
 }
 
-const BreadCrumb: React.FC<BreadCrumbProps> = ({ navigationLinks, pageTitle }) => {
+const BreadCrumb: React.FC<BreadCrumbProps> = ({ navigationLinks, pageTitle, className }) => {
   return (
-    <div className="flex flex-col">
+    <div className={`flex flex-col ${className}`}>
       {/* Navigation Links */}
       <nav className="flex items-center gap-xs">
         {navigationLinks.map((link, index) => (
@@ -22,10 +23,10 @@ const BreadCrumb: React.FC<BreadCrumbProps> = ({ navigationLinks, pageTitle }) =
                 {link.label}
               </a>
             ) : (
-              <span className="text-caption text-muted">{link.label}</span>
+              <span className="text-caption text-muted link">{link.label}</span>
             )}
             {index < navigationLinks.length - 1 && (
-              <span className="text-caption text-muted">/</span>
+              <span className="text-caption text-muted">&nbsp;/&nbsp;</span>
             )}
           </React.Fragment>
         ))}

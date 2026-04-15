@@ -5,6 +5,7 @@ import ProcessInformationPage from "./pages/MetricsOverview/ProcessInformation";
 import { baseUrl } from "./constants";
 import DeviceInformationPage from "./pages/MetricsOverview/DeviceInformation";
 import OrganizationSettingsPage from "./pages/Settings/Organization/OrganizationSettings";
+import NotificationsPreviewPage from "./pages/Settings/Notifications/NotificationPreview";
 
 
 export interface SidebarRoutesDTO {
@@ -61,7 +62,14 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
             path: `${base}/settings/organization/`,
             component: OrganizationSettingsPage,
             id: 'organization-settings',
-            label: 'Organization Settings',
+            label: 'Organization',
+            parentRoute: 'settings',
+        },
+        {
+            path: `${base}/settings/notifications/`,
+            component: NotificationsPreviewPage,
+            id: 'notification-settings',
+            label: 'Notifications',
             parentRoute: 'settings',
         }
     ];
