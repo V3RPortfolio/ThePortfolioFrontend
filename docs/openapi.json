@@ -293,6 +293,223 @@
         ]
       }
     },
+    "/api/organization/v1/invitations/{org_id}/respond": {
+      "post": {
+        "operationId": "organization_views_invitations_respond_to_org_invite",
+        "summary": "Respond To Org Invite",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationInvitationOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organization"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationInvitationResponseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
+    "/api/organization/v1/invitations/": {
+      "get": {
+        "operationId": "organization_views_invitations_list_org_invitations",
+        "summary": "List Org Invitations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationInvitationOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organization"
+        ],
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
+    "/api/organization/v1/invitations/{org_id}/invite": {
+      "post": {
+        "operationId": "organization_views_invitations_add_org_user",
+        "summary": "Add Org User",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationInvitationOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Organization"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationUserIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
     "/api/organization/v1/": {
       "post": {
         "operationId": "organization_views_organization_create_org",
@@ -671,92 +888,6 @@
             "AuthBearer": []
           }
         ]
-      },
-      "post": {
-        "operationId": "organization_views_organization_add_org_user",
-        "summary": "Add Org User",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "org_id",
-            "schema": {
-              "format": "uuid",
-              "title": "Org Id",
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationUserOut"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorMessage"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorMessage"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorMessage"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorMessage"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Organization"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OrganizationUserIn"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "AuthBearer": []
-          }
-        ]
       }
     },
     "/api/organization/v1/{org_id}/users/{user_email}": {
@@ -882,9 +1013,57 @@
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "Organization"
+        ],
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
+    "/api/organization/v1/{org_id}/leave": {
+      "post": {
+        "operationId": "organization_views_organization_leave_org",
+        "summary": "Leave Org",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationLeaveOut"
+                }
+              }
+            }
           },
-          "404": {
-            "description": "Not Found",
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
@@ -911,20 +1090,22 @@
         "parameters": [
           {
             "in": "query",
-            "name": "page",
+            "name": "limit",
             "schema": {
-              "default": 1,
-              "title": "Page",
+              "default": 100,
+              "minimum": 1,
+              "title": "Limit",
               "type": "integer"
             },
             "required": false
           },
           {
             "in": "query",
-            "name": "page_size",
+            "name": "offset",
             "schema": {
-              "default": 10,
-              "title": "Page Size",
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
               "type": "integer"
             },
             "required": false
@@ -936,7 +1117,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedNotificationOut"
+                  "$ref": "#/components/schemas/PagedNotificationOut"
                 }
               }
             }
@@ -969,20 +1150,22 @@
         "parameters": [
           {
             "in": "query",
-            "name": "page",
+            "name": "limit",
             "schema": {
-              "default": 1,
-              "title": "Page",
+              "default": 100,
+              "minimum": 1,
+              "title": "Limit",
               "type": "integer"
             },
             "required": false
           },
           {
             "in": "query",
-            "name": "page_size",
+            "name": "offset",
             "schema": {
-              "default": 10,
-              "title": "Page Size",
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
               "type": "integer"
             },
             "required": false
@@ -994,7 +1177,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedNotificationOut"
+                  "$ref": "#/components/schemas/PagedNotificationOut"
                 }
               }
             }
@@ -1022,8 +1205,8 @@
     },
     "/api/notification/v1/mark-read": {
       "post": {
-        "operationId": "notification_views_notifications_mark_notifications_as_read",
-        "summary": "Mark Notifications As Read",
+        "operationId": "notification_views_notifications_mark_as_read",
+        "summary": "Mark As Read",
         "parameters": [],
         "responses": {
           "200": {
@@ -1031,7 +1214,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NotificationReadStatusUpdate"
+                  "$ref": "#/components/schemas/NotificationReadStatusUpdateOut"
                 }
               }
             }
@@ -1054,11 +1237,54 @@
           "content": {
             "application/json": {
               "schema": {
-                "items": {
-                  "type": "integer"
-                },
-                "title": "Notification Ids",
-                "type": "array"
+                "$ref": "#/components/schemas/NotificationReadStatusUpdatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
+    "/api/notification/v1/create": {
+      "post": {
+        "operationId": "notification_views_examples_create_notifications",
+        "summary": "Create Notifications",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notification"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationIn"
               }
             }
           },
@@ -1233,6 +1459,102 @@
         "title": "GoogleOauth2Info",
         "type": "object"
       },
+      "OrganizationInvitationOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "organization_name": {
+            "title": "Organization Name",
+            "type": "string"
+          },
+          "invited_by": {
+            "title": "Invited By",
+            "type": "string"
+          },
+          "invited_email": {
+            "title": "Invited Email",
+            "type": "string"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "invitation_status": {
+            "title": "Invitation Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "organization_id",
+          "organization_name",
+          "invited_by",
+          "invited_email",
+          "role",
+          "created_at",
+          "invitation_status"
+        ],
+        "title": "OrganizationInvitationOut",
+        "type": "object"
+      },
+      "OrganizationInvitationResponseIn": {
+        "properties": {
+          "accept": {
+            "title": "Accept",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accept"
+        ],
+        "title": "OrganizationInvitationResponseIn",
+        "type": "object"
+      },
+      "OrganizationRoleType": {
+        "enum": [
+          "admin",
+          "owner",
+          "manager",
+          "editor",
+          "viewer"
+        ],
+        "title": "OrganizationRoleType",
+        "type": "string"
+      },
+      "OrganizationUserIn": {
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationRoleType"
+              }
+            ],
+            "default": "viewer"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "OrganizationUserIn",
+        "type": "object"
+      },
       "OrganizationOut": {
         "properties": {
           "id": {
@@ -1324,8 +1646,9 @@
       "OrganizationUserOut": {
         "properties": {
           "id": {
+            "format": "uuid",
             "title": "Id",
-            "type": "integer"
+            "type": "string"
           },
           "organization_id": {
             "format": "uuid",
@@ -1367,38 +1690,6 @@
         "title": "OrganizationUserOut",
         "type": "object"
       },
-      "OrganizationRoleType": {
-        "enum": [
-          "admin",
-          "owner",
-          "manager",
-          "editor",
-          "viewer"
-        ],
-        "title": "OrganizationRoleType",
-        "type": "string"
-      },
-      "OrganizationUserIn": {
-        "properties": {
-          "email": {
-            "title": "Email",
-            "type": "string"
-          },
-          "role": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/OrganizationRoleType"
-              }
-            ],
-            "default": "viewer"
-          }
-        },
-        "required": [
-          "email"
-        ],
-        "title": "OrganizationUserIn",
-        "type": "object"
-      },
       "OrganizationUserUpdateIn": {
         "properties": {
           "role": {
@@ -1409,6 +1700,37 @@
           "role"
         ],
         "title": "OrganizationUserUpdateIn",
+        "type": "object"
+      },
+      "OrganizationLeaveOut": {
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "OrganizationLeaveOut",
+        "type": "object"
+      },
+      "Input": {
+        "properties": {
+          "limit": {
+            "default": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "Input",
         "type": "object"
       },
       "NotificationOut": {
@@ -1491,7 +1813,7 @@
         "title": "NotificationOut",
         "type": "object"
       },
-      "PaginatedNotificationOut": {
+      "PagedNotificationOut": {
         "properties": {
           "items": {
             "items": {
@@ -1500,29 +1822,19 @@
             "title": "Items",
             "type": "array"
           },
-          "total": {
-            "title": "Total",
-            "type": "integer"
-          },
-          "page": {
-            "title": "Page",
-            "type": "integer"
-          },
-          "page_size": {
-            "title": "Page Size",
+          "count": {
+            "title": "Count",
             "type": "integer"
           }
         },
         "required": [
           "items",
-          "total",
-          "page",
-          "page_size"
+          "count"
         ],
-        "title": "PaginatedNotificationOut",
+        "title": "PagedNotificationOut",
         "type": "object"
       },
-      "NotificationReadStatusUpdate": {
+      "NotificationReadStatusUpdateOut": {
         "properties": {
           "is_read": {
             "title": "Is Read",
@@ -1537,7 +1849,23 @@
           "is_read",
           "total_updated"
         ],
-        "title": "NotificationReadStatusUpdate",
+        "title": "NotificationReadStatusUpdateOut",
+        "type": "object"
+      },
+      "NotificationReadStatusUpdatIn": {
+        "properties": {
+          "notification_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notification Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "notification_ids"
+        ],
+        "title": "NotificationReadStatusUpdatIn",
         "type": "object"
       },
       "NotificationIn": {

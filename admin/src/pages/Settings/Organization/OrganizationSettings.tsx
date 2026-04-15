@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import organizationService from "../../../services/organization.service";
 import type {
     OrganizationOut,
@@ -10,31 +10,29 @@ import ViewOrganizationList from "./components/ViewOrganizationList";
 import ManageOrganizationDetails from "./components/ManageOrganizationDetails";
 import InviteUser from "./components/InviteUser";
 import ViewOrganizationUsers from "./components/ViewOrganizationUsers";
+import { ToastContext } from "../../../contexts/toast.context";
+import ManageOrganizationUser from "./components/ManageOrganizationUser";
+import PendingInvitationsComponent from "./components/PendingInvitations";
 
-const TOAST_DURATION = 4000;
-
-interface Toast {
-    id: number;
-    message: string;
-    type: "success" | "error";
-}
 
 const OrganizationSettingsPage: React.FC = () => {
     const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
-    const [selectedOrg, setSelectedOrg] = useState<OrganizationOut | null>(null);
     const [orgUsers, setOrgUsers] = useState<OrganizationUserOut[]>([]);
-    const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
-    const [showForm, setShowForm] = useState(false);
-    const [toasts, setToasts] = useState<Toast[]>([]);
 
-    const toastCounterRef = useRef(0);
-    const addToast = (message: string, type: "success" | "error") => {
-        const id = ++toastCounterRef.current;
-        setToasts((prev) => [...prev, { id, message, type }]);
-        setTimeout(() => {
-            setToasts((prev) => prev.filter((t) => t.id !== id));
-        }, TOAST_DURATION);
-    };
+    const [selectedOrg, setSelectedOrg] = useState<OrganizationOut | null>(null);    
+    const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
+    const [showOrgForm, setShowOrgForm] = useState(false);
+
+    const [editingUser, setEditingUser] = useState<OrganizationUserOut | null>(null);
+    const [showUserForm, setShowUserForm] = useState(false);
+
+    const toastContext = useContext(ToastContext);
+
+    const addToast = useCallback((message: string, type: "success" | "error") => {
+        if(toastContext?.addToast) {
+            toastContext.addToast({ message, type });
+        }
+    }, [toastContext]);
 
     const extractErrorMessage = (err: unknown): string => {
         if (err instanceof Error) return err.message;
@@ -88,7 +86,7 @@ const OrganizationSettingsPage: React.FC = () => {
 
     const handleEditOrg = (org: OrganizationOut) => {
         setEditingOrg(org);
-        setShowForm(true);
+        setShowOrgForm(true);
     };
 
     const handleSaveOrg = async (data: { name: string; description: string }) => {
@@ -105,7 +103,7 @@ const OrganizationSettingsPage: React.FC = () => {
                 });
                 addToast(`Created organization "${data.name}"`, "success");
             }
-            setShowForm(false);
+            setShowOrgForm(false);
             setEditingOrg(null);
             fetchOrganizations();
         } catch (err) {
@@ -113,15 +111,15 @@ const OrganizationSettingsPage: React.FC = () => {
         }
     };
 
-    const handleCancelForm = () => {
-        setShowForm(false);
+    const handleCancelOrgForm = () => {
+        setShowOrgForm(false);
         setEditingOrg(null);
     };
 
     const handleInviteUser = async (email: string, role: OrganizationRoleType) => {
         if (!selectedOrg) return;
         try {
-            await organizationService.addOrganizationUser(selectedOrg.id, { email, role });
+            await organizationService.inviteUser(selectedOrg.id, { email, role });
             addToast(`Invited "${email}" to the organization`, "success");
             fetchUsers(selectedOrg.id);
         } catch (err) {
@@ -140,6 +138,16 @@ const OrganizationSettingsPage: React.FC = () => {
         }
     };
 
+    const handleSaveOrgUser = async (data: OrganizationUserOut) => {
+        if (!selectedOrg) return;
+        handleUpdateUserRole(data.email, data.role as OrganizationRoleType);
+    };
+
+    const handleCancelOrgUserForm = () => {
+        setShowUserForm(false);
+        setEditingUser(null);
+    }
+
     const handleRemoveUser = async (userEmail: string) => {
         if (!selectedOrg) return;
         try {
@@ -151,17 +159,30 @@ const OrganizationSettingsPage: React.FC = () => {
         }
     };
 
+    const handleLeaveOrg = async (org: OrganizationOut) => {
+        try {
+            await organizationService.leaveOrganization(org.id);
+            if (selectedOrg?.id === org.id) {
+                setSelectedOrg(null);
+            }
+            addToast(`Left organization "${org.name}"`, "success");
+            fetchOrganizations();
+        } catch (err) {
+            addToast(extractErrorMessage(err), "error");
+        }
+    }
+
     return (
         <>
             <div className="p-6 flex flex-col gap-6">
                 <div className="flex items-center justify-between">
                     <h2 className="text-title">Organization Settings</h2>
-                    {!showForm && (
+                    {!showOrgForm && (
                         <button
                             className="btn btn-primary"
                             onClick={() => {
                                 setEditingOrg(null);
-                                setShowForm(true);
+                                setShowOrgForm(true);
                             }}
                         >
                             New Organization
@@ -169,20 +190,27 @@ const OrganizationSettingsPage: React.FC = () => {
                     )}
                 </div>
 
-                {showForm && (
+                {showOrgForm && (
                     <ManageOrganizationDetails
                         editingOrg={editingOrg}
                         onSave={handleSaveOrg}
-                        onCancel={handleCancelForm}
+                        onCancel={handleCancelOrgForm}
                     />
                 )}
 
                 <ViewOrganizationList
                     organizations={organizations}
-                    selectedOrgId={selectedOrg?.id ?? null}
                     onSelect={handleSelectOrg}
                     onEdit={handleEditOrg}
                     onDelete={handleDeleteOrg}
+                    onLeave={handleLeaveOrg}
+                />
+
+                <PendingInvitationsComponent 
+                    onResponse={(orgId, accept) => { 
+                        console.info("Invitation response for orgId:", orgId, "accepted:", accept);
+                        if(accept) fetchOrganizations();
+                     }}
                 />
 
                 {selectedOrg && (
@@ -200,36 +228,26 @@ const OrganizationSettingsPage: React.FC = () => {
                             onInvite={handleInviteUser}
                         />
 
+                        {showUserForm && editingUser && (
+                            <ManageOrganizationUser 
+                            editingUser={editingUser}
+                            onSave={handleSaveOrgUser}
+                            onCancel={handleCancelOrgUserForm}
+                            />
+                        )}
+
                         <ViewOrganizationUsers
                             users={orgUsers}
-                            onUpdateRole={handleUpdateUserRole}
-                            onRemoveUser={handleRemoveUser}
+                            onUpdateRole={async (user) => {
+                                setEditingUser(user);
+                                setShowUserForm(true);
+                            }}
+                            onRemoveUser={async (user) => {
+                                await handleRemoveUser(user.email);
+                            }}
                         />
                     </>
                 )}
-            </div>
-
-            {/* Toast notifications */}
-            <div className="fixed bottom-6 right-6 flex flex-col gap-2" style={{ zIndex: 9999 }}>
-                {toasts.map((toast) => (
-                    <div
-                        key={toast.id}
-                        className="card flex items-center gap-3 px-5 py-3 text-sm"
-                        style={{
-                            backgroundColor:
-                                toast.type === "error"
-                                    ? "var(--color-error-light)"
-                                    : "var(--color-tertiary-100)",
-                            color:
-                                toast.type === "error"
-                                    ? "var(--color-error)"
-                                    : "var(--color-tertiary-700)",
-                            minWidth: "260px",
-                        }}
-                    >
-                        {toast.message}
-                    </div>
-                ))}
             </div>
         </>
     );

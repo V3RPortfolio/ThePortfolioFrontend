@@ -140,7 +140,6 @@ const DeviceInformationPage:React.FC = () => {
                     entries
                 })).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp 
             });
-            console.log(uptimeResults)
         }
         setIsFetchingUptime(false);
         return uptimeResults;
@@ -185,7 +184,6 @@ const DeviceInformationPage:React.FC = () => {
                         value={selectedMetric.field}
                         handler={(value) => {
                             const metric = Object.values(availableMetrics).find(m => m.field === value);
-                            console.log("Selected metric:", metric);
                             if (metric) setSelectedMetric(metric);
                         }}
                         className="w-auto"

@@ -17,12 +17,23 @@ export interface OrganizationUpdateIn {
 }
 
 export interface OrganizationUserOut {
-    id: number;
+    id: string;
     organization_id: string;
     email: string;
     role: string;
     created_at: string;
     updated_at: string;
+    invitation_status: string;
+}
+
+export interface OrganizationInvitationOut {
+    id: string;
+    organization_id: string;
+    organization_name: string;
+    invited_email: string;
+    invited_by: string;
+    role: string;
+    created_at: string;
     invitation_status: string;
 }
 
