@@ -44,7 +44,7 @@ const TopHeader: React.FC<{className?: string}> = ({className}) => {
     }, [location.pathname, baseUrl])
 
 
-    return <header className={`bg-[var(--color-background)] w-[1] flex flex-row justify-between align-center flex-wrap ${className || ''}`}>
+    return <header className={`bg-[var(--color-background)] w-[100%] flex flex-row justify-between align-center flex-wrap ${className || ''}`}>
         {currentPaths.length > 0 && 
             <BreadCrumb 
             navigationLinks={currentPaths}
