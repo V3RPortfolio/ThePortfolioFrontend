@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useState } from "react";
+import Pagination from "../Pagination/Pagination";
 
 type TableData = { [key: string]: any}; // Generic type for table data, can be extended with specific fields as needed
 interface DataTableProps {
@@ -17,39 +17,7 @@ interface DataTableProps {
 }
 
 const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler, totalPages, clipLongText, onRowClick }: DataTableProps) => {
-    const [activePage, setActivePage] = useState<number>(1);
-    const [displayedPagination, setDisplayedPagination] = useState<{ pageNumber: number; isActive?: boolean }[]>([]);
     const rowsAreClickable = Boolean(onRowClick);
-    const handlePageClick = (pageNumber: number) => {
-        setActivePage(pageNumber);
-        if (paginationHandler) {
-            paginationHandler(pageNumber);
-        }
-    };
-
-    useEffect(() => {
-        // Set active page
-        const activePageObj = pagination.find((p) => p.isActive);
-        if (activePageObj) {
-            setActivePage(activePageObj.pageNumber);
-        }
-
-        // Set the list of displayed page - show max 5 page numbers at a time for better UX
-        const maxDisplayed = 5;
-        let startPage = Math.max(1, activePage - Math.floor(maxDisplayed / 2));
-        let endPage = Math.min(totalPages || activePage, startPage + maxDisplayed - 1);
-
-        // Adjust startPage if we are near the end
-        if (endPage - startPage < maxDisplayed - 1) {
-            startPage = Math.max(1, endPage - maxDisplayed + 1);
-        }
-
-        const newPagination = [];
-        for (let i = startPage; i <= endPage; i++) {
-            newPagination.push({ pageNumber: i, isActive: i === activePage });
-        }
-        setDisplayedPagination(newPagination);
-    }, [pagination, activePage, totalPages]);
 
     return (
         <div className="card overflow-hidden p-0">
@@ -149,77 +117,11 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
             </div>
 
             {/* Pagination */}
-            {displayedPagination.length > 0 && (
-                <div
-                    className="flex items-center justify-between px-5 py-3"
-                    style={{ borderTop: "1px solid var(--color-border)" }}
-                >
-                    {/* Results summary */}
-                    <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-                        Page {activePage} of {totalPages || pagination.length}
-                    </span>
-
-                    {/* Page buttons */}
-                    <div className="flex items-center gap-1">
-                        {/* Previous */}
-                        <button
-                            disabled={activePage === pagination[0]?.pageNumber}
-                            onClick={() => {
-                                const idx = pagination.findIndex((p) => p.pageNumber === activePage);
-                                if (idx > 0) handlePageClick(pagination[idx - 1].pageNumber);
-                            }}
-                            className="flex items-center justify-center w-8 h-8 rounded text-xs font-medium transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                            style={{
-                                border: "1px solid var(--color-border)",
-                                color: "var(--color-text-secondary)",
-                                borderRadius: "var(--border-radius-base)",
-                            }}
-                        >
-                            ‹
-                        </button>
-
-                        {/* Page numbers */}
-                        {displayedPagination.map(({ pageNumber, isActive }) => {
-                            return (
-                                <button
-                                    key={pageNumber}
-                                    onClick={() => handlePageClick(pageNumber)}
-                                    className="flex items-center justify-center w-8 h-8 text-xs font-semibold transition-all cursor-pointer"
-                                    style={{
-                                        backgroundColor: isActive
-                                            ? "var(--color-primary-600)"
-                                            : "transparent",
-                                        color: isActive
-                                            ? "var(--color-white)"
-                                            : "var(--color-text-secondary)",
-                                        border: `1px solid ${isActive ? "var(--color-primary-600)" : "var(--color-border)"}`,
-                                        borderRadius: "var(--border-radius-base)",
-                                    }}
-                                >
-                                    {pageNumber}
-                                </button>
-                            );
-                        })}
-
-                        {/* Next */}
-                        <button
-                            disabled={activePage === pagination[pagination.length - 1]?.pageNumber}
-                            onClick={() => {
-                                const idx = pagination.findIndex((p) => p.pageNumber === activePage);
-                                if (idx < pagination.length - 1) handlePageClick(pagination[idx + 1].pageNumber);
-                            }}
-                            className="flex items-center justify-center w-8 h-8 rounded text-xs font-medium transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                            style={{
-                                border: "1px solid var(--color-border)",
-                                color: "var(--color-text-secondary)",
-                                borderRadius: "var(--border-radius-base)",
-                            }}
-                        >
-                            ›
-                        </button>
-                    </div>
-                </div>
-            )}
+            <Pagination
+                pagination={pagination}
+                paginationHandler={paginationHandler}
+                totalPages={totalPages}
+            />
         </div>
     );
 };
