@@ -16,7 +16,7 @@ export const jwtHeader = `${import.meta.env.VITE_JWT_HEADER || 'Authorization'}`
 export const authApi = `${gatewayApi}/${import.meta.env.VITE_AUTH_API_PATH || 'auth'}`;
 export const elasticsearchEndpoint = import.meta.env.VITE_ELASTIC_ENDPOINT || `${gatewayApi}/elastic`;
 export const organizationApi = `${gatewayApi}/${import.meta.env.VITE_ORGANIZATION_API_PATH || 'organization'}`;
-export const notificationApi = `${gatewayApi}/${import.meta.env.VITE_NOTIFICATION_API_PATH || 'notifications'}`;
+export const notificationApi = `${gatewayApi}/${import.meta.env.VITE_NOTIFICATION_API_PATH || 'notification'}`;
 
 
 
