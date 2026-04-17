@@ -27,8 +27,8 @@ import type { ElasticSearchResponse } from "../interfaces/elasticsearch.interfac
 
 export interface FetchRunningDevicesStatsParams {
     deviceId: string;
-    from: string;     // ISO 8601 date string, e.g. "2026-01-01T00:00:00Z"
-    to: string;       // ISO 8601 date string, e.g. "2026-12-31T23:59:59Z"
+    from?: string;     // ISO 8601 date string, e.g. "2026-01-01T00:00:00Z"
+    to?: string;       // ISO 8601 date string, e.g. "2026-12-31T23:59:59Z"
     page: number;     // 1-based page index
     pageSize: number; // number of processes per page,
     order_by: "avg_memory_megabytes" | "avg_cpu_consumption" | "avg_memory_consumption" | "avg_memory_leak"; // field to sort by
@@ -41,41 +41,51 @@ export const buildFetchRunningDevicesStatsQuery = ({
     page,
     pageSize,
     order_by
-}: FetchRunningDevicesStatsParams) => ({
-    "size": pageSize,
-    "from": (page - 1) * pageSize,
-    "query": {
-        "bool": {
-            "filter": [
-                {
-                    "term": {
-                        "device_id": deviceId
-                    }
-                },
-                {
-                    "range": {
-                        "processing_timestamp": {
-                            "gte": from,
-                            "lte": to
+}: FetchRunningDevicesStatsParams) => {
+    const query = {
+        "size": pageSize,
+        "from": (page - 1) * pageSize,
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "device_id": deviceId
                         }
                     }
-                }
-            ]
-        }
-    },
-    "sort": [
-        {
-            [order_by]: {
-                "order": "desc"
+                ]
             }
+        },
+        "sort": [
+            {
+                [order_by]: {
+                    "order": "desc"
+                }
+            }
+        ],
+        "_source": [
+            "process_name",
+            order_by,
+            "processing_timestamp"
+        ]
+    };
+    if(from || to) {
+        const rangeData = {
+            "range": {
+                "processing_timestamp": {
+                }
+            }
+        };
+        if(from) {
+            rangeData["range"]["processing_timestamp"]["gte"] = from;
         }
-    ],
-    "_source": [
-        "process_name",
-        order_by,
-        "processing_timestamp"
-    ]
-});
+        if(to) {
+            rangeData["range"]["processing_timestamp"]["lte"] = to;
+        }
+        query["query"]["bool"]["filter"].push(rangeData);
+    }
+    return query;
+};
 
 export interface RunningDevicesStatsResponse {
     process_name: string;

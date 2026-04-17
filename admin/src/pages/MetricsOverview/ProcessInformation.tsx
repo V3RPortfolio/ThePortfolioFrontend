@@ -149,8 +149,6 @@ const ProcessInformationPage: React.FC = () => {
         const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
             buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
-                from: fromDate,
-                to: toDate,
                 page: activePageMemoryIntense,
                 pageSize: totalItemsPerPage,
                 order_by: "avg_memory_megabytes"
