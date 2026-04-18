@@ -151,7 +151,14 @@ const ProcessInformationPage: React.FC = () => {
                 deviceId: device,
                 page: activePageMemoryIntense,
                 pageSize: totalItemsPerPage,
-                order_by: "avg_memory_megabytes"
+                order_by: "avg_memory_megabytes",
+                fields: [
+                    "processing_timestamp",
+                    "avg_memory_megabytes",
+                    "deviation_memory_consumption_megabytes",
+                    "avg_cpu_consumption",
+                    "process_name"
+                ]
             }),
             elasticIndices.runningProcesses
         );
@@ -184,11 +191,11 @@ const ProcessInformationPage: React.FC = () => {
         const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
             buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
-                from: fromDate,
-                to: toDate,
+                // from: fromDate, # Memory leak is relative and not time dependent
+                // to: toDate, # Memory leak is relative and not time dependent
                 page: activePageMemoryIntense,
                 pageSize: totalItemsPerPage,
-                order_by: "avg_memory_megabytes"
+                order_by: "avg_memory_leak"
             }),
             elasticIndices.runningProcesses
         );
@@ -358,7 +365,7 @@ const ProcessInformationPage: React.FC = () => {
                 data={memoryIntenseProcesses.map(p => ({
                     processName: p.process_name,
                     avgMemoryUsageGB: ((p.avg_memory_megabytes || 0) / 1024).toFixed(2),
-                    deviationMemoryConsumption: (p.deviation_memory_consumption || 0).toFixed(2),
+                    deviationMemoryConsumption: ((p.deviation_memory_consumption_megabytes || 0)/1024 ).toFixed(2),
                     avgCpuConsumption: (p.avg_cpu_consumption || 0).toFixed(2),
                     processingTimestamp: new Date(p.processing_timestamp).toLocaleString()
                 }))}
@@ -379,7 +386,7 @@ const ProcessInformationPage: React.FC = () => {
                 title="Processes with Memory Leak"
                 columns={[
                     { name: "Process Name", key: "processName" },
-                    { name: "Avg. Memory Leak (MB)", key: "avgMemoryLeak" },
+                    { name: "Mean memory leak over time", key: "avgMemoryLeak" },
                     { name: "Deviation of Memory Leak", key: "deviationMemoryLeak" }
                 ]}
                 data={memoryLeakProcesses.map(p => ({
