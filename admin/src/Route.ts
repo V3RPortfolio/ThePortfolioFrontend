@@ -6,6 +6,7 @@ import { baseUrl } from "./constants";
 import DeviceInformationPage from "./pages/MetricsOverview/DeviceInformation";
 import OrganizationSettingsPage from "./pages/Settings/Organization/OrganizationSettings";
 import NotificationsPreviewPage from "./pages/Settings/Notifications/NotificationPreview";
+import DeviceSettingsPage from "./pages/Settings/Devices/DeviceSettings";
 
 
 export interface SidebarRoutesDTO {
@@ -63,6 +64,13 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
             component: OrganizationSettingsPage,
             id: 'organization-settings',
             label: 'Organization',
+            parentRoute: 'settings',
+        },
+        {
+            path: `${base}/settings/devices/`,
+            component: DeviceSettingsPage,
+            id: 'device-settings',
+            label: 'Devices',
             parentRoute: 'settings',
         },
         {
