@@ -42,7 +42,7 @@ export const buildFetchRunningDevicesStatsQuery = ({
     pageSize,
     order_by
 }: FetchRunningDevicesStatsParams) => {
-    const query = {
+    const query:any = {
         "size": pageSize,
         "from": (page - 1) * pageSize,
         "query": {
@@ -70,7 +70,7 @@ export const buildFetchRunningDevicesStatsQuery = ({
         ]
     };
     if(from || to) {
-        const rangeData = {
+        const rangeData:any = {
             "range": {
                 "processing_timestamp": {
                 }
