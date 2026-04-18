@@ -13,13 +13,14 @@ import ViewOrganizationUsers from "./components/ViewOrganizationUsers";
 import { ToastContext } from "../../../contexts/toast.context";
 import ManageOrganizationUser from "./components/ManageOrganizationUser";
 import PendingInvitationsComponent from "./components/PendingInvitations";
+import { useOrganization } from "../../../contexts/organization.context";
 
 
 const OrganizationSettingsPage: React.FC = () => {
     const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
     const [orgUsers, setOrgUsers] = useState<OrganizationUserOut[]>([]);
 
-    const [selectedOrg, setSelectedOrg] = useState<OrganizationOut | null>(null);    
+    const { selectedOrg, selectOrg, clearSelectedOrg } = useOrganization();
     const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
     const [showOrgForm, setShowOrgForm] = useState(false);
 
@@ -63,8 +64,7 @@ const OrganizationSettingsPage: React.FC = () => {
 
     const handleSelectOrg = async (org: OrganizationOut) => {
         try {
-            await organizationService.selectOrganization(org.id);
-            setSelectedOrg(org);
+            await selectOrg(org);
             addToast(`Selected organization "${org.name}"`, "success");
         } catch (err) {
             addToast(extractErrorMessage(err), "error");
@@ -75,7 +75,7 @@ const OrganizationSettingsPage: React.FC = () => {
         try {
             await organizationService.deleteOrganization(org.id);
             if (selectedOrg?.id === org.id) {
-                setSelectedOrg(null);
+                clearSelectedOrg();
             }
             addToast(`Deleted organization "${org.name}"`, "success");
             fetchOrganizations();
@@ -163,7 +163,7 @@ const OrganizationSettingsPage: React.FC = () => {
         try {
             await organizationService.leaveOrganization(org.id);
             if (selectedOrg?.id === org.id) {
-                setSelectedOrg(null);
+                clearSelectedOrg();
             }
             addToast(`Left organization "${org.name}"`, "success");
             fetchOrganizations();

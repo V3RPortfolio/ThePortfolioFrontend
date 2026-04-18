@@ -8,6 +8,7 @@ import { loginPath, requireAuth } from './constants';
 import httpService from './services/http.service';
 import { ToastProvider } from './contexts/toast.context';
 import ToastComponent from './components/Modals/Toast';
+import { OrganizationProvider } from './contexts/organization.context';
 
 
 
@@ -23,35 +24,36 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <div className='App min-h-screen flex flex-col'>
+      <OrganizationProvider>
+        {/* Main Layout: Sidebar + Content */}
+        <div className='flex flex-1'>
+          {/* Sidebar */}
+          <Sidebar fixed={false} sidebarWidth={'w-[20%]'} />
 
-      {/* Main Layout: Sidebar + Content */}
-      <div className='flex flex-1'>
-        {/* Sidebar */}
-        <Sidebar fixed={false} sidebarWidth={'w-[20%]'} />
+          {/* Main Content Area */}
+          {/* Body - Routes render here */}
+          <div className='py-[var(--padding-md)] flex-1 max-w-[80%]'>
+            <TopHeader />
 
-        {/* Main Content Area */}
-        {/* Body - Routes render here */}
-        <div className='py-[var(--padding-md)] flex-1 max-w-[80%]'>
-          <TopHeader />
+            <ToastProvider>
+              <main className='p-[var(--padding-md)]'>
+                <Routes>
+                  {AllRoutes().filter(x => !!x.component).map(({ path, component: Component, props }) => (
+                    !!Component && <Route
+                      key={path}
+                      path={path}
+                      element={<ProtectedRoute><Component /></ProtectedRoute>}
+                      {...props}
+                    />
+                  ))}
+                </Routes>
+              </main>
+              <ToastComponent />
+            </ToastProvider>
+          </div>
 
-          <ToastProvider>
-            <main className='p-[var(--padding-md)]'>
-              <Routes>
-                {AllRoutes().filter(x => !!x.component).map(({ path, component: Component, props }) => (
-                  !!Component && <Route
-                    key={path}
-                    path={path}
-                    element={<ProtectedRoute><Component /></ProtectedRoute>}
-                    {...props}
-                  />
-                ))}
-              </Routes>
-            </main>
-            <ToastComponent />
-          </ToastProvider>
         </div>
-
-      </div>
+      </OrganizationProvider>
       {/* Footer */}
       <footer>
         {/* Footer content will go here */}
