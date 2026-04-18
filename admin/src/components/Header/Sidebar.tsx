@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SidebarLogo from '../Logo/Sidebar';
 import Separator from '../Divider/Separator';
 import { type SidebarRoutesDTO, SidebarRoutes } from '../../Route';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useOrganization } from '../../contexts/organization.context';
+import organizationService from '../../services/organization.service';
+import { type OrganizationOut } from '../../interfaces/organization.interface';
+import Dropdown from '../Filters/Dropdown';
 
 // ============= INTERFACES =============
 
@@ -124,10 +128,29 @@ interface SidebarProps {
   sidebarWidth?: string;
 }
 const Sidebar: React.FC<SidebarProps> = ({ fixed = false, sidebarWidth = 'w-1' }) => {
+  const { selectedOrg, selectOrg } = useOrganization();
+  const [organizations, setOrganizations] = useState<OrganizationOut[]>();
+
+  useEffect(() => {
+    organizationService.listOrganizations().then(orgs => {
+        setOrganizations(orgs);
+    })
+    .catch(err => {
+        console.error("Failed to fetch organizations:", err);
+    });
+  })
   return (
     <aside className={`${fixed ? `fixed left-0 top-0` : ''} ${sidebarWidth} h-screen overflow-y-auto overflow-x-hidden shadow-sm hidden md:flex md:flex-col`}>
       {/* Logo Section */}
       <SidebarLogo />
+
+      {organizations?.length && <Dropdown
+        items={organizations.map(org => ({ name: org.name, value: org.id }))}
+        value={selectedOrg?.id}
+        handler={(org) => selectOrg(organizations.find(o => o.id === org)!)}
+        label='Selected Organization'
+      />}
+
 
       {/* Separator */}
       <Separator className="mt-2" />
