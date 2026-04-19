@@ -17,7 +17,7 @@ export const authApi = `${gatewayApi}/${import.meta.env.VITE_AUTH_API_PATH || 'a
 export const elasticsearchEndpoint = import.meta.env.VITE_ELASTIC_ENDPOINT || `${gatewayApi}/elastic`;
 export const organizationApi = `${gatewayApi}/${import.meta.env.VITE_ORGANIZATION_API_PATH || 'organization'}`;
 export const notificationApi = `${gatewayApi}/${import.meta.env.VITE_NOTIFICATION_API_PATH || 'notification'}`;
-export const deviceApi = `${gatewayApi}/${import.meta.env.VITE_DEVICE_API_PATH || 'organization/v1/devices'}`;
+export const deviceApi = `${organizationApi}/devices`;
 
 
 

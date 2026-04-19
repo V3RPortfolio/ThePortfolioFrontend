@@ -7,6 +7,7 @@ import type {
     DeviceConfigurationOut,
     DeviceConfigurationIn,
     DeviceConnectionStatusOut,
+    DeviceUpdate,
 } from "../interfaces/device.interface";
 
 class DeviceService {
@@ -21,6 +22,12 @@ class DeviceService {
 
     async addDevice(orgId: string, data: DeviceIn): Promise<DeviceOut> {
         return httpService.post<DeviceOut>(`${deviceApi}/${orgId}/`, {
+            body: JSON.stringify(data),
+        }, true);
+    }
+
+    async updateDevice(orgId:string, deviceId: string, data: DeviceUpdate): Promise<DeviceOut> {
+        return httpService.put<DeviceOut>(`${deviceApi}/${orgId}/${deviceId}/`, {
             body: JSON.stringify(data),
         }, true);
     }

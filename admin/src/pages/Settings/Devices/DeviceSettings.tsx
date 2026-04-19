@@ -6,15 +6,18 @@ import type {
     DeviceDetailOut,
     DeviceConfigurationOut,
     DeviceDataType,
+    DeviceIn,
 } from "../../../interfaces/device.interface";
 import ViewDeviceList from "./components/ViewDeviceList";
 import ViewConfigurationList from "./components/ViewConfigurationList";
 import ManageConfiguration from "./components/ManageConfiguration";
+import ManageDevice from "./components/ManageDevice";
 import { ToastContext } from "../../../contexts/toast.context";
 import { useOrganization } from "../../../contexts/organization.context";
 
 const DeviceSettingsPage: React.FC = () => {
     const [devices, setDevices] = useState<DeviceOut[]>([]);
+    const [showDeviceForm, setShowDeviceForm] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState<DeviceDetailOut | null>(null);
     const [showConfigForm, setShowConfigForm] = useState(false);
 
@@ -55,7 +58,29 @@ const DeviceSettingsPage: React.FC = () => {
         if (!selectedOrg) return;
         try {
             await fetchDeviceDetails(selectedOrg.id, device.id);
-            addToast(`Selected device "${device.name}"`, "success");
+            setShowDeviceForm(false);
+            setShowConfigForm(false);
+        } catch (err) {
+            addToast(extractErrorMessage(err), "error");
+        }
+    };
+
+    const handleManageDevice = async (data: DeviceIn) => {
+        if (!selectedOrg) return;
+        try {
+            if (selectedDevice) {
+                await deviceService.updateDevice(selectedOrg.id, selectedDevice.id, {
+                    name: data.name,
+                    description: data.description ?? null,
+                });
+                addToast(`Device "${selectedDevice.name}" updated`, "success");
+                await fetchDeviceDetails(selectedOrg.id, selectedDevice.id);
+            } else {
+                await deviceService.addDevice(selectedOrg.id, data);
+                addToast(`Device "${data.name}" added`, "success");
+            }
+            await fetchDevices(selectedOrg.id);
+            setShowDeviceForm(false);
         } catch (err) {
             addToast(extractErrorMessage(err), "error");
         }
@@ -115,9 +140,6 @@ const DeviceSettingsPage: React.FC = () => {
     return (
         <>
             <div className="p-6 flex flex-col gap-6">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-title">Device Settings</h2>
-                </div>
 
                 {!selectedOrg && (
                     <div className="card">
@@ -136,8 +158,30 @@ const DeviceSettingsPage: React.FC = () => {
                             className="text-heading"
                             style={{ color: "var(--color-text-primary)" }}
                         >
-                            Organization: {selectedOrg.name}
+                            Device Settings | Organization: {selectedOrg.name}
                         </h3>
+
+                        {!showDeviceForm && (
+                            <div>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        setSelectedDevice(null);
+                                        setShowDeviceForm(true);
+                                    }}
+                                >
+                                    Add New Device
+                                </button>
+                            </div>
+                        )}
+
+                        {showDeviceForm && (
+                            <ManageDevice
+                                device={selectedDevice}
+                                onSave={handleManageDevice}
+                                onCancel={() => setShowDeviceForm(false)}
+                            />
+                        )}
 
                         <ViewDeviceList
                             devices={devices}
@@ -156,13 +200,19 @@ const DeviceSettingsPage: React.FC = () => {
                                     Managing: {selectedDevice.name}
                                 </h3>
 
-                                {!showConfigForm && (
-                                    <div>
+                                {!showConfigForm && !showDeviceForm && (
+                                    <div className="flex items-center gap-3">
                                         <button
                                             className="btn btn-primary"
                                             onClick={() => setShowConfigForm(true)}
                                         >
                                             Add Configuration
+                                        </button>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={() => setShowDeviceForm(true)}
+                                        >
+                                            Edit Device
                                         </button>
                                     </div>
                                 )}

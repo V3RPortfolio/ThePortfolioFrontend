@@ -46,6 +46,11 @@ export interface DeviceIn {
     device_type?: DeviceType;
 }
 
+export interface DeviceUpdate {
+    name?: string;
+    description?: string | null;
+}
+
 export interface DeviceConnectionStatusOut {
     device_id: string;
     is_active: boolean;
