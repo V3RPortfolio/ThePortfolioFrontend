@@ -2,6 +2,7 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
     useState,
     type ReactNode,
@@ -11,14 +12,17 @@ import organizationService from "../services/organization.service";
 
 export type OrganizationContextValue = {
     selectedOrg: OrganizationOut | null;
+    organizations: OrganizationOut[];
     selectOrg: (org: OrganizationOut) => Promise<void>;
     clearSelectedOrg: () => void;
+    updateOrganizationsList: () => Promise<void>;
 };
 
 export const OrganizationContext = createContext<OrganizationContextValue | null>(null);
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
     const [selectedOrg, setSelectedOrg] = useState<OrganizationOut | null>(null);
+    const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
 
     const selectOrg = useCallback(async (org: OrganizationOut) => {
         await organizationService.selectOrganization(org.id);
@@ -29,14 +33,25 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
         setSelectedOrg(null);
     }, []);
 
+    const updateOrganizationsList = useCallback(async () => {
+        const orgs = await organizationService.listOrganizations();
+        setOrganizations(orgs);
+    }, []);
+
     const value = useMemo<OrganizationContextValue>(
         () => ({
             selectedOrg,
+            organizations,
             selectOrg,
             clearSelectedOrg,
+            updateOrganizationsList
         }),
-        [selectedOrg, selectOrg, clearSelectedOrg]
+        [selectedOrg, organizations, selectOrg, clearSelectedOrg, updateOrganizationsList]
     );
+
+    useEffect(() => {
+        updateOrganizationsList();
+    }, [])
 
     return (
         <OrganizationContext.Provider value={value}>

@@ -17,10 +17,9 @@ import { useOrganization } from "../../../contexts/organization.context";
 
 
 const OrganizationSettingsPage: React.FC = () => {
-    const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
     const [orgUsers, setOrgUsers] = useState<OrganizationUserOut[]>([]);
 
-    const { selectedOrg, selectOrg, clearSelectedOrg } = useOrganization();
+    const { selectedOrg, selectOrg, clearSelectedOrg, organizations, updateOrganizationsList } = useOrganization();
     const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
     const [showOrgForm, setShowOrgForm] = useState(false);
 
@@ -40,19 +39,10 @@ const OrganizationSettingsPage: React.FC = () => {
         return String(err);
     };
 
-    const fetchOrganizations = useCallback(async () => {
-        const data = await organizationService.listOrganizations();
-        setOrganizations(data);
-    }, []);
-
     const fetchUsers = useCallback(async (orgId: string) => {
         const data = await organizationService.listOrganizationUsers(orgId);
         setOrgUsers(data);
     }, []);
-
-    useEffect(() => {
-        fetchOrganizations();
-    }, [fetchOrganizations]);
 
     useEffect(() => {
         if (selectedOrg) {
@@ -78,7 +68,7 @@ const OrganizationSettingsPage: React.FC = () => {
                 clearSelectedOrg();
             }
             addToast(`Deleted organization "${org.name}"`, "success");
-            fetchOrganizations();
+            updateOrganizationsList();
         } catch (err) {
             addToast(extractErrorMessage(err), "error");
         }
@@ -105,7 +95,7 @@ const OrganizationSettingsPage: React.FC = () => {
             }
             setShowOrgForm(false);
             setEditingOrg(null);
-            fetchOrganizations();
+            updateOrganizationsList();
         } catch (err) {
             addToast(extractErrorMessage(err), "error");
         }
@@ -166,7 +156,7 @@ const OrganizationSettingsPage: React.FC = () => {
                 clearSelectedOrg();
             }
             addToast(`Left organization "${org.name}"`, "success");
-            fetchOrganizations();
+            updateOrganizationsList();
         } catch (err) {
             addToast(extractErrorMessage(err), "error");
         }
@@ -209,7 +199,7 @@ const OrganizationSettingsPage: React.FC = () => {
                 <PendingInvitationsComponent 
                     onResponse={(orgId, accept) => { 
                         console.info("Invitation response for orgId:", orgId, "accepted:", accept);
-                        if(accept) fetchOrganizations();
+                        if(accept) updateOrganizationsList();
                      }}
                 />
 
