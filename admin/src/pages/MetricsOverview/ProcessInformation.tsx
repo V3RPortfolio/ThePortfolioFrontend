@@ -1,6 +1,6 @@
 import type React from "react";
 import MetricsCard from "../../components/Card/MetricsCard";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import LineChart from "../../components/Charts/LineChart";
 import DataTable from "../../components/Table/DataTable";
 import elasticsearchService from "../../services/elasticsearch.service";
@@ -15,6 +15,7 @@ import { buildFetchProcessExecutionsQuery, parseFetchProcessExecutionsResponse, 
 import SidePanel from "../../components/Panels/Sidepanel";
 import { fetchProcessTreeQuery, mapProcessTreeResponse, type fetchProcessTreeResponse, type ProcessTreeInfo } from "../../queries/fetchProcessTree";
 import ProcessTreeDiagram from "../../components/Trees/ProcessTree";
+import SearchInput from "../../components/Search/SearchInput";
 
 
 interface CardRowProps {
@@ -84,10 +85,12 @@ const ProcessInformationPage: React.FC = () => {
     const [memoryIntenseProcesses, setMemoryIntenseProcesses] = useState<RunningDevicesStatsResponse[]>([]);
     const [activePageMemoryIntense, setActivePageMemoryIntense] = useState(1);
     const [totalMemoryIntenseProcess, setTotalMemoryIntenseProcess] = useState(1);
+    const [memoryIntenseProcessSearchTerm, setMemoryIntenseProcessesSearchTerm] = useState("");
 
     const [memoryLeakProcesses, setMemoryLeakProcesses] = useState<RunningDevicesStatsResponse[]>([]);
     const [activePageMemoryLeak, setActivePageMemoryLeak] = useState(1);
     const [totalMemoryLeakProcesses, setTotalMemoryLeakProcesses] = useState(1);
+    const [memoryLeakProcessSearchTerm, setMemoryLeakProcessSearchTerm] = useState("");
 
     const totalItemsPerPage = 10;
 
@@ -103,6 +106,19 @@ const ProcessInformationPage: React.FC = () => {
     /**
      * Elasticsearch Data Processing
      */
+
+    const updateFromDate = useCallback((newFromDate: string) => {
+        // From date should not be more than 30 days in the past
+        const newFrom = new Date(newFromDate);
+        const now = !!toDate ? new Date(toDate) : new Date();
+        if (newFrom < new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)) {
+            setFromDate(new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString());
+        } else if (newFrom > now) {
+            setFromDate(now.toISOString());
+        } else {
+            setFromDate(newFrom.toISOString());
+        }
+    }, [toDate]);
 
     const fetchUniqueDevices = async () => {
         const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
@@ -146,6 +162,7 @@ const ProcessInformationPage: React.FC = () => {
     };
 
     const fetchMemoryIntensiveProcesses = useMemo(async () => {
+        console.log("Fetching memory intensive processes with search term:", memoryIntenseProcessSearchTerm);
         const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
             buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
@@ -158,7 +175,14 @@ const ProcessInformationPage: React.FC = () => {
                     "deviation_memory_consumption_megabytes",
                     "avg_cpu_consumption",
                     "process_name"
-                ]
+                ],
+                filters: memoryIntenseProcessSearchTerm ? [
+                    {
+                        wildcard: {
+                            process_name: `*${memoryIntenseProcessSearchTerm}*`
+                        }
+                    }
+                ] : []
             }),
             elasticIndices.runningProcesses
         );
@@ -168,7 +192,7 @@ const ProcessInformationPage: React.FC = () => {
         }
         return parseFetchRunningDevicesStatsResponse(result);
         
-    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage]);
+    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm]);
 
     const fetchTotalIODevices = async () => {
         const result = await elasticsearchService.aggregate<null, FetchTotalIoDevicesResponse>(
@@ -195,7 +219,14 @@ const ProcessInformationPage: React.FC = () => {
                 // to: toDate, # Memory leak is relative and not time dependent
                 page: activePageMemoryLeak,
                 pageSize: totalItemsPerPage,
-                order_by: "avg_memory_leak"
+                order_by: "avg_memory_leak",
+                filters: memoryLeakProcessSearchTerm ? [
+                    {
+                        wildcard: {
+                            process_name: `*${memoryLeakProcessSearchTerm}*`
+                        }
+                    }
+                ] : [],
             }),
             elasticIndices.runningProcesses
         );
@@ -204,7 +235,7 @@ const ProcessInformationPage: React.FC = () => {
             return;
         }
         return parseFetchRunningDevicesStatsResponse(result);
-    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage]);
+    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm]);
 
     const fetchProcessExecutions = async (processName: string) => {
         setIsFetchingExecutions(true);
@@ -271,7 +302,6 @@ const ProcessInformationPage: React.FC = () => {
     /**
      * Component Display related functions
      */
-    
 
     useEffect(() => {
         fetchUniqueDevices();
@@ -337,7 +367,7 @@ const ProcessInformationPage: React.FC = () => {
                     from={fromDate}
                     to={toDate}
                     handler={({from, to}) => {
-                        if (from) setFromDate(from);
+                        if (from) updateFromDate(from);
                         if (to) setToDate(to);
                     }}
                     className="w-auto"
@@ -353,56 +383,81 @@ const ProcessInformationPage: React.FC = () => {
                 ioDevicesConnected={ioDevicesConnected} />
 
             
-            {activePageMemoryIntense && <DataTable 
-                title="Highest memory consuming processes"
-                columns={[
-                    { name: "Process Name", key: "processName" },
-                    { name: "Average Memory Usage (GB)", key: "avgMemoryUsageGB" },
-                    { name: "Avg. Deviation from Mean (%)", key: "deviationMemoryConsumption" },
-                    { name: "Average CPU Usage (%)", key: "avgCpuConsumption" },
-                    { name: "Processed At", key: "processingTimestamp"}
-                ]}
-                data={memoryIntenseProcesses.map(p => ({
-                    processName: p.process_name,
-                    avgMemoryUsageGB: ((p.avg_memory_megabytes || 0) / 1024).toFixed(2),
-                    deviationMemoryConsumption: ((p.deviation_memory_consumption_megabytes || 0)/1024 ).toFixed(2),
-                    avgCpuConsumption: (p.avg_cpu_consumption || 0).toFixed(2),
-                    processingTimestamp: new Date(p.processing_timestamp).toLocaleString()
-                }))}
-                pagination={
-                    Array.from({ length: Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage) }, (_, i) => ({
+            {activePageMemoryIntense && <div className="memory-intensive-process-section">
+                <div className="flex flex-wrap w-full gap-2 flex-start mb-2 memory-intensive-process-filters">
+                    <SearchInput 
+                        value=""
+                        onChange={(value) => { 
+                            setMemoryIntenseProcessesSearchTerm(value);
+                        }}
+                        placeholder="Search by process name..."
+                        fullWidth={false}
+                    />
+                </div>
+                <DataTable 
+                    title="Highest memory consuming processes"
+                    columns={[
+                        { name: "Process Name", key: "processName" },
+                        { name: "Average Memory Usage (GB)", key: "avgMemoryUsageGB" },
+                        { name: "Avg. Deviation from Mean (%)", key: "deviationMemoryConsumption" },
+                        { name: "Average CPU Usage (%)", key: "avgCpuConsumption" },
+                        { name: "Processed At", key: "processingTimestamp"}
+                    ]}
+                    data={memoryIntenseProcesses.map(p => ({
+                        processName: p.process_name,
+                        avgMemoryUsageGB: ((p.avg_memory_megabytes || 0) / 1024).toFixed(2),
+                        deviationMemoryConsumption: ((p.deviation_memory_consumption_megabytes || 0)/1024 ).toFixed(2),
+                        avgCpuConsumption: (p.avg_cpu_consumption || 0).toFixed(2),
+                        processingTimestamp: new Date(p.processing_timestamp).toLocaleString()
+                    }))}
+                    pagination={
+                        Array.from({ length: Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage) }, (_, i) => ({
+                            pageNumber: i + 1,
+                            isActive: activePageMemoryIntense === (i + 1)
+                        }))
+                    }
+                    paginationHandler={(page) => {
+                        setActivePageMemoryIntense(page);
+                    }}
+                    clipLongText={true}
+                    totalPages={Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage)}
+                    onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
+                />
+                
+            </div>}
+            {activePageMemoryLeak && <div className="memory-leak-process-section">
+                <div className="flex flex-wrap w-full gap-2 flex-start mb-2 memory-leak-process-filters">
+                    <SearchInput 
+                        value=""
+                        onChange={(value) => { 
+                            setMemoryLeakProcessSearchTerm(value);
+                        }}
+                        placeholder="Search by process name..."
+                        fullWidth={false}
+                    />
+                </div>
+                <DataTable
+                    title="Processes with Memory Leak"
+                    columns={[
+                        { name: "Process Name", key: "processName" },
+                        { name: "Mean memory leak over time", key: "avgMemoryLeak" },
+                        { name: "Deviation of Memory Leak", key: "deviationMemoryLeak" }
+                    ]}
+                    data={memoryLeakProcesses.map(p => ({
+                        processName: p.process_name,
+                        avgMemoryLeak: (p.avg_memory_leak || 0).toFixed(2),
+                        deviationMemoryLeak: (p.deviation_memory_leak || 0).toFixed(2)
+                    }))}
+                    pagination={Array.from({ length: Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage) }, (_, i) => ({
                         pageNumber: i + 1,
-                        isActive: activePageMemoryIntense === (i + 1)
-                    }))
-                }
-                paginationHandler={(page) => {
-                    setActivePageMemoryIntense(page);
-                }}
-                clipLongText={true}
-                totalPages={Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage)}
-                onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
-            />}
-            {activePageMemoryLeak && <DataTable
-                title="Processes with Memory Leak"
-                columns={[
-                    { name: "Process Name", key: "processName" },
-                    { name: "Mean memory leak over time", key: "avgMemoryLeak" },
-                    { name: "Deviation of Memory Leak", key: "deviationMemoryLeak" }
-                ]}
-                data={memoryLeakProcesses.map(p => ({
-                    processName: p.process_name,
-                    avgMemoryLeak: (p.avg_memory_leak || 0).toFixed(2),
-                    deviationMemoryLeak: (p.deviation_memory_leak || 0).toFixed(2)
-                }))}
-                pagination={Array.from({ length: Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage) }, (_, i) => ({
-                    pageNumber: i + 1,
-                    isActive: activePageMemoryLeak === (i + 1)
-                }))}
-                paginationHandler={(page) => { setActivePageMemoryLeak(page); }}
-                clipLongText={true}
-                totalPages={Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage)}
-                onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
-            />}
+                        isActive: activePageMemoryLeak === (i + 1)
+                    }))}
+                    paginationHandler={(page) => { setActivePageMemoryLeak(page); }}
+                    clipLongText={true}
+                    totalPages={Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage)}
+                    onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
+                />
+            </div>}
         </div>
         <SidePanel
         title={`Process Execution Details${selectedProcessName ? ` — ${selectedProcessName}` : ""}`}

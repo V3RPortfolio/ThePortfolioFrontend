@@ -33,6 +33,7 @@ export interface FetchRunningDevicesStatsParams {
     pageSize: number; // number of processes per page,
     order_by: "avg_memory_megabytes" | "avg_cpu_consumption" | "avg_memory_consumption" | "avg_memory_leak"; // field to sort by
     fields?: string[]; // optional list of additional fields to include in the response
+    filters?: any[];
 }
 
 export const buildFetchRunningDevicesStatsQuery = ({
@@ -42,7 +43,8 @@ export const buildFetchRunningDevicesStatsQuery = ({
     page,
     pageSize,
     order_by,
-    fields
+    fields,
+    filters
 }: FetchRunningDevicesStatsParams) => {
     if(!!fields && !fields.includes(order_by)) {
         fields.push(order_by);
@@ -63,7 +65,8 @@ export const buildFetchRunningDevicesStatsQuery = ({
                         "term": {
                             "device_id": deviceId
                         }
-                    }
+                    },
+                    ...(filters || [])
                 ]
             }
         },
