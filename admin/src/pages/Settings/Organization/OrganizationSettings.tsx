@@ -14,6 +14,8 @@ import { ToastContext } from "../../../contexts/toast.context";
 import ManageOrganizationUser from "./components/ManageOrganizationUser";
 import PendingInvitationsComponent from "./components/PendingInvitations";
 import { useOrganization } from "../../../contexts/organization.context";
+import InformationModal from "../../../components/Modals/Information";
+
 
 
 const OrganizationSettingsPage: React.FC = () => {
@@ -26,10 +28,12 @@ const OrganizationSettingsPage: React.FC = () => {
     const [editingUser, setEditingUser] = useState<OrganizationUserOut | null>(null);
     const [showUserForm, setShowUserForm] = useState(false);
 
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+
     const toastContext = useContext(ToastContext);
 
     const addToast = useCallback((message: string, type: "success" | "error") => {
-        if(toastContext?.addToast) {
+        if (toastContext?.addToast) {
             toastContext.addToast({ message, type });
         }
     }, [toastContext]);
@@ -165,19 +169,25 @@ const OrganizationSettingsPage: React.FC = () => {
     return (
         <>
             <div className="p-6 flex flex-col gap-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                     <h2 className="text-title">Organization Settings</h2>
-                    {!showOrgForm && (
-                        <button
-                            className="btn btn-primary"
-                            onClick={() => {
-                                setEditingOrg(null);
-                                setShowOrgForm(true);
-                            }}
-                        >
-                            New Organization
-                        </button>
-                    )}
+                    <div className="flex flex-row flex-wrap button-container gap-2">
+                        {!showOrgForm && (
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => {
+                                    setEditingOrg(null);
+                                    setShowOrgForm(true);
+                                }}
+                            >
+                                New Organization
+                            </button>
+                        )}
+                        {selectedOrg && <button className="btn btn-tertiary" onClick={() => setShowPaymentModal(true)}>
+                            Provision resources
+                        </button>}
+                    </div>
+
                 </div>
 
                 {showOrgForm && (
@@ -196,11 +206,11 @@ const OrganizationSettingsPage: React.FC = () => {
                     onLeave={handleLeaveOrg}
                 />
 
-                <PendingInvitationsComponent 
-                    onResponse={(orgId, accept) => { 
+                <PendingInvitationsComponent
+                    onResponse={(orgId, accept) => {
                         console.info("Invitation response for orgId:", orgId, "accepted:", accept);
-                        if(accept) updateOrganizationsList();
-                     }}
+                        if (accept) updateOrganizationsList();
+                    }}
                 />
 
                 {selectedOrg && (
@@ -219,10 +229,10 @@ const OrganizationSettingsPage: React.FC = () => {
                         />
 
                         {showUserForm && editingUser && (
-                            <ManageOrganizationUser 
-                            editingUser={editingUser}
-                            onSave={handleSaveOrgUser}
-                            onCancel={handleCancelOrgUserForm}
+                            <ManageOrganizationUser
+                                editingUser={editingUser}
+                                onSave={handleSaveOrgUser}
+                                onCancel={handleCancelOrgUserForm}
                             />
                         )}
 
@@ -238,6 +248,13 @@ const OrganizationSettingsPage: React.FC = () => {
                         />
                     </>
                 )}
+
+                {showPaymentModal && <InformationModal
+                title="Online payment currently unavailable"
+                description="We're excited to have you use our platform to provision resources and manage your documents. At the moment, our online payment processing feature is still under development and is not yet available. This means that while you can explore the application and set up resources, payment-related actions cannot be completed at this time. We're actively working to enable this feature and will notify you as soon as it becomes available. Thank you for your patience and understanding."
+                onAccept={() => setShowPaymentModal(false)}
+                onCancel={() => setShowPaymentModal(false)}
+                />}
             </div>
         </>
     );

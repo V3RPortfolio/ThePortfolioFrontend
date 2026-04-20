@@ -154,15 +154,15 @@ const DeviceSettingsPage: React.FC = () => {
 
                 {selectedOrg && (
                     <>
-                        <h3
-                            className="text-heading"
-                            style={{ color: "var(--color-text-primary)" }}
-                        >
-                            Device Settings | Organization: {selectedOrg.name}
-                        </h3>
+                        <div className="flex flex-wrap justify-between">
+                            <h3
+                                className="text-heading"
+                                style={{ color: "var(--color-text-primary)" }}
+                            >
+                                Device Settings | Organization: {selectedOrg.name}
+                            </h3>
 
-                        {!showDeviceForm && (
-                            <div>
+                            {!showDeviceForm && (
                                 <button
                                     className="btn btn-primary"
                                     onClick={() => {
@@ -172,8 +172,8 @@ const DeviceSettingsPage: React.FC = () => {
                                 >
                                     Add New Device
                                 </button>
-                            </div>
-                        )}
+                            )}
+                        </div>
 
                         {showDeviceForm && (
                             <ManageDevice
