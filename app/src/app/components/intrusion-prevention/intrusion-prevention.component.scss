@@ -1,0 +1,15 @@
+@use 'theme';
+
+
+#intrusion-prevention {
+    padding: 20px 0;
+    .intrusion-prevention-title {
+        width: 100%;
+        text-align: center;
+    }
+    .intrusion-prevention-description {
+        font-style: italic;
+        text-align: center;
+        font-weight: normal;
+    }
+}

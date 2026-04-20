@@ -1,0 +1,10 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+#data-analytics-banner {
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 100);
+
+    .data-analytics-banner-title, .data-analytics-banner-content {
+        color: mat.get-theme-color(theme.$theme, 'primary', 25);
+    }
+}

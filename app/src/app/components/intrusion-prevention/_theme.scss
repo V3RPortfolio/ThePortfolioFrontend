@@ -1,0 +1,14 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+@use '../../../styles/theme/constants' as constants;
+
+#intrusion-prevention {
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 20);
+    .intrusion-prevention-title, .intrusion-prevention-description {
+        color: mat.get-theme-color(theme.$theme, 'neutral', 95);
+        font-weight: bold;
+    }
+    .intrusion-prevention-description {
+        font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+    }
+}
