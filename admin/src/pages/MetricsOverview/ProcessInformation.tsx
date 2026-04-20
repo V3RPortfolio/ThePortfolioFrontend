@@ -193,7 +193,7 @@ const ProcessInformationPage: React.FC = () => {
                 deviceId: device,
                 // from: fromDate, # Memory leak is relative and not time dependent
                 // to: toDate, # Memory leak is relative and not time dependent
-                page: activePageMemoryIntense,
+                page: activePageMemoryLeak,
                 pageSize: totalItemsPerPage,
                 order_by: "avg_memory_leak"
             }),
@@ -380,7 +380,7 @@ const ProcessInformationPage: React.FC = () => {
                 }}
                 clipLongText={true}
                 totalPages={Math.ceil(totalMemoryIntenseProcess/totalItemsPerPage)}
-                onRowClick={(row) => fetchProcessExecutions(row.processName)}
+                onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
             />}
             {activePageMemoryLeak && <DataTable
                 title="Processes with Memory Leak"
@@ -401,7 +401,7 @@ const ProcessInformationPage: React.FC = () => {
                 paginationHandler={(page) => { setActivePageMemoryLeak(page); }}
                 clipLongText={true}
                 totalPages={Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage)}
-                onRowClick={(row) => fetchProcessExecutions(row.processName)}
+                onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
             />}
         </div>
         <SidePanel
@@ -437,7 +437,7 @@ const ProcessInformationPage: React.FC = () => {
                                 if(index !== -1) {
                                     const processId = processExecutionChartData.processId[index];
                                     const processingTimestamp = processExecutionChartData.processingTimestamp[index];
-                                    fetchProcessTree(processId, device, processingTimestamp);
+                                    !isFetchingProcessTree && fetchProcessTree(processId, device, processingTimestamp);
                                 }
                             }}
                         />
@@ -459,7 +459,7 @@ const ProcessInformationPage: React.FC = () => {
                                 if(index !== -1) {
                                     const processId = processExecutionChartData.processId[index];
                                     const processingTimestamp = processExecutionChartData.processingTimestamp[index];
-                                    fetchProcessTree(processId, device, processingTimestamp);
+                                    !isFetchingProcessTree && fetchProcessTree(processId, device, processingTimestamp);
                                 }
                             }}
                         />
