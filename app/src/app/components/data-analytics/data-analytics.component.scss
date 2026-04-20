@@ -1,0 +1,13 @@
+@use 'theme';
+
+#data-analytics-banner {
+    .data-analytics-banner-content {
+        font-style: italic;
+    }
+
+    .data-analytics-banner-image {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+    }
+}

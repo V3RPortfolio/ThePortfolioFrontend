@@ -1,0 +1,20 @@
+<section id="supported-technologies">
+    <div class="wrapper" id="supported-frameworks">
+        <div class="container supported-technology-section">
+            <div class="section-header">
+                <h5 class="title">Built for Every Platform You Use</h5>
+                <h6 class="subtitle">Connect seamlessly across a wide range of operating systems and device types. The platform supports Windows, Linux, Android, and custom smart adapters for your appliances. Enjoy consistent performance and unified monitoring regardless of your infrastructure. Integration is straightforward, reducing setup time and complexity. One system, complete visibility—everywhere.</h6>
+            </div>
+            <div class="section-body">
+                <ul class="supported-technology-list supported-framework-list">
+                    @for(technology of technologies; track technology.name) {
+                        <li class="supported-technology supported-framework" attr.data="{{technology.name}}">
+                            <img class="supported-technology-icon" src="{{technologyImagePath}}/{{technology.icon}}" alt="{{technology.name}}" />
+                            <span class="supported-technology-name">{{technology.name}}</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,16 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+@use '../../../styles/theme/breakpoint' as breakpoint;
+
+#data-ingestion-banner {
+    .data-ingestion-banner-title, .data-ingestion-banner-content {
+        color: mat.get-theme-color(theme.$theme, 'primary', 95);
+    }
+    .data-ingestion-banner-title {
+        text-shadow: 0px 5px 30px mat.get-theme-color(theme.$theme, 'primary', 90);
+    }
+
+    @include breakpoint.mobile {
+        background-color: mat.get-theme-color(theme.$theme, 'primary', 25);
+    }
+}

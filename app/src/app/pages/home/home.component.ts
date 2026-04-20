@@ -8,6 +8,11 @@ import { NotificationBannerComponent } from '../../components/notification-banne
 import { HomeBannersComponent } from '../../components/home-banners/home-banners.component';
 import { RelatedPostsComponent } from '../../components/related-posts/related-posts.component';
 import { GithubIssueMetricsComponent } from '../../components/github/github-issue-metrics/github-issue-metrics.component';
+import { DataIngestionPipelineComponent } from '../../components/data-ingestion-pipeline/data-ingestion-pipeline.component';
+import { DataAnalyticsComponent } from '../../components/data-analytics/data-analytics.component';
+import { RagArchitectureComponent } from '../../components/rag-architecture/rag-architecture.component';
+import { IntrusionPreventionComponent } from '../../components/intrusion-prevention/intrusion-prevention.component';
+import { TargetPlatformComponent } from '../../components/target-platform/target-platform.component';
 
 @Component({
     selector: 'app-home',
@@ -16,7 +21,13 @@ import { GithubIssueMetricsComponent } from '../../components/github/github-issu
     standalone: true,
     imports: [
       NotificationBannerComponent,
-      OpenSourceBannerComponent, 
+      
+      DataIngestionPipelineComponent, 
+      DataAnalyticsComponent,
+      RagArchitectureComponent,
+      IntrusionPreventionComponent,
+      TargetPlatformComponent,
+
       ParallaxDirective, 
       HeroComponent, 
       FamiliarTechnologiesComponent,

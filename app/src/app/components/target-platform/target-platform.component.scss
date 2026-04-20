@@ -1,0 +1,61 @@
+@use 'theme';
+@use '../../../styles/theme/breakpoint' as breakpoint;
+
+#supported-technologies {
+    .supported-technology-list {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
+
+        .supported-technology {
+            width: calc(20% - 20px);
+            margin: 10px 10px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .supported-technology-icon {
+            max-width: 80px;
+            margin-bottom: auto;
+            
+        }
+    }
+
+    .section-header {
+        text-align: center;
+        padding: 30px 0;
+    }
+
+    .supported-technology-section {
+        margin-bottom: 5px;
+        position: relative;
+    }
+
+    @include breakpoint.tablet {
+        .supported-technology-list {
+            .supported-technology {
+                margin: 20px 30px;
+                width: calc(33% - 60px);
+            }
+        }
+    }
+
+    @include breakpoint.mobile {
+        .supported-technology-list {
+            .supported-technology {
+                margin: 20px 10px;
+                width: calc(50% - 20px);
+            }
+        }
+        
+    }
+}

@@ -1,0 +1,20 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use 'theme';
+
+#rag-architecture-banner {
+    .rag-architecture-banner-content {
+        font-style: italic;
+    }
+
+    .rag-architecture-banner-image {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+    }
+
+    @include breakpoint.tablet {
+        .rag-architecture-banner-image-container {
+            display: none;
+        }
+    }
+}

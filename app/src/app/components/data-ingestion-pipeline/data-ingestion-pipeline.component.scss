@@ -1,0 +1,73 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+@use 'theme';
+#data-ingestion-banner {
+    position: relative;
+    line-height: 0;
+
+
+    .data-ingestion-banner-overlay {
+        position: absolute;
+        top: 15%;
+        left: 4%;
+        max-width: 55%
+    }
+    .data-ingestion-banner-title {
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+
+    .data-ingestion-banner-content {
+        max-width: 810px;
+        font-style: italic;
+    }
+
+    .data-ingestion-banner-image {
+        width: 100%;
+    }
+
+    @include breakpoint.smallDesktop {
+        overflow: hidden;
+        .data-ingestion-banner-image {
+            width: 135%;
+        }
+    }
+
+    @include breakpoint.mobile {
+        padding: 30px 30px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        .data-ingestion-banner-overlay {
+            left: unset;
+            top: unset;
+            width: 100%;
+            max-width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }   
+        .data-ingestion-banner-title {
+            text-align: center;            
+            margin-bottom: 15px;
+
+        }
+
+        .data-ingestion-banner-content {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .data-ingestion-banner-image {
+            display: none;
+        }
+
+        .data-ingestion-banner-button {
+            width: 100%;
+        }
+    }
+}
