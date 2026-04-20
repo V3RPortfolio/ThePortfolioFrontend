@@ -122,7 +122,7 @@ const ProcessInformationPage: React.FC = () => {
 
     const fetchUniqueDevices = async () => {
         const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
-            fetchUniqueDevicesQuery(1, 10),
+            fetchUniqueDevicesQuery(0, 1),
             elasticIndices.ioDevices
         );
         if(!result || !result.aggregations) {
@@ -388,6 +388,7 @@ const ProcessInformationPage: React.FC = () => {
                     <SearchInput 
                         value=""
                         onChange={(value) => { 
+                            setActivePageMemoryIntense(1); // Reset to first page on new search
                             setMemoryIntenseProcessesSearchTerm(value);
                         }}
                         placeholder="Search by process name..."
@@ -430,6 +431,7 @@ const ProcessInformationPage: React.FC = () => {
                     <SearchInput 
                         value=""
                         onChange={(value) => { 
+                            setActivePageMemoryLeak(1); // Reset to first page on new search
                             setMemoryLeakProcessSearchTerm(value);
                         }}
                         placeholder="Search by process name..."

@@ -1,6 +1,6 @@
 /**
  * Elasticsearch DSL Query: Fetch all unique device IDs from the process_executions index.
- * URL Path: /process_executions/_search
+ * URL Path: /running_processes/_search
  * Method: POST
  * Body:
  * {
@@ -17,15 +17,17 @@
  * }
  */
 
-export const fetchUniqueDevicesQuery = (pageNo: number, pageSize: number): any => {
+export const fetchUniqueDevicesQuery = (partition: number, totalPartitions: number): any => {
     return {
-        "size": pageSize,
-        "from": (pageNo - 1) * pageSize,
+        "size": 0,
         "aggs": {
             "unique_devices": {
                 "terms": {
                     "field": "device_id",
-                    "size": pageSize
+                    "include": {
+                        "partition": partition,
+                        "num_partitions": totalPartitions
+                    }
                 }
             }
         }
