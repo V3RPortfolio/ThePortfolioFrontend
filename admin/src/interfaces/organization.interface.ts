@@ -47,3 +47,25 @@ export interface OrganizationUserIn {
 export interface OrganizationUserUpdateIn {
     role: OrganizationRoleType;
 }
+
+export interface ResourceIndexDto {
+    name: string;
+    major_version: number;
+    minor_version: number;
+    patch_version: number;
+    last_attempted_provisioned_at: string;
+    provision_status: string | null;
+}
+
+export interface ResourceDto {
+    organization_id: string;
+    name: string;
+    is_active: boolean;
+    indices?: ResourceIndexDto[];
+}
+
+export interface ManageResourceDto {
+    organization_id: string;
+    name?: string | null;
+    is_active?: boolean | null;
+}

@@ -5,6 +5,7 @@ import type {
     OrganizationOut,
     OrganizationRoleType,
     OrganizationUserOut,
+    ResourceDto,
 } from "../../../interfaces/organization.interface";
 import ViewOrganizationList from "./components/ViewOrganizationList";
 import ManageOrganizationDetails from "./components/ManageOrganizationDetails";
@@ -14,7 +15,7 @@ import { ToastContext } from "../../../contexts/toast.context";
 import ManageOrganizationUser from "./components/ManageOrganizationUser";
 import PendingInvitationsComponent from "./components/PendingInvitations";
 import { useOrganization } from "../../../contexts/organization.context";
-import InformationModal from "../../../components/Modals/Information";
+import ViewResourceList from "./components/ViewResourceList";
 
 
 
@@ -28,7 +29,8 @@ const OrganizationSettingsPage: React.FC = () => {
     const [editingUser, setEditingUser] = useState<OrganizationUserOut | null>(null);
     const [showUserForm, setShowUserForm] = useState(false);
 
-    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [resource, setResource] = useState<ResourceDto | null>(null);
+    const [isProvisioningResource, setIsProvisioningResource] = useState(false);
 
     const toastContext = useContext(ToastContext);
 
@@ -48,13 +50,20 @@ const OrganizationSettingsPage: React.FC = () => {
         setOrgUsers(data);
     }, []);
 
+    const fetchResource = useCallback(async (orgId: string) => {
+        const data = await organizationService.getResource(orgId);
+        setResource(data);
+    }, []);
+
     useEffect(() => {
         if (selectedOrg) {
             fetchUsers(selectedOrg.id);
+            fetchResource(selectedOrg.id);
         } else {
             setOrgUsers([]);
+            setResource(null);
         }
-    }, [selectedOrg, fetchUsers]);
+    }, [selectedOrg, fetchUsers, fetchResource]);
 
     const handleSelectOrg = async (org: OrganizationOut) => {
         try {
@@ -166,6 +175,41 @@ const OrganizationSettingsPage: React.FC = () => {
         }
     }
 
+    const handleCreateAndProvisionResource = async () => {
+        if (!selectedOrg) return;
+        setIsProvisioningResource(true);
+        try {
+            const created = await organizationService.createResource(selectedOrg.id, {
+                organization_id: selectedOrg.id,
+                name: selectedOrg.name,
+                is_active: true
+            });
+            setResource(created);
+            addToast(`Created resource for "${selectedOrg.name}"`, "success");
+            await organizationService.provisionResource(selectedOrg.id);
+            addToast(`Provisioning started for "${selectedOrg.name}"`, "success");
+            fetchResource(selectedOrg.id);
+        } catch (err) {
+            addToast(extractErrorMessage(err), "error");
+        } finally {
+            setIsProvisioningResource(false);
+        }
+    };
+
+    const handleProvisionResource = async () => {
+        if (!selectedOrg) return;
+        setIsProvisioningResource(true);
+        try {
+            await organizationService.provisionResource(selectedOrg.id);
+            addToast(`Provisioning started for "${selectedOrg.name}"`, "success");
+            fetchResource(selectedOrg.id);
+        } catch (err) {
+            addToast(extractErrorMessage(err), "error");
+        } finally {
+            setIsProvisioningResource(false);
+        }
+    };
+
     return (
         <>
             <div className="p-6 flex flex-col gap-6">
@@ -183,9 +227,24 @@ const OrganizationSettingsPage: React.FC = () => {
                                 New Organization
                             </button>
                         )}
-                        {selectedOrg && <button className="btn btn-tertiary" onClick={() => setShowPaymentModal(true)}>
-                            Provision resources
-                        </button>}
+                        {selectedOrg && !resource && (
+                            <button
+                                className="btn btn-tertiary"
+                                onClick={handleCreateAndProvisionResource}
+                                disabled={isProvisioningResource}
+                            >
+                                {isProvisioningResource ? "Provisioning…" : "Provision resources"}
+                            </button>
+                        )}
+                        {selectedOrg && resource && (
+                            <button
+                                className="btn btn-tertiary"
+                                onClick={handleProvisionResource}
+                                disabled={isProvisioningResource}
+                            >
+                                {isProvisioningResource ? "Provisioning…" : "Re-provision resources"}
+                            </button>
+                        )}
                     </div>
 
                 </div>
@@ -246,15 +305,15 @@ const OrganizationSettingsPage: React.FC = () => {
                                 await handleRemoveUser(user.email);
                             }}
                         />
+
+                        {resource && resource.indices && resource.indices.length > 0 && (
+                            <>
+                                <hr className="divider" />
+                                <ViewResourceList indices={resource.indices} />
+                            </>
+                        )}
                     </>
                 )}
-
-                {showPaymentModal && <InformationModal
-                title="Online payment currently unavailable"
-                description="We're excited to have you use our platform to provision resources and manage your documents. At the moment, our online payment processing feature is still under development and is not yet available. This means that while you can explore the application and set up resources, payment-related actions cannot be completed at this time. We're actively working to enable this feature and will notify you as soon as it becomes available. Thank you for your patience and understanding."
-                onAccept={() => setShowPaymentModal(false)}
-                onCancel={() => setShowPaymentModal(false)}
-                />}
             </div>
         </>
     );

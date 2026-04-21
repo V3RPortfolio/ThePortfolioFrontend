@@ -562,6 +562,104 @@
         ]
       }
     },
+    "/api/organization/v1/devices/{org_id}/{device_id}/": {
+      "put": {
+        "operationId": "organization_views_devices_update_device_endpoint",
+        "summary": "Update Device Endpoint",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "device_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Device Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Devices"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
     "/api/organization/v1/devices/{org_id}/{device_id}": {
       "get": {
         "operationId": "organization_views_devices_get_device_details_endpoint",
@@ -1055,6 +1153,319 @@
         },
         "tags": [
           "Devices"
+        ],
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
+    "/api/organization/v1/{org_id}/resources": {
+      "post": {
+        "operationId": "organization_views_resources_create_resource",
+        "summary": "Create Resource",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "description": "Creates a new organization resource.",
+        "tags": [
+          "Organization Resources"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManageResourceDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "organization_views_resources_get_resource_status",
+        "summary": "Get Resource Status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "description": "Gets the organization resource.",
+        "tags": [
+          "Organization Resources"
+        ],
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "organization_views_resources_update_resource",
+        "summary": "Update Resource",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "description": "Updates organization resource.",
+        "tags": [
+          "Organization Resources"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManageResourceDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "organization_views_resources_delete_resource",
+        "summary": "Delete Resource",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "description": "Deletes organization resource.",
+        "tags": [
+          "Organization Resources"
+        ],
+        "security": [
+          {
+            "AuthBearer": []
+          }
+        ]
+      }
+    },
+    "/api/organization/v1/{org_id}/resources/provision": {
+      "post": {
+        "operationId": "organization_views_resources_provision_resource",
+        "summary": "Provision Resource",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response",
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "description": "Provisions organization resource.",
+        "tags": [
+          "Organization Resources"
         ],
         "security": [
           {
@@ -2215,6 +2626,34 @@
         "title": "DeviceType",
         "type": "string"
       },
+      "DeviceUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "title": "DeviceUpdate",
+        "type": "object"
+      },
       "DeviceDetailOut": {
         "properties": {
           "id": {
@@ -2343,6 +2782,131 @@
           "is_active"
         ],
         "title": "DeviceConnectionStatusOut",
+        "type": "object"
+      },
+      "ResourceDto": {
+        "description": "Data Transfer Object for organization response.",
+        "properties": {
+          "organization_id": {
+            "description": "ID of the organization",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the organization",
+            "title": "Name",
+            "type": "string"
+          },
+          "is_active": {
+            "description": "Whether the organization is active",
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "indices": {
+            "description": "List of indices associated with the organization",
+            "items": {
+              "$ref": "#/components/schemas/ResourceIndexDto"
+            },
+            "title": "Indices",
+            "type": "array"
+          }
+        },
+        "required": [
+          "organization_id",
+          "name",
+          "is_active"
+        ],
+        "title": "ResourceDto",
+        "type": "object"
+      },
+      "ResourceIndexDto": {
+        "properties": {
+          "name": {
+            "description": "Name of the index",
+            "title": "Name",
+            "type": "string"
+          },
+          "major_version": {
+            "description": "Major version number of the index schema. It should be incremented when there are breaking changes in the schema which requires reindexing of data.",
+            "title": "Major Version",
+            "type": "integer"
+          },
+          "minor_version": {
+            "description": "Minor version number of the index schema. It should be incremented when there are non-breaking changes in the schema which does not require reindexing of data.",
+            "title": "Minor Version",
+            "type": "integer"
+          },
+          "patch_version": {
+            "description": "Patch version number of the index schema. It should be incremented when there are minor changes in the schema such as adding new properties which does not require reindexing of data.",
+            "title": "Patch Version",
+            "type": "integer"
+          },
+          "last_attempted_provisioned_at": {
+            "description": "Timestamp when the index was last provisioned",
+            "title": "Last Attempted Provisioned At",
+            "type": "string"
+          },
+          "provision_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Provision status of the index. It can be one of 'pending', 'in_progress', 'completed', 'failed'",
+            "title": "Provision Status"
+          }
+        },
+        "required": [
+          "name",
+          "major_version",
+          "minor_version",
+          "patch_version",
+          "last_attempted_provisioned_at",
+          "provision_status"
+        ],
+        "title": "ResourceIndexDto",
+        "type": "object"
+      },
+      "ManageResourceDto": {
+        "description": "Data Transfer Object for managing organization information.",
+        "properties": {
+          "organization_id": {
+            "description": "ID of the organization",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Name of the organization",
+            "title": "Name"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Whether the organization is active",
+            "title": "Is Active"
+          }
+        },
+        "required": [
+          "organization_id"
+        ],
+        "title": "ManageResourceDto",
         "type": "object"
       },
       "OrganizationOut": {
