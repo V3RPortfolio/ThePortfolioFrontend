@@ -4,7 +4,7 @@ import organizationService from "../../../services/organization.service";
 import type {
     OrganizationOut,
     OrganizationRoleType,
-    OrganizationUserOut,
+    OrganizationUserOut
 } from "../../../interfaces/organization.interface";
 import ViewOrganizationList from "./components/ViewOrganizationList";
 import ManageOrganizationDetails from "./components/ManageOrganizationDetails";
@@ -14,21 +14,30 @@ import { ToastContext } from "../../../contexts/toast.context";
 import ManageOrganizationUser from "./components/ManageOrganizationUser";
 import PendingInvitationsComponent from "./components/PendingInvitations";
 import { useOrganization } from "../../../contexts/organization.context";
-import InformationModal from "../../../components/Modals/Information";
+import ViewResourceList from "./components/ViewResourceList";
 
 
 
 const OrganizationSettingsPage: React.FC = () => {
     const [orgUsers, setOrgUsers] = useState<OrganizationUserOut[]>([]);
 
-    const { selectedOrg, selectOrg, clearSelectedOrg, organizations, updateOrganizationsList } = useOrganization();
+    const { 
+        selectedOrg, 
+        selectOrg, 
+        clearSelectedOrg, 
+        organizations, 
+        updateOrganizationsList, 
+        resource, 
+        updateProvisionedResource,
+        isResourceProvisioned
+    } = useOrganization();
     const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
     const [showOrgForm, setShowOrgForm] = useState(false);
 
     const [editingUser, setEditingUser] = useState<OrganizationUserOut | null>(null);
     const [showUserForm, setShowUserForm] = useState(false);
 
-    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [isProvisioningResource, setIsProvisioningResource] = useState(false);
 
     const toastContext = useContext(ToastContext);
 
@@ -47,14 +56,6 @@ const OrganizationSettingsPage: React.FC = () => {
         const data = await organizationService.listOrganizationUsers(orgId);
         setOrgUsers(data);
     }, []);
-
-    useEffect(() => {
-        if (selectedOrg) {
-            fetchUsers(selectedOrg.id);
-        } else {
-            setOrgUsers([]);
-        }
-    }, [selectedOrg, fetchUsers]);
 
     const handleSelectOrg = async (org: OrganizationOut) => {
         try {
@@ -166,6 +167,55 @@ const OrganizationSettingsPage: React.FC = () => {
         }
     }
 
+    const handleCreateAndProvisionResource = async () => {
+        if (!selectedOrg || isResourceProvisioned) return;
+        setIsProvisioningResource(true);
+        try {
+            const created = await organizationService.createResource(selectedOrg.id, {
+                organization_id: selectedOrg.id,
+                name: selectedOrg.name,
+                is_active: true
+            });
+            if(!!created) {
+                setTimeout(() => {
+                    updateProvisionedResource();
+                }, 500);
+                addToast(`Created resource for "${selectedOrg.name}"`, "success");
+                await organizationService.provisionResource(selectedOrg.id);
+                addToast(`Provisioning started for "${selectedOrg.name}"`, "success");
+            }
+        } catch (err) {
+            addToast(extractErrorMessage(err), "error");
+        } finally {
+            setIsProvisioningResource(false);
+        }
+    };
+
+    const handleDeprovisionResource = async () => {
+        if (!selectedOrg || !isResourceProvisioned) return;
+        setIsProvisioningResource(true);
+        try {
+            await organizationService.deprovisionResource(selectedOrg.id);
+            addToast(`Deprovisioning started for "${selectedOrg.name}"`, "success");
+            setTimeout(() => {
+                updateProvisionedResource();
+            }, 500);
+        } catch (err) {
+            addToast(extractErrorMessage(err), "error");
+        } finally {
+            setIsProvisioningResource(false);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedOrg) {
+            fetchUsers(selectedOrg.id);
+            updateProvisionedResource();
+        } else {
+            setOrgUsers([]);
+        }
+    }, [selectedOrg, fetchUsers]);
+
     return (
         <>
             <div className="p-6 flex flex-col gap-6">
@@ -183,9 +233,24 @@ const OrganizationSettingsPage: React.FC = () => {
                                 New Organization
                             </button>
                         )}
-                        {selectedOrg && <button className="btn btn-tertiary" onClick={() => setShowPaymentModal(true)}>
-                            Provision resources
-                        </button>}
+                        {selectedOrg && !resource && (
+                            <button
+                                className="btn btn-tertiary"
+                                onClick={handleCreateAndProvisionResource}
+                                disabled={isProvisioningResource}
+                            >
+                                {isProvisioningResource ? "Provisioning…" : "Provision resources"}
+                            </button>
+                        )}
+                        {selectedOrg && resource && (
+                            <button
+                                className="btn bg-red-100 hover:bg-red-200 text-red-700"
+                                onClick={handleDeprovisionResource}
+                                disabled={isProvisioningResource}
+                            >
+                                {isProvisioningResource ? "Provisioning…" : "De-provision resources"}
+                            </button>
+                        )}
                     </div>
 
                 </div>
@@ -206,12 +271,20 @@ const OrganizationSettingsPage: React.FC = () => {
                     onLeave={handleLeaveOrg}
                 />
 
-                <PendingInvitationsComponent
-                    onResponse={(orgId, accept) => {
-                        console.info("Invitation response for orgId:", orgId, "accepted:", accept);
-                        if (accept) updateOrganizationsList();
-                    }}
-                />
+                {selectedOrg && resource && resource.indices && resource.indices.length > 0 && <div>
+                    <hr className="divider" />
+                    <ViewResourceList indices={resource.indices} />
+                </div>}
+
+                <div>
+                    <hr className="divider" />
+                    <PendingInvitationsComponent
+                        onResponse={(orgId, accept) => {
+                            console.info("Invitation response for orgId:", orgId, "accepted:", accept);
+                            if (accept) updateOrganizationsList();
+                        }}
+                    />
+                </div>
 
                 {selectedOrg && (
                     <>
@@ -248,13 +321,6 @@ const OrganizationSettingsPage: React.FC = () => {
                         />
                     </>
                 )}
-
-                {showPaymentModal && <InformationModal
-                title="Online payment currently unavailable"
-                description="We're excited to have you use our platform to provision resources and manage your documents. At the moment, our online payment processing feature is still under development and is not yet available. This means that while you can explore the application and set up resources, payment-related actions cannot be completed at this time. We're actively working to enable this feature and will notify you as soon as it becomes available. Thank you for your patience and understanding."
-                onAccept={() => setShowPaymentModal(false)}
-                onCancel={() => setShowPaymentModal(false)}
-                />}
             </div>
         </>
     );

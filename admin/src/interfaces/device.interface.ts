@@ -26,20 +26,6 @@ export interface DeviceOut {
     last_heartbeat_at: string | null;
     configurations: DeviceConfigurationOut[];
 }
-
-export interface DeviceDetailOut {
-    id: string;
-    organization_id: string;
-    name: string;
-    description: string | null;
-    device_type: string;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-    last_heartbeat_at: string | null;
-    configurations: DeviceConfigurationOut[];
-}
-
 export interface DeviceIn {
     name: string;
     description?: string | null;

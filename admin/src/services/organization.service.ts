@@ -9,6 +9,8 @@ import type {
     OrganizationUserIn,
     OrganizationUserUpdateIn,
     OrganizationInvitationOut,
+    ResourceDto,
+    ManageResourceDto,
 } from "../interfaces/organization.interface";
 
 export class OrganizationService {
@@ -89,6 +91,27 @@ export class OrganizationService {
         return httpService.get<OrganizationInvitationOut[]>(`${organizationApi}/invitations/pending`, {}, true);
     }
 
+    async getResource(orgId: string): Promise<ResourceDto | null> {
+        try {
+            return await httpService.get<ResourceDto>(`${organizationApi}/${orgId}/resources`, {}, true);
+        } catch {
+            return null;
+        }
+    }
+
+    async createResource(orgId: string, data: ManageResourceDto): Promise<ResourceDto> {
+        return httpService.post<ResourceDto>(`${organizationApi}/${orgId}/resources`, {
+            body: JSON.stringify(data),
+        }, true);
+    }
+
+    async provisionResource(orgId: string): Promise<object> {
+        return httpService.post<object>(`${organizationApi}/${orgId}/resources/provision`, {}, true);
+    }
+
+    async deprovisionResource(orgId: string): Promise<{message: string}> {
+        return httpService.delete<{message:string}>(`${organizationApi}/${orgId}/resources`, {}, true);
+    }
 
 }
 
