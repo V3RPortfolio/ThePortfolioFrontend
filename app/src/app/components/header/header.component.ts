@@ -78,10 +78,12 @@ export class HeaderComponent implements OnInit {
   }
 
   gotToPost(name:string, id:number): void {
+    this.closeMenu();
     this.router.navigate([`/${RoutePaths.posts}`, id, name]);
   }
 
   goToLogin(): void {
+    this.closeMenu();
     this.router.navigate([`/${RoutePaths.login}`]);
   }
 
@@ -92,8 +94,15 @@ export class HeaderComponent implements OnInit {
 
   // Basic sign-out clears tokens and navigates to home
   signOut(): void {
+    this.closeMenu();
     this.authenticationService.clearTokens();
     this.router.navigate(['/']);
+  }
+
+  closeMenu(): void {
+    if (this.showMenu) {
+      this.toggleMenu();
+    }
   }
 
   toggleMenu() {
