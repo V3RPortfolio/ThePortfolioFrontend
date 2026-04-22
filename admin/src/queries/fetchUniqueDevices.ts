@@ -34,6 +34,19 @@ export const fetchUniqueDevicesQuery = (partition: number, totalPartitions: numb
     };
 };
 
+export const fetchTotalUniqueDevicesQuery = (): any => {
+    return {
+        "size": 0,
+        "aggs": {
+            "unique_devices": {
+                "cardinality": {
+                    "field": "device_id"
+                }
+            }
+        }
+    };  
+}
+
 export interface DeviceBucket {
     key: string;
     doc_count: number;
@@ -42,6 +55,12 @@ export interface DeviceBucket {
 export interface FetchUniqueDevicesResponse {
     unique_devices: {
         buckets: DeviceBucket[];
+    };
+}
+
+export interface FetchTotalUniqueDevicesResponse {
+    unique_devices: {
+        value: number;
     };
 }
 
@@ -63,4 +82,17 @@ export const parseFetchUniqueDevicesResponse = (response: FetchUniqueDevicesResp
                 typeof b.key === 'string'
         )
         .map((b: any) => b.key as string);
+};
+
+export const parseFetchTotalUniqueDevicesResponse = (response: FetchTotalUniqueDevicesResponse): number => {
+    if (
+        typeof response !== 'object' ||
+        !response.unique_devices ||
+        typeof response.unique_devices.value !== 'number'
+    ) {
+        console.error("Invalid response format for fetchTotalUniqueDevicesQuery:", response);
+        return 0;
+    }
+
+    return response.unique_devices.value;
 };
