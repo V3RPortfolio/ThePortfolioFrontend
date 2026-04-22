@@ -8,6 +8,7 @@ import { CreditsComponent } from './components/credits/credits.component';
 import { AboutComponent } from './pages/about/about.component';
 import { LoginComponent } from './pages/login/login.component';
 import { LogoutComponent } from './components/logout/logout.component';
+import { ContactComponent } from './pages/contact/contact.component';
 import { environment } from '../environments/environment.development';
 
 
@@ -20,6 +21,7 @@ export const routes: Routes = [
     {path: `${RoutePaths.post}/:catid/:catname/:id/:name`, component: PostComponent },
     {path: RoutePaths.credits, component: CreditsComponent},
     {path: RoutePaths.about, component: AboutComponent},
+    {path: RoutePaths.contact, component: ContactComponent},
     {path: RoutePaths.login, component: LoginComponent},
     {path: RoutePaths.oauth2CallbackGoogle, component: LoginComponent},
     {path: RoutePaths.logout, component: LogoutComponent},

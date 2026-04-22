@@ -7,6 +7,7 @@ export enum RoutePaths {
     notFound = '404',
     credits = 'credits',
     about = 'about',
+    contact = 'contact',
     login = 'login',
     logout = 'logout',
     admin = 'admin',

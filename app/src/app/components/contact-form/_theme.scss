@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+.contact-form-container {
+  .error-banner {
+    background-color: mat.get-theme-color(theme.$theme, 'error-container');
+    color: mat.get-theme-color(theme.$theme, 'on-error-container');
+  }
+
+  .success-message {
+    .success-icon {
+      color: mat.get-theme-color(theme.$theme, 'tertiary');
+    }
+  }
+}

@@ -1,0 +1,90 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+
+@import 'theme';
+
+.contact-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: map-get(constants.$padding, lg);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.contact-form {
+  width: 100%;
+  max-width: 680px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: map-get(constants.$margin, md);
+
+  .half-width {
+    flex: 1;
+  }
+}
+
+.optional-label {
+  font-size: map-get(constants.$font-sizes-rem, sm);
+  opacity: 0.75;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: map-get(constants.$padding, sm) map-get(constants.$padding, md);
+
+  .submit-button {
+    display: flex;
+    align-items: center;
+    gap: map-get(constants.$margin, sm);
+  }
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: map-get(constants.$margin, sm);
+  border-radius: 4px;
+  padding: map-get(constants.$padding, sm) map-get(constants.$padding, md);
+  margin-bottom: map-get(constants.$margin, md);
+}
+
+.success-message {
+  text-align: center;
+  padding: map-get(constants.$padding, xl);
+  max-width: 480px;
+  margin: auto;
+
+  .success-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: map-get(constants.$margin, md);
+  }
+
+  h3 {
+    margin-bottom: map-get(constants.$margin, sm);
+  }
+
+  p {
+    margin-bottom: map-get(constants.$margin, lg);
+  }
+}
+
+@include breakpoint.mobile {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .contact-form-container {
+    padding: map-get(constants.$padding, md) map-get(constants.$padding, sm);
+  }
+}

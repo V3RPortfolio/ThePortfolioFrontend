@@ -1,0 +1,11 @@
+@use '@angular/material' as mat;
+@use '../../../styles/theme/theme' as theme;
+
+#contact-page {
+  background-color: mat.get-theme-color(theme.$theme, 'surface');
+  color: mat.get-theme-color(theme.$theme, 'on-surface');
+
+  .contact-page-subtitle {
+    color: mat.get-theme-color(theme.$theme, 'on-surface-variant');
+  }
+}
