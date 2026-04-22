@@ -3,7 +3,6 @@ import { deviceApi } from "../constants";
 import type {
     DeviceOut,
     DeviceIn,
-    DeviceDetailOut,
     DeviceConfigurationOut,
     DeviceConfigurationIn,
     DeviceConnectionStatusOut,
@@ -32,9 +31,9 @@ class DeviceService {
         }, true);
     }
 
-    async getDeviceDetails(orgId: string, deviceId: string): Promise<DeviceDetailOut | null> {
+    async getDeviceDetails(orgId: string, deviceId: string): Promise<DeviceOut | null> {
         try {
-            return await httpService.get<DeviceDetailOut>(`${deviceApi}/${orgId}/${deviceId}`, {}, true);
+            return await httpService.get<DeviceOut>(`${deviceApi}/${orgId}/${deviceId}`, {}, true);
         } catch {
             return null;
         }

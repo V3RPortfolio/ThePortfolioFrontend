@@ -22,14 +22,22 @@ import ViewResourceList from "./components/ViewResourceList";
 const OrganizationSettingsPage: React.FC = () => {
     const [orgUsers, setOrgUsers] = useState<OrganizationUserOut[]>([]);
 
-    const { selectedOrg, selectOrg, clearSelectedOrg, organizations, updateOrganizationsList } = useOrganization();
+    const { 
+        selectedOrg, 
+        selectOrg, 
+        clearSelectedOrg, 
+        organizations, 
+        updateOrganizationsList, 
+        resource, 
+        updateProvisionedResource,
+        isResourceProvisioned
+    } = useOrganization();
     const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
     const [showOrgForm, setShowOrgForm] = useState(false);
 
     const [editingUser, setEditingUser] = useState<OrganizationUserOut | null>(null);
     const [showUserForm, setShowUserForm] = useState(false);
 
-    const [resource, setResource] = useState<ResourceDto | null>(null);
     const [isProvisioningResource, setIsProvisioningResource] = useState(false);
 
     const toastContext = useContext(ToastContext);
@@ -49,21 +57,6 @@ const OrganizationSettingsPage: React.FC = () => {
         const data = await organizationService.listOrganizationUsers(orgId);
         setOrgUsers(data);
     }, []);
-
-    const fetchResource = useCallback(async (orgId: string) => {
-        const data = await organizationService.getResource(orgId);
-        setResource(data);
-    }, []);
-
-    useEffect(() => {
-        if (selectedOrg) {
-            fetchUsers(selectedOrg.id);
-            fetchResource(selectedOrg.id);
-        } else {
-            setOrgUsers([]);
-            setResource(null);
-        }
-    }, [selectedOrg, fetchUsers, fetchResource]);
 
     const handleSelectOrg = async (org: OrganizationOut) => {
         try {
@@ -176,7 +169,7 @@ const OrganizationSettingsPage: React.FC = () => {
     }
 
     const handleCreateAndProvisionResource = async () => {
-        if (!selectedOrg) return;
+        if (!selectedOrg || isResourceProvisioned) return;
         setIsProvisioningResource(true);
         try {
             const created = await organizationService.createResource(selectedOrg.id, {
@@ -184,11 +177,14 @@ const OrganizationSettingsPage: React.FC = () => {
                 name: selectedOrg.name,
                 is_active: true
             });
-            setResource(created);
-            addToast(`Created resource for "${selectedOrg.name}"`, "success");
-            await organizationService.provisionResource(selectedOrg.id);
-            addToast(`Provisioning started for "${selectedOrg.name}"`, "success");
-            fetchResource(selectedOrg.id);
+            if(!!created) {
+                setTimeout(() => {
+                    updateProvisionedResource();
+                }, 500);
+                addToast(`Created resource for "${selectedOrg.name}"`, "success");
+                await organizationService.provisionResource(selectedOrg.id);
+                addToast(`Provisioning started for "${selectedOrg.name}"`, "success");
+            }
         } catch (err) {
             addToast(extractErrorMessage(err), "error");
         } finally {
@@ -196,19 +192,30 @@ const OrganizationSettingsPage: React.FC = () => {
         }
     };
 
-    const handleProvisionResource = async () => {
-        if (!selectedOrg) return;
+    const handleDeprovisionResource = async () => {
+        if (!selectedOrg || !isResourceProvisioned) return;
         setIsProvisioningResource(true);
         try {
-            await organizationService.provisionResource(selectedOrg.id);
-            addToast(`Provisioning started for "${selectedOrg.name}"`, "success");
-            fetchResource(selectedOrg.id);
+            await organizationService.deprovisionResource(selectedOrg.id);
+            addToast(`Deprovisioning started for "${selectedOrg.name}"`, "success");
+            setTimeout(() => {
+                updateProvisionedResource();
+            }, 500);
         } catch (err) {
             addToast(extractErrorMessage(err), "error");
         } finally {
             setIsProvisioningResource(false);
         }
     };
+
+    useEffect(() => {
+        if (selectedOrg) {
+            fetchUsers(selectedOrg.id);
+            updateProvisionedResource();
+        } else {
+            setOrgUsers([]);
+        }
+    }, [selectedOrg, fetchUsers]);
 
     return (
         <>
@@ -238,11 +245,11 @@ const OrganizationSettingsPage: React.FC = () => {
                         )}
                         {selectedOrg && resource && (
                             <button
-                                className="btn btn-tertiary"
-                                onClick={handleProvisionResource}
+                                className="btn bg-red-100 hover:bg-red-200 text-red-700"
+                                onClick={handleDeprovisionResource}
                                 disabled={isProvisioningResource}
                             >
-                                {isProvisioningResource ? "Provisioning…" : "Re-provision resources"}
+                                {isProvisioningResource ? "Provisioning…" : "De-provision resources"}
                             </button>
                         )}
                     </div>
@@ -265,12 +272,20 @@ const OrganizationSettingsPage: React.FC = () => {
                     onLeave={handleLeaveOrg}
                 />
 
-                <PendingInvitationsComponent
-                    onResponse={(orgId, accept) => {
-                        console.info("Invitation response for orgId:", orgId, "accepted:", accept);
-                        if (accept) updateOrganizationsList();
-                    }}
-                />
+                {selectedOrg && resource && resource.indices && resource.indices.length > 0 && <div>
+                    <hr className="divider" />
+                    <ViewResourceList indices={resource.indices} />
+                </div>}
+
+                <div>
+                    <hr className="divider" />
+                    <PendingInvitationsComponent
+                        onResponse={(orgId, accept) => {
+                            console.info("Invitation response for orgId:", orgId, "accepted:", accept);
+                            if (accept) updateOrganizationsList();
+                        }}
+                    />
+                </div>
 
                 {selectedOrg && (
                     <>
@@ -305,13 +320,6 @@ const OrganizationSettingsPage: React.FC = () => {
                                 await handleRemoveUser(user.email);
                             }}
                         />
-
-                        {resource && resource.indices && resource.indices.length > 0 && (
-                            <>
-                                <hr className="divider" />
-                                <ViewResourceList indices={resource.indices} />
-                            </>
-                        )}
                     </>
                 )}
             </div>

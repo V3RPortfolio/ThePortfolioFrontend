@@ -3,7 +3,6 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import deviceService from "../../../services/devices.service";
 import type {
     DeviceOut,
-    DeviceDetailOut,
     DeviceConfigurationOut,
     DeviceDataType,
     DeviceIn,
@@ -18,7 +17,7 @@ import { useOrganization } from "../../../contexts/organization.context";
 const DeviceSettingsPage: React.FC = () => {
     const [devices, setDevices] = useState<DeviceOut[]>([]);
     const [showDeviceForm, setShowDeviceForm] = useState(false);
-    const [selectedDevice, setSelectedDevice] = useState<DeviceDetailOut | null>(null);
+    const [selectedDevice, setSelectedDevice] = useState<DeviceOut | null>(null);
     const [showConfigForm, setShowConfigForm] = useState(false);
 
     const { selectedOrg } = useOrganization();

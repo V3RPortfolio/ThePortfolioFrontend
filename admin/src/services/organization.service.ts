@@ -109,6 +109,10 @@ export class OrganizationService {
         return httpService.post<object>(`${organizationApi}/${orgId}/resources/provision`, {}, true);
     }
 
+    async deprovisionResource(orgId: string): Promise<{message: string}> {
+        return httpService.delete<{message:string}>(`${organizationApi}/${orgId}/resources`, {}, true);
+    }
+
 }
 
 export default new OrganizationService();
