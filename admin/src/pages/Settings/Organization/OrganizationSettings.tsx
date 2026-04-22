@@ -4,8 +4,7 @@ import organizationService from "../../../services/organization.service";
 import type {
     OrganizationOut,
     OrganizationRoleType,
-    OrganizationUserOut,
-    ResourceDto,
+    OrganizationUserOut
 } from "../../../interfaces/organization.interface";
 import ViewOrganizationList from "./components/ViewOrganizationList";
 import ManageOrganizationDetails from "./components/ManageOrganizationDetails";
