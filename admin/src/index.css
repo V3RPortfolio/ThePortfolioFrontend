@@ -173,6 +173,21 @@ Level 2 (Styles):
   }
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode specific color overrides */
+    --color-background: var(--color-gray-900);
+    --color-background-secondary: var(--color-gray-800);
+    --color-background-tertiary: var(--color-gray-700);
+    --color-text-primary: var(--color-gray-50);
+    --color-text-secondary: var(--color-gray-400);
+    --color-border: var(--color-gray-600);
+
+    --color-fill-start: var(--color-primary-300);
+    --color-fill-end: var(--color-tertiary-300);
+  }
+}
+
 /* ============================================
    Level 2: Component Styles
    ============================================ */
@@ -304,7 +319,7 @@ Level 2 (Styles):
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-base);
   background-color: var(--color-white);
-  color: var(--color-text-primary);
+  color: var(--color-black);
   transition: all var(--transition-base);
   outline: none;
   width: 100%;
@@ -486,7 +501,7 @@ Level 2 (Styles):
 
 /* Card */
 .card {
-  background-color: var(--color-white);
+  background-color: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg);
   padding: var(--padding-lg);

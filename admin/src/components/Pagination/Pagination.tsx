@@ -40,7 +40,7 @@ const Pagination: React.FC<PaginationProps> = ({ pagination, paginationHandler, 
             style={{ borderTop: "1px solid var(--color-border)" }}
         >
             {/* Results summary */}
-            <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
+            <span className="text-xs" style={{ color: "var(--color-primary)" }}>
                 Page {activePage} of {totalPages || pagination.length}
             </span>
 
