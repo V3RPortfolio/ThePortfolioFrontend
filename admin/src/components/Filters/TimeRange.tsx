@@ -59,7 +59,7 @@ const TimeRange: React.FC<TimeRangeProps> = ({
                 <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
             ) : null}
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 w-full">
                 <div className="flex flex-wrap gap-2">
                     <label className="mb-1 block text-xs font-medium text-gray-600 mt-auto mb-auto">From</label>
                     <input
@@ -77,7 +77,7 @@ const TimeRange: React.FC<TimeRangeProps> = ({
                         placeholder="YYYY-MM-DDTHH:mm:ss.sssZ"
                         aria-label="From timestamp (ISO)"
                         className={[
-                            "w-auto rounded border bg-white px-4 py-2 text-left text-sm",
+                            "w-auto rounded border bg-white px-4 py-2 text-left text-sm flex-grow",
                             "text-gray-900 shadow-sm",
                             "focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400",
                             "disabled:cursor-not-allowed disabled:opacity-60",
@@ -93,7 +93,7 @@ const TimeRange: React.FC<TimeRangeProps> = ({
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                    <label className="mb-1 block text-xs font-medium text-gray-600 mt-auto mb-auto">To</label>
+                    <label className="mb-1 block text-xs font-medium text-gray-600 mt-auto mb-auto mr-[13px]">To</label>
                     <input
                         type="text"
                         inputMode="text"
@@ -109,7 +109,7 @@ const TimeRange: React.FC<TimeRangeProps> = ({
                         placeholder="YYYY-MM-DDTHH:mm:ss.sssZ"
                         aria-label="To timestamp (ISO)"
                         className={[
-                            "w-auto rounded border bg-white px-4 py-2 text-left text-sm",
+                            "w-auto rounded border bg-white px-4 py-2 text-left text-sm flex-grow",
                             "text-gray-900 shadow-sm",
                             "focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400",
                             "disabled:cursor-not-allowed disabled:opacity-60",

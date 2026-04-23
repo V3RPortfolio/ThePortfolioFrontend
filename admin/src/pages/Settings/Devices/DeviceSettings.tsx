@@ -163,7 +163,7 @@ const DeviceSettingsPage: React.FC = () => {
 
                             {!showDeviceForm && (
                                 <button
-                                    className="btn btn-primary"
+                                    className="btn btn-primary mt-2 md:mt-0 w-full md:w-auto"
                                     onClick={() => {
                                         setSelectedDevice(null);
                                         setShowDeviceForm(true);
