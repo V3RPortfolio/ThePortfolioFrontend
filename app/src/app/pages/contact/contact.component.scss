@@ -1,0 +1,23 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+
+@import 'theme';
+
+#contact-page {
+  min-height: calc(100vh - 104px);
+  padding-top: map-get(constants.$padding, xl);
+
+  .contact-page-header {
+    text-align: center;
+    padding: map-get(constants.$padding, lg) map-get(constants.$padding, md);
+
+    h1 {
+      margin-bottom: map-get(constants.$margin, sm);
+    }
+
+    .contact-page-subtitle {
+      margin: 0 auto;
+      max-width: 540px;
+    }
+  }
+}

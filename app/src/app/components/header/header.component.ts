@@ -48,6 +48,7 @@ export class HeaderComponent implements OnInit {
 
   creditsRoute=`/${RoutePaths.credits}`;
   aboutRoute=`/${RoutePaths.about}`;
+  contactRoute=`/${RoutePaths.contact}`;
   loginRoute=`/${RoutePaths.login}`;
   adminRoute=`/${RoutePaths.admin}`;
 
