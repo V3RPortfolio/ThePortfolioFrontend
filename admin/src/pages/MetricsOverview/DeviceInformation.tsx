@@ -10,18 +10,11 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import TimeRange from "../../components/Filters/TimeRange";
 import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../../queries/fetchDeviceMetrics";
 import LineChart from "../../components/Charts/LineChart";
-import { useOrganization } from "../../contexts/organization.context";
+import { useIndexInfo } from "../../hooks/useIndexInfo";
 
 
 const DeviceInformationPage:React.FC = () => {
-    const { selectedOrg, resource, isResourceProvisioned } = useOrganization();
-
-    const getIndexInfo = (indexName: string): { orgId: string; version: number } | null => {
-        if (!selectedOrg || !isResourceProvisioned || !resource?.indices) return null;
-        const idx = resource.indices.find(i => i.name === indexName);
-        if (!idx) return null;
-        return { orgId: selectedOrg.id, version: idx.major_version };
-    };
+    const { selectedOrg, isResourceProvisioned, getIndexInfo } = useIndexInfo();
 
     const today = new Date();
 
@@ -145,7 +138,7 @@ const DeviceInformationPage:React.FC = () => {
         }
         setIsFetchingMetrics(false);
         return distributions
-    }, [devices, selectedMetric, selectedOrg, isResourceProvisioned, resource]);
+    }, [devices, selectedMetric, selectedOrg, isResourceProvisioned, getIndexInfo]);
 
 
     const fetchDeviceMetrics = useMemo(async () => {
@@ -211,7 +204,7 @@ const DeviceInformationPage:React.FC = () => {
         }
         setIsFetchingUptime(false);
         return uptimeResults;
-    }, [devices, uptimeDateStart, uptimeDateEnd, selectedOrg, isResourceProvisioned, resource]);
+    }, [devices, uptimeDateStart, uptimeDateEnd, selectedOrg, isResourceProvisioned, getIndexInfo]);
 
     /* Component Specific Functions */
 

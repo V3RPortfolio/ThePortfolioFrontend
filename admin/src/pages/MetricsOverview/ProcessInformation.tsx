@@ -1,7 +1,7 @@
 import type React from "react";
 import MetricsCard from "../../components/Card/MetricsCard";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useOrganization } from "../../contexts/organization.context";
+import { useIndexInfo } from "../../hooks/useIndexInfo";
 import LineChart from "../../components/Charts/LineChart";
 import DataTable from "../../components/Table/DataTable";
 import elasticsearchService from "../../services/elasticsearch.service";
@@ -69,14 +69,7 @@ const CardRow: React.FC<CardRowProps> = ({ memoryUsagePercent, cpuUsagePercent, 
  * @returns
  */
 const ProcessInformationPage: React.FC = () => {
-    const { selectedOrg, resource, isResourceProvisioned } = useOrganization();
-
-    const getIndexInfo = (indexName: string): { orgId: string; version: number } | null => {
-        if (!selectedOrg || !isResourceProvisioned || !resource?.indices) return null;
-        const idx = resource.indices.find(i => i.name === indexName);
-        if (!idx) return null;
-        return { orgId: selectedOrg.id, version: idx.major_version };
-    };
+    const { selectedOrg, isResourceProvisioned, getIndexInfo } = useIndexInfo();
 
     const [memoryUsagePercent, setMemoryUsagePercent] = useState(0.0);
     const [cpuUsagePercent, setCpuUsagePercent] = useState(0.0);
@@ -217,7 +210,7 @@ const ProcessInformationPage: React.FC = () => {
         }
         return parseFetchRunningDevicesStatsResponse(result);
         
-    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm, selectedOrg, isResourceProvisioned, resource]);
+    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm, selectedOrg, isResourceProvisioned, getIndexInfo]);
 
     const fetchTotalIODevices = async () => {
         if(!device || !fromDate || !toDate) return;
@@ -272,7 +265,7 @@ const ProcessInformationPage: React.FC = () => {
             return;
         }
         return parseFetchRunningDevicesStatsResponse(result);
-    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm, selectedOrg, isResourceProvisioned, resource]);
+    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm, selectedOrg, isResourceProvisioned, getIndexInfo]);
 
     const fetchProcessExecutions = async (processName: string) => {
         if(!device || !fromDate || !toDate) return;
