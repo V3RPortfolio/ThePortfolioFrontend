@@ -261,7 +261,7 @@ const DeviceInformationPage:React.FC = () => {
                             if (from) setUptimeDateStart(from);
                             if (to) setUptimeDateEnd(to);
                         }}
-                        className="w-auto"
+                        className="w-full md:w-auto"
                     />
                     <Dropdown 
                     
@@ -270,7 +270,7 @@ const DeviceInformationPage:React.FC = () => {
                             Object.values(timeSeriesViewUnits).map(
                                 unit => ({name: unit.label, value: unit.value})
                             )}
-                        className="w-auto"
+                        className="w-full lg:w-auto"
                         handler={(value:string) => { 
                             if(Object.values(timeSeriesViewUnits).find(unit => unit.value === value)) {
                                 setUptimeBinCategory(value);

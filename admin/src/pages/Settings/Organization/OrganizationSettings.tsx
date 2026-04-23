@@ -221,10 +221,10 @@ const OrganizationSettingsPage: React.FC = () => {
             <div className="p-6 flex flex-col gap-6">
                 <div className="flex flex-wrap items-center justify-between">
                     <h2 className="text-title">Organization Settings</h2>
-                    <div className="flex flex-row flex-wrap button-container gap-2">
+                    <div className="flex flex-row flex-wrap button-container gap-2  mt-2 md:mt-0 w-full md:w-auto">
                         {!showOrgForm && (
                             <button
-                                className="btn btn-primary"
+                                className="btn btn-primary w-full md:w-auto"
                                 onClick={() => {
                                     setEditingOrg(null);
                                     setShowOrgForm(true);
@@ -235,7 +235,7 @@ const OrganizationSettingsPage: React.FC = () => {
                         )}
                         {selectedOrg && !resource && (
                             <button
-                                className="btn btn-tertiary"
+                                className="btn btn-tertiary w-full md:w-auto"
                                 onClick={handleCreateAndProvisionResource}
                                 disabled={isProvisioningResource}
                             >
@@ -244,7 +244,7 @@ const OrganizationSettingsPage: React.FC = () => {
                         )}
                         {selectedOrg && resource && (
                             <button
-                                className="btn bg-red-100 hover:bg-red-200 text-red-700"
+                                className="btn bg-red-100 hover:bg-red-200 text-red-700 w-full md:w-auto"
                                 onClick={handleDeprovisionResource}
                                 disabled={isProvisioningResource}
                             >

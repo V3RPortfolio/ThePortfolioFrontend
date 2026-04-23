@@ -127,7 +127,7 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                                 {actions.map((action, actionIndex) => (
                                                     <button
                                                         key={actionIndex}
-                                                        className={action.className || 'btn btn-primary btn-small'}
+                                                        className={'w-full md:w-auto ' + (action.className || 'btn btn-primary btn-small')}
                                                         onClick={(e) => {
                                                             e.stopPropagation(); // Prevent row click
                                                             action.handler(row);

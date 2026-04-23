@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SidebarLogo from '../Logo/Sidebar';
 import Separator from '../Divider/Separator';
@@ -17,6 +17,7 @@ interface MenuItemProps {
   isActive: boolean;
   className?: string;
   childRoutes?: SidebarRoutesDTO[];
+  onClose?: () => void;
 }
 
 // ============= SUB-COMPONENTS =============
@@ -27,12 +28,13 @@ interface MenuItemProps {
  * Based on Figma: Each menu item has 36px height
  * Active state with background and text color changes
  */
-const MenuItemComponent: React.FC<MenuItemProps> = ({ item, isActive, className }) => {
+const MenuItemComponent: React.FC<MenuItemProps> = ({ item, isActive, className, onClose }) => {
   return (
     <Link
       to={item.path}
       reloadDocument={!!item.isRedirect || false}
       className={`link${isActive ? ' active' : ''} ${className}`}
+      onClick={() => !!onClose && onClose()}
     >
       {item.icon && <span className="icon">{item.icon}</span>}
       <span>{item.label}</span>
@@ -46,7 +48,7 @@ const MenuItemComponent: React.FC<MenuItemProps> = ({ item, isActive, className 
  * - Each submenu item has 32px height
  * - Active state with background and text color changes
  */
-const MenuItemDropdownComponent: React.FC<MenuItemProps> = ({ item, className, childRoutes }) => {
+const MenuItemDropdownComponent: React.FC<MenuItemProps> = ({ item, className, childRoutes, onClose }) => {
   // Placeholder for dropdown logic (e.g., state to toggle visibility)
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -70,6 +72,7 @@ const MenuItemDropdownComponent: React.FC<MenuItemProps> = ({ item, className, c
               item={child}
               isActive={window.location.pathname === child.path} // Simple active check for child items
               className={(idx < childRoutes.length - 1 ? 'block border-b-1 border-b-[var(--color-border)]' : 'block')}
+              onClose={onClose}
             />
           ))}
         </div>
@@ -82,7 +85,10 @@ const MenuItemDropdownComponent: React.FC<MenuItemProps> = ({ item, className, c
  * MenuSection Component
  * Based on Figma Pages group: Contains multiple menu items
  */
-const MenuSection: React.FC = () => {
+interface MenuSectionProps {
+  onClose?: () => void;
+}
+const MenuSection: React.FC<MenuSectionProps> = ({onClose}) => {
   const location = useLocation();
   const menus = SidebarRoutes().filter(r => !!r.component || r.isRedirect || (!r.component && r.path === '')).sort((a, b) => (a.ordering || 9999) - (b.ordering || 9999) > 0 ? 1 : -1);
   return (
@@ -100,6 +106,7 @@ const MenuSection: React.FC = () => {
             isActive={location.pathname.startsWith(item.path)}
             className={idx < menus.length - 1 ? 'border-b-1 border-b-[var(--color-border)]' : ''}
             childRoutes={menus.filter(x => x.parentRoute === item.id)}
+            onClose={onClose}
           />
         }
         return <MenuItemComponent
@@ -107,6 +114,7 @@ const MenuSection: React.FC = () => {
           item={item}
           isActive={location.pathname === item.path}
           className={idx < menus.length - 1 ? 'border-b-1 border-b-[var(--color-border)]' : ''}
+          onClose={onClose}
         />
 
       })}
@@ -132,6 +140,18 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ sidebarWidth = 'w-1', isOpen = true, onClose }) => {
   const { selectedOrg, selectOrg, organizations } = useOrganization();
   const [userInfo, setUserInfo] = useState<JWTToken | null>(null);
+  const sidebarRef = useRef<HTMLDivElement|null>(null);
+
+  const handleCloseOnClick = useCallback(() => {
+    if(!sidebarRef.current) return;
+    const sidebarWidth = sidebarRef.current.getBoundingClientRect().width;
+    const screenWidth = window.innerWidth;
+    if(sidebarWidth > screenWidth * 0.5) {
+      if(onClose) {
+        onClose();
+      }
+    }
+  }, [onClose, sidebarRef.current])
 
   useEffect(() => {
     const token = httpService.getAccessToken();
@@ -147,7 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarWidth = 'w-1', isOpen = true, 
     : 'hidden';
 
   return (
-    <aside className={`${sidebarClasses} overflow-y-auto overflow-x-hidden shadow-sm bg-[var(--color-background)]`}>
+    <aside ref={sidebarRef} className={`${sidebarClasses} overflow-y-auto overflow-x-hidden shadow-sm bg-[var(--color-background)]`}>
       {/* Logo Section + Close Button */}
       <div className="flex items-center justify-between pr-[var(--padding-md)]">
         <SidebarLogo />
@@ -176,7 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarWidth = 'w-1', isOpen = true, 
       <Separator className="mt-2" />
 
       {/* Menu Section */}
-      <MenuSection />
+      <MenuSection onClose={handleCloseOnClick} />
 
       {/* Spacer to push ProCard to bottom */}
       <div className="flex-1 min-h-[200px]" />
