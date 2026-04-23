@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, TOKEN_TYPE_KEY, authApi, jwtHeader } from '../constants';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, TOKEN_TYPE_KEY, authApi, jwtHeader, loginPath } from '../constants';
 import type { AuthResponse, RefreshTokenPayload } from '../interfaces/authResponse.interface';
 class HttpService {
 
@@ -83,6 +83,7 @@ class HttpService {
             console.info('Access token expired, attempting to refresh token...');
             const refreshToken = this.getRefreshToken();
             if(!refreshToken) {
+                window.location.href = loginPath;
                 throw new Error('No refresh token found for token refresh');
             }
 
@@ -100,7 +101,9 @@ class HttpService {
                     });
                 } else {
                     console.error('Token refresh response did not contain new access token:', newTokens);
+                    window.location.href = loginPath;
                     throw new Error('Token refresh failed, user logged out');
+                    
                 }
             } catch (err) {
                 this.clearTokens();
