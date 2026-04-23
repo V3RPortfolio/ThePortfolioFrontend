@@ -3,7 +3,7 @@ import { useCallback, useContext } from "react";
 import type { NotificationOut } from "../../../interfaces/notification.interface";
 import ViewNotification from "./components/ViewNotification";
 import Pagination from "../../../components/Pagination/Pagination";
-import { NotificationsContext, NotificationsProvider } from "../../../contexts/notifications.context";
+import { NotificationsContext } from "../../../contexts/notifications.context";
 
 
 const NotificationsPreviewPage: React.FC = () => {
