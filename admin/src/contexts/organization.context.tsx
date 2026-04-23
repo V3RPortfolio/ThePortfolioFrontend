@@ -4,17 +4,15 @@ import {
     useContext,
     useEffect,
     useMemo,
-    useRef,
     useState,
-    type ReactNode,
-    type RefObject,
+    type ReactNode
 } from "react";
 import type { OrganizationOut, ResourceDto } from "../interfaces/organization.interface";
 import organizationService from "../services/organization.service";
 
 export type OrganizationContextValue = {
     selectedOrg: OrganizationOut | null;
-    organizations: RefObject<OrganizationOut[]>;
+    organizations: OrganizationOut[];
     selectOrg: (org: OrganizationOut) => Promise<void>;
     clearSelectedOrg: () => void;
     updateOrganizationsList: () => Promise<void>;
@@ -30,11 +28,7 @@ export const OrganizationContext = createContext<OrganizationContextValue | null
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
     const [selectedOrg, setSelectedOrg] = useState<OrganizationOut | null>(null);
-    // const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
-    const organizations = useRef<OrganizationOut[]>([]);
-    const setOrganizations = (orgs: OrganizationOut[]) => {
-        organizations.current = orgs;
-    }
+    const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
     
     const [resource, setResource] = useState<ResourceDto | null>(null);
     const [isResourceProvisioned, setIsResourceProvisioned] = useState(false);
