@@ -137,6 +137,7 @@ const ProcessInformationPage: React.FC = () => {
     };
 
     const fetchDeviceMetrics = async () => {
+        if(!device || !fromDate || !toDate) return;
         const result = await elasticsearchService.aggregate<null, FetchDeviceMetricsAggregationResponse>(buildFetchDeviceMetricsQuery({
             deviceId: device,
             from: fromDate,
@@ -162,6 +163,7 @@ const ProcessInformationPage: React.FC = () => {
     };
 
     const fetchMemoryIntensiveProcesses = useMemo(async () => {
+        if(!device || !activePageMemoryIntense || !totalItemsPerPage) return;
         console.log("Fetching memory intensive processes with search term:", memoryIntenseProcessSearchTerm);
         const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
             buildFetchRunningDevicesStatsQuery({
@@ -195,6 +197,7 @@ const ProcessInformationPage: React.FC = () => {
     }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm]);
 
     const fetchTotalIODevices = async () => {
+        if(!device || !fromDate || !toDate) return;
         const result = await elasticsearchService.aggregate<null, FetchTotalIoDevicesResponse>(
             buildFetchTotalIoDevicesQuery({
                 deviceId: device,
@@ -212,6 +215,7 @@ const ProcessInformationPage: React.FC = () => {
     };
 
     const fetchMemoryLeakProcesses = useMemo(async () => {
+        if(!device || !activePageMemoryLeak || !totalItemsPerPage) return;
         const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
             buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
@@ -238,6 +242,7 @@ const ProcessInformationPage: React.FC = () => {
     }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm]);
 
     const fetchProcessExecutions = async (processName: string) => {
+        if(!device || !fromDate || !toDate) return;
         setIsFetchingExecutions(true);
         setSelectedProcessName(processName);
         setProcessExecutionChartData(null);
@@ -279,6 +284,7 @@ const ProcessInformationPage: React.FC = () => {
 
     const fetchProcessTree = async (processId:string, deviceId:string, processing_timestamp:string) => {
         try {
+            if(!deviceId || !processing_timestamp) return;
             setIsFetchingProcessTree(true);
             const result = await elasticsearchService.search<fetchProcessTreeResponse>(
                 fetchProcessTreeQuery(deviceId, processing_timestamp),

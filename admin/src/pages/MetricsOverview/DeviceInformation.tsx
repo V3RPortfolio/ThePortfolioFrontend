@@ -106,6 +106,7 @@ const DeviceInformationPage:React.FC = () => {
     };
 
     const fetchDistribution = useMemo(async () => {
+        if(!devices.length || !selectedMetric.field || isFetchingMetrics) return;
         const distributions:{device: string, distribution: DistributionInfo[]}[] = [];
         setIsFetchingMetrics(true);
         for (let device of devices) {
@@ -126,6 +127,7 @@ const DeviceInformationPage:React.FC = () => {
 
 
     const fetchDeviceMetrics = useMemo(async () => {
+        if(!devices.length || !uptimeDateStart || !uptimeDateEnd || isFetchingUptime) return;
         setIsFetchingUptime(true);
         const uptimeResults:{device: string, metrics: {timestamp: string, entries: number}[]}[] = [];
 
@@ -191,22 +193,20 @@ const DeviceInformationPage:React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if(devices.length == 0 || isFetchingMetrics) return;
         fetchDistribution.then(distributions => {
             if(distributions) {
                 setDeviceMetrics(distributions);
             }
         });
-    }, [devices, selectedMetric, isFetchingMetrics]);
+    }, [fetchDistribution]);
 
     useEffect(() => {
-        if(devices.length == 0 || isFetchingUptime) return;
         fetchDeviceMetrics.then(uptimeResults => {
             if(uptimeResults) {
                 setUptimeData(uptimeResults);
             }
         });
-    }, [devices, uptimeDateStart, uptimeDateEnd, isFetchingUptime]);
+    }, [fetchDeviceMetrics]);
 
     return <div className="p-6 flex flex-col gap-6">
         <div className="distribution-container">
