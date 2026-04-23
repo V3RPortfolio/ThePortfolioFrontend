@@ -495,8 +495,13 @@ Level 2 (Styles):
   padding: var(--padding-md);
   text-decoration: none;
 }
-.link.active, .link:hover, a:hover {
+.link.active, .link:hover, a:hover, .small-link.active, .small-link:hover, a.small-link:hover {
   color: var(--color-text-primary);
+}
+.small-link, a.small-link {
+  color: var(--color-text-secondary);
+  padding: var(--padding-sm);
+  text-decoration: none;
 }
 
 /* Card */

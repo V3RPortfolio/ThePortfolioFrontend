@@ -1,6 +1,27 @@
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, TOKEN_TYPE_KEY, authApi, jwtHeader, loginPath } from '../constants';
-import type { AuthResponse, RefreshTokenPayload } from '../interfaces/authResponse.interface';
+import type { AuthResponse, JWTToken, RefreshTokenPayload } from '../interfaces/authResponse.interface';
 class HttpService {
+
+    decodeToken(token: string): JWTToken | null {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const payload = JSON.parse(jsonPayload);
+            if(!payload || !payload.sub || !payload.exp) throw new Error('Invalid token payload');
+            return {
+                sub: payload.sub,
+                exp: payload.exp,
+                iat: payload.iat || undefined,
+                roles: payload.roles || []
+            }
+        } catch (e) {
+            return null;
+        }
+    }
 
     getAccessToken(): string | null {
         return localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -41,7 +62,7 @@ class HttpService {
         const res = await fetch(url, {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
         });
@@ -79,17 +100,17 @@ class HttpService {
             headers
         });
 
-        if(withAuth && !!this.getAccessToken() && res.status === 401) {
+        if (withAuth && !!this.getAccessToken() && res.status === 401) {
             console.info('Access token expired, attempting to refresh token...');
             const refreshToken = this.getRefreshToken();
-            if(!refreshToken) {
+            if (!refreshToken) {
                 window.location.href = loginPath;
                 throw new Error('No refresh token found for token refresh');
             }
 
             try {
                 const newTokens = await this.refreshToken(refreshToken);
-                if(newTokens.access_token) {
+                if (newTokens.access_token) {
                     console.info('Token refresh successful, retrying original request with new access token');
                     this.setTokens(newTokens);
                     // Retry original request with new access token
@@ -103,7 +124,7 @@ class HttpService {
                     console.error('Token refresh response did not contain new access token:', newTokens);
                     window.location.href = loginPath;
                     throw new Error('Token refresh failed, user logged out');
-                    
+
                 }
             } catch (err) {
                 this.clearTokens();
@@ -128,7 +149,7 @@ class HttpService {
         url: string,
         options: RequestInit = {},
         withAuth: boolean = false
-    ): Promise<T> {        
+    ): Promise<T> {
         try {
             return await this.fetch<T>(url, { ...options, method: 'GET' }, withAuth);
         } catch (err) {
@@ -156,7 +177,7 @@ class HttpService {
         options: RequestInit = {},
         withAuth: boolean = false
     ): Promise<T> {
-        
+
         try {
             return await this.fetch<T>(url, { ...options, method: 'PUT' }, withAuth);
         } catch (err) {

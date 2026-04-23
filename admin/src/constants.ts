@@ -5,6 +5,7 @@ export const REFRESH_TOKEN_KEY = 'auth.refresh_token';
 export const baseUrl = import.meta.env.VITE_APP_BASE_URL || '';
 export const gatewayApi = import.meta.env.VITE_GATEWAY_API || '';
 export const requireAuth = import.meta.env.VITE_AUTHENTICATE === 'true';
+export const websiteUrl = import.meta.env.VITE_APP_WEBSITE_URL || '';
 export const loginPath = `${import.meta.env.VITE_APP_WEBSITE_URL}/login` || '/';
 
 export const devAccessToken = import.meta.env.VITE_DEV_ACCESS_TOKEN;

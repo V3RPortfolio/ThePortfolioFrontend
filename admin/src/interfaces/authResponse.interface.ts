@@ -16,3 +16,10 @@ export interface RefreshTokenPayload {
 export interface ErrorMessage {
   message: string;
 }
+
+export interface JWTToken {
+  sub: string;
+  exp: number;
+  iat?: number;
+  roles?: string[];
+}

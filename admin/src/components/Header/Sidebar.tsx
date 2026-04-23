@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SidebarLogo from '../Logo/Sidebar';
 import Separator from '../Divider/Separator';
@@ -6,6 +6,8 @@ import { type SidebarRoutesDTO, SidebarRoutes } from '../../Route';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useOrganization } from '../../contexts/organization.context';
 import Dropdown from '../Filters/Dropdown';
+import { type JWTToken } from '../../interfaces/authResponse.interface';
+import httpService from '../../services/http.service';
 
 // ============= INTERFACES =============
 
@@ -129,6 +131,16 @@ interface SidebarProps {
 }
 const Sidebar: React.FC<SidebarProps> = ({ fixed = false, sidebarWidth = 'w-1', isOpen = true, onClose }) => {
   const { selectedOrg, selectOrg, organizations } = useOrganization();
+  const [userInfo, setUserInfo] = useState<JWTToken | null>(null);
+
+  useEffect(() => {
+    const token = httpService.getAccessToken();
+    if(!token) {
+      setUserInfo(null);
+      return;
+    }
+    setUserInfo(httpService.decodeToken(token));
+  }, [])
 
   const sidebarClasses = isOpen
     ? `flex flex-col fixed inset-0 z-50 md:static md:inset-auto md:z-auto ${sidebarWidth} h-full md:h-screen`
@@ -147,12 +159,16 @@ const Sidebar: React.FC<SidebarProps> = ({ fixed = false, sidebarWidth = 'w-1', 
           <X size={20} />
         </button>
       </div>
+      {userInfo && userInfo.sub && <div className='text text-caption color-text-primary px-[var(--padding-md)]'>
+          <span>Logged in as: <b>{userInfo.sub}</b></span>
+      </div>}
 
       {organizations?.length && <Dropdown
         items={organizations.map(org => ({ name: org.name, value: org.id }))}
         value={selectedOrg?.id}
         handler={(org) => selectOrg(organizations.find(o => o.id === org)!)}
         label='Selected Organization'
+        className='p-[var(--padding-md)]'
       />}
 
 
