@@ -5,8 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { baseUrl, loginPath } from "../../constants";
 import { Bell, CirclePowerIcon, Menu } from "lucide-react";
 import httpService from "../../services/http.service";
-import { useContext } from "react";
-import { NotificationsContext } from "../../contexts/notifications.context";
+import { useNotifications } from "../../contexts/notifications.context";
 
 
 
@@ -21,7 +20,7 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
     const [currentPaths, setCurrentPaths] = useState<NavigationLink[]>([]);
 
     const [notificationPath, setNotificationPath] = useState<SidebarRoutesDTO | null>(null);
-    const notificationsContext = useContext(NotificationsContext);
+    const { hasUnreadNotifications } = useNotifications();
 
 
     const handleLogout = async () => {
@@ -80,9 +79,9 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
                 <a href={notificationsUrl} className="small-link relative">
                     <Bell
                         size={20}
-                        className={`cursor-pointer ${notificationsContext?.hasUnreadNotifications ? 'text-[var(--color-primary-600)]' : ''}`}
+                        className={`cursor-pointer ${hasUnreadNotifications ? 'text-[var(--color-primary-600)]' : ''}`}
                     />
-                    {notificationsContext?.hasUnreadNotifications && (
+                    {hasUnreadNotifications && (
                         <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[var(--color-error)]" />
                     )}
                 </a>

@@ -1,6 +1,7 @@
 import {
     createContext,
     useCallback,
+    useContext,
     useEffect,
     useMemo,
     useReducer,
@@ -108,4 +109,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     );
 
     return <ToastContext.Provider value={ value }> { children } </ToastContext.Provider>;
+}
+
+export function useToast() {
+    const context = useContext(ToastContext);
+    if (!context) {
+        throw new Error("useToast must be used within a ToastProvider");
+    }
+    return context;
 }

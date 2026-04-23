@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import organizationService from "../../../services/organization.service";
 import type {
     OrganizationOut,
@@ -10,7 +10,7 @@ import ViewOrganizationList from "./components/ViewOrganizationList";
 import ManageOrganizationDetails from "./components/ManageOrganizationDetails";
 import InviteUser from "./components/InviteUser";
 import ViewOrganizationUsers from "./components/ViewOrganizationUsers";
-import { ToastContext } from "../../../contexts/toast.context";
+import { useToast } from "../../../contexts/toast.context";
 import ManageOrganizationUser from "./components/ManageOrganizationUser";
 import PendingInvitationsComponent from "./components/PendingInvitations";
 import { useOrganization } from "../../../contexts/organization.context";
@@ -39,13 +39,7 @@ const OrganizationSettingsPage: React.FC = () => {
 
     const [isProvisioningResource, setIsProvisioningResource] = useState(false);
 
-    const toastContext = useContext(ToastContext);
-
-    const addToast = useCallback((message: string, type: "success" | "error") => {
-        if (toastContext?.addToast) {
-            toastContext.addToast({ message, type });
-        }
-    }, [toastContext]);
+    const { addToast } = useToast();
 
     const extractErrorMessage = (err: unknown): string => {
         if (err instanceof Error) return err.message;
@@ -60,9 +54,9 @@ const OrganizationSettingsPage: React.FC = () => {
     const handleSelectOrg = async (org: OrganizationOut) => {
         try {
             await selectOrg(org);
-            addToast(`Selected organization "${org.name}"`, "success");
+            addToast({message: `Selected organization "${org.name}"`, type: "success"});
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         }
     };
 
@@ -72,10 +66,10 @@ const OrganizationSettingsPage: React.FC = () => {
             if (selectedOrg?.id === org.id) {
                 clearSelectedOrg();
             }
-            addToast(`Deleted organization "${org.name}"`, "success");
+            addToast({message: `Deleted organization "${org.name}"`, type: "success"});
             updateOrganizationsList();
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         }
     };
 
@@ -90,19 +84,19 @@ const OrganizationSettingsPage: React.FC = () => {
                 await organizationService.updateOrganization(editingOrg.id, {
                     description: data.description || null,
                 });
-                addToast(`Updated organization "${editingOrg.name}"`, "success");
+                addToast({message: `Updated organization "${editingOrg.name}"`, type: "success"});
             } else {
                 await organizationService.createOrganization({
                     name: data.name,
                     description: data.description || null,
                 });
-                addToast(`Created organization "${data.name}"`, "success");
+                addToast({message: `Created organization "${data.name}"`, type: "success"});
             }
             setShowOrgForm(false);
             setEditingOrg(null);
             updateOrganizationsList();
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         }
     };
 
@@ -115,10 +109,10 @@ const OrganizationSettingsPage: React.FC = () => {
         if (!selectedOrg) return;
         try {
             await organizationService.inviteUser(selectedOrg.id, { email, role });
-            addToast(`Invited "${email}" to the organization`, "success");
+            addToast({message: `Invited "${email}" to the organization`, type: "success"});
             fetchUsers(selectedOrg.id);
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         }
     };
 
@@ -126,10 +120,10 @@ const OrganizationSettingsPage: React.FC = () => {
         if (!selectedOrg) return;
         try {
             await organizationService.updateOrganizationUserRole(selectedOrg.id, userEmail, { role });
-            addToast(`Updated role for "${userEmail}"`, "success");
+            addToast({message: `Updated role for "${userEmail}"`, type: "success"});
             fetchUsers(selectedOrg.id);
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         }
     };
 
@@ -147,10 +141,10 @@ const OrganizationSettingsPage: React.FC = () => {
         if (!selectedOrg) return;
         try {
             await organizationService.removeOrganizationUser(selectedOrg.id, userEmail);
-            addToast(`Removed "${userEmail}" from the organization`, "success");
+            addToast({message: `Removed "${userEmail}" from the organization`, type: "success"});
             fetchUsers(selectedOrg.id);
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         }
     };
 
@@ -160,10 +154,10 @@ const OrganizationSettingsPage: React.FC = () => {
             if (selectedOrg?.id === org.id) {
                 clearSelectedOrg();
             }
-            addToast(`Left organization "${org.name}"`, "success");
+            addToast({message: `Left organization "${org.name}"`, type: "success"});
             updateOrganizationsList();
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         }
     }
 
@@ -180,12 +174,12 @@ const OrganizationSettingsPage: React.FC = () => {
                 setTimeout(() => {
                     updateProvisionedResource();
                 }, 500);
-                addToast(`Created resource for "${selectedOrg.name}"`, "success");
+                addToast({message: `Created resource for "${selectedOrg.name}"`, type: "success"});
                 await organizationService.provisionResource(selectedOrg.id);
-                addToast(`Provisioning started for "${selectedOrg.name}"`, "success");
+                addToast({message: `Provisioning started for "${selectedOrg.name}"`, type: "success"});
             }
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         } finally {
             setIsProvisioningResource(false);
         }
@@ -196,12 +190,12 @@ const OrganizationSettingsPage: React.FC = () => {
         setIsProvisioningResource(true);
         try {
             await organizationService.deprovisionResource(selectedOrg.id);
-            addToast(`Deprovisioning started for "${selectedOrg.name}"`, "success");
+            addToast({message: `Deprovisioning started for "${selectedOrg.name}"`, type: "success"});
             setTimeout(() => {
                 updateProvisionedResource();
             }, 500);
         } catch (err) {
-            addToast(extractErrorMessage(err), "error");
+            addToast({message: extractErrorMessage(err), type: "error"});
         } finally {
             setIsProvisioningResource(false);
         }
@@ -210,7 +204,6 @@ const OrganizationSettingsPage: React.FC = () => {
     useEffect(() => {
         if (selectedOrg) {
             fetchUsers(selectedOrg.id);
-            updateProvisionedResource();
         } else {
             setOrgUsers([]);
         }

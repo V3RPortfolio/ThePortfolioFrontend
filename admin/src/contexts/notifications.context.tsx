@@ -100,3 +100,12 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         </NotificationsContext.Provider>
     );
 }
+
+
+export const useNotifications = (): NotificationsContextValue => {
+    const context = useContext(NotificationsContext);
+    if (!context) {
+        throw new Error("useNotifications must be used within a NotificationsProvider");
+    }
+    return context;
+}

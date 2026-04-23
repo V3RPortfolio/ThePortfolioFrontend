@@ -1,7 +1,7 @@
 import type React from "react";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import organizationService from "../../../../services/organization.service";
-import { ToastContext } from "../../../../contexts/toast.context";
+import { useToast } from "../../../../contexts/toast.context";
 import type { OrganizationInvitationOut } from "../../../../interfaces/organization.interface";
 import DataTable from "../../../../components/Table/DataTable";
 
@@ -17,7 +17,7 @@ const PendingInvitationsComponent:React.FC<PendingInvitationsProps> = ({ onRespo
 
     const [invitations, setInvitations] = useState<OrganizationInvitationOut[]>([]); // Replace 'any' with your actual invitation type
 
-    const toastContext = useContext(ToastContext);
+    const  { addToast } = useToast();
 
 
     const fetchInvitations = useCallback(async () => {
@@ -28,7 +28,7 @@ const PendingInvitationsComponent:React.FC<PendingInvitationsProps> = ({ onRespo
             setInvitations(data);
         } catch {
             // Handle error
-            toastContext?.addToast({
+            addToast({
                 message: "Failed to load pending invitations",
                 type: "error",
             });
@@ -40,7 +40,7 @@ const PendingInvitationsComponent:React.FC<PendingInvitationsProps> = ({ onRespo
     const handleResponse = async (organizationId: string, accept: boolean) => {
         try {
             await organizationService.respondToInvitation(organizationId, accept);
-            toastContext?.addToast({
+            addToast({
                 message: accept ? "Invitation accepted" : "Invitation declined",
                 type: "success",
             });
@@ -49,7 +49,7 @@ const PendingInvitationsComponent:React.FC<PendingInvitationsProps> = ({ onRespo
                 onResponse(organizationId, accept);   
             }
         } catch {
-            toastContext?.addToast({
+            addToast({
                 message: "Failed to respond to invitation",
                 type: "error",
             });

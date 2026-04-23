@@ -4,15 +4,17 @@ import {
     useContext,
     useEffect,
     useMemo,
+    useRef,
     useState,
     type ReactNode,
+    type RefObject,
 } from "react";
 import type { OrganizationOut, ResourceDto } from "../interfaces/organization.interface";
 import organizationService from "../services/organization.service";
 
 export type OrganizationContextValue = {
     selectedOrg: OrganizationOut | null;
-    organizations: OrganizationOut[];
+    organizations: RefObject<OrganizationOut[]>;
     selectOrg: (org: OrganizationOut) => Promise<void>;
     clearSelectedOrg: () => void;
     updateOrganizationsList: () => Promise<void>;
@@ -28,22 +30,29 @@ export const OrganizationContext = createContext<OrganizationContextValue | null
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
     const [selectedOrg, setSelectedOrg] = useState<OrganizationOut | null>(null);
-    const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
+    // const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
+    const organizations = useRef<OrganizationOut[]>([]);
+    const setOrganizations = (orgs: OrganizationOut[]) => {
+        organizations.current = orgs;
+    }
     
     const [resource, setResource] = useState<ResourceDto | null>(null);
     const [isResourceProvisioned, setIsResourceProvisioned] = useState(false);
 
 
     const selectOrg = useCallback(async (org: OrganizationOut) => {
+        if(selectedOrg?.id === org.id) return;
         await organizationService.selectOrganization(org.id);
         setSelectedOrg(org);
     }, []);
 
     const clearSelectedOrg = useCallback(() => {
+        if(!selectedOrg) return;
         setSelectedOrg(null);
     }, []);
 
     const updateOrganizationsList = useCallback(async () => {
+        console.log("Updating organizations list...");
         const orgs = await organizationService.listOrganizations();
         setOrganizations(orgs);
     }, []);
@@ -77,7 +86,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
         }),
         [selectedOrg, organizations, isResourceProvisioned, selectOrg, clearSelectedOrg, updateOrganizationsList]
     );
-
+    console.log("Organization context")
     useEffect(() => {
         updateOrganizationsList();
     }, [])

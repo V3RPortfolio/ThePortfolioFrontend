@@ -1,30 +1,37 @@
 import type React from "react";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import type { NotificationOut } from "../../../interfaces/notification.interface";
 import ViewNotification from "./components/ViewNotification";
 import Pagination from "../../../components/Pagination/Pagination";
-import { NotificationsContext } from "../../../contexts/notifications.context";
+import { useNotifications } from "../../../contexts/notifications.context";
 
 
 const NotificationsPreviewPage: React.FC = () => {
-    const notificationsContext = useContext(NotificationsContext);
+    const {
+        fetchNotifications,
+        markAsRead,
+        notifications,
+        loading,
+        currentPage,
+        totalPages
+    } = useNotifications();
 
     const handlePageChange = useCallback((page: number) => {
-        notificationsContext?.fetchNotifications(page);
-    }, [notificationsContext?.fetchNotifications]);
+        fetchNotifications(page);
+    }, [fetchNotifications]);
 
     const handleMarkAsRead = useCallback(async (notification: NotificationOut) => {
-        await notificationsContext?.markAsRead(notification);
-    }, [notificationsContext?.markAsRead]);
+        await markAsRead(notification);
+    }, [markAsRead]);
 
-    const pagination = (Array.from({ length: notificationsContext?.totalPages || 1 }, (_, i) => ({
+    const pagination = (Array.from({ length: totalPages || 1 }, (_, i) => ({
         pageNumber: i + 1,
-        isActive: i + 1 === notificationsContext?.currentPage || true,
+        isActive: i + 1 === currentPage || true,
     })));
 
 
     useEffect(() => {
-        notificationsContext?.fetchNotifications(notificationsContext?.currentPage || 1);
+        fetchNotifications(currentPage || 1);
     }, [])
 
     return (
@@ -44,14 +51,14 @@ const NotificationsPreviewPage: React.FC = () => {
 
                     {/* Notification list */}
                     <div>
-                        {notificationsContext?.loading ? (
+                        {loading ? (
                             <div
                                 className="text-center py-12 text-sm"
                                 style={{ color: "var(--color-text-secondary)" }}
                             >
                                 Loading notifications…
                             </div>
-                        ) : notificationsContext?.notifications.length === 0 ? (
+                        ) : notifications.length === 0 ? (
                             <div
                                 className="text-center py-12 text-sm"
                                 style={{ color: "var(--color-text-secondary)" }}
@@ -59,12 +66,12 @@ const NotificationsPreviewPage: React.FC = () => {
                                 No notifications found
                             </div>
                         ) : (
-                            notificationsContext?.notifications.map((notification, idx) => (
+                            notifications.map((notification, idx) => (
                                 <div
                                     key={notification.id}
                                     style={{
                                         borderBottom:
-                                            idx < notificationsContext?.notifications.length - 1
+                                            idx < notifications.length - 1
                                                 ? "1px solid var(--color-border)"
                                                 : "none",
                                     }}
@@ -82,7 +89,7 @@ const NotificationsPreviewPage: React.FC = () => {
                     <Pagination
                         pagination={pagination}
                         paginationHandler={handlePageChange}
-                        totalPages={notificationsContext?.totalPages}
+                        totalPages={totalPages}
                     />
                 </div>
             </div>
