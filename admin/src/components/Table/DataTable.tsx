@@ -27,7 +27,7 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                     <thead>
-                        <tr style={{ backgroundColor: "var(--color-gray-100)" }}>
+                        <tr style={{ backgroundColor: "var(--color-background-secondary)" }}>
                             {columns.map((col) => (
                                 <th
                                     key={col.key}
@@ -76,8 +76,8 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                                 : "none",
                                         backgroundColor:
                                             rowIndex % 2 !== 0
-                                                ? "var(--color-gray-50)"
-                                                : "transparent",
+                                                ? "var(--color-background-secondary)"
+                                                : "var(--color-background)",
                                     }}
                                     onClick={rowsAreClickable ? () => onRowClick?.(row) : undefined}
                                     role={rowsAreClickable ? "button" : undefined}
@@ -92,28 +92,28 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                               }
                                             : undefined
                                     }
-                                    onMouseEnter={
-                                        rowsAreClickable
-                                            ? (e) =>
-                                                  (e.currentTarget.style.backgroundColor =
-                                                      "var(--color-primary-50)")
-                                            : undefined
-                                    }
-                                    onMouseLeave={
-                                        rowsAreClickable
-                                            ? (e) =>
-                                                  (e.currentTarget.style.backgroundColor =
-                                                      rowIndex % 2 !== 0
-                                                          ? "var(--color-gray-50)"
-                                                          : "transparent")
-                                            : undefined
-                                    }
+                                    // onMouseEnter={
+                                    //     rowsAreClickable
+                                    //         ? (e) =>
+                                    //               (e.currentTarget.style.backgroundColor =
+                                    //                   "var(--color-primary-50)")
+                                    //         : undefined
+                                    // }
+                                    // onMouseLeave={
+                                    //     rowsAreClickable
+                                    //         ? (e) =>
+                                    //               (e.currentTarget.style.backgroundColor =
+                                    //                   rowIndex % 2 !== 0
+                                    //                       ? "var(--color-background-secondary)"
+                                    //                         : "var(--color-background)")
+                                    //         : undefined
+                                    // }
                                 >
                                     {columns.map((col) => (
                                         <td
                                             key={col.key}
                                             className="px-5 py-3 text-sm whitespace-nowrap"
-                                            style={{ color: "var(--color-text-primary)" }}
+                                            style={{ color: rowIndex % 2 == 0 ? "var(--color-text-primary)" : "var(--color-text-secondary)" }}
                                         >
                                             <span
                                             className={`${clipLongText ? "block max-w-xs truncate" : ""} ${rowsAreClickable ? "group-hover:underline underline-offset-2" : ""}`}

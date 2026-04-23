@@ -44,7 +44,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ children, title, isDisplayed = fa
                     ${show ? "translate-x-0" : "translate-x-full"}`}
                 style={{
                     zIndex: 50,
-                    backgroundColor: "var(--color-white)",
+                    backgroundColor: "var(--color-background)",
                     borderLeft: "1px solid var(--color-border)",
                     boxShadow: "var(--shadow-xl)",
                 }}
@@ -54,7 +54,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ children, title, isDisplayed = fa
                     className="flex items-center justify-between px-6 py-4 shrink-0"
                     style={{
                         borderBottom: "1px solid var(--color-border)",
-                        backgroundColor: "var(--color-white)",
+                        backgroundColor: "var(--color-background)",
                     }}
                 >
                     <h2 className="text-heading" style={{ color: "var(--color-text-primary)" }}>
