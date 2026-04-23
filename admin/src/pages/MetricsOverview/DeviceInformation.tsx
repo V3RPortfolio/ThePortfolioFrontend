@@ -10,9 +10,19 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import TimeRange from "../../components/Filters/TimeRange";
 import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../../queries/fetchDeviceMetrics";
 import LineChart from "../../components/Charts/LineChart";
+import { useOrganization } from "../../contexts/organization.context";
 
 
 const DeviceInformationPage:React.FC = () => {
+    const { selectedOrg, resource, isResourceProvisioned } = useOrganization();
+
+    const getIndexInfo = (indexName: string): { orgId: string; version: number } | null => {
+        if (!selectedOrg || !isResourceProvisioned || !resource?.indices) return null;
+        const idx = resource.indices.find(i => i.name === indexName);
+        if (!idx) return null;
+        return { orgId: selectedOrg.id, version: idx.major_version };
+    };
+
     const today = new Date();
 
     // const [fromDate, setFromDate] = useState(past24Hours.toISOString());
@@ -62,13 +72,18 @@ const DeviceInformationPage:React.FC = () => {
 
     /* Elasticsearch Data Processing */
     const fetchUniqueDevices = async () => {
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const ioIndexInfo = getIndexInfo(elasticIndices.ioDevices);
+        if (!ioIndexInfo) return;
         if(isFetchingDevices) return;
         setIsFetchingDevices(true);
         clearDevices();
         const deviceIndex = elasticIndices.ioDevices;
         const response = await elasticsearchService.aggregate<null, FetchTotalUniqueDevicesResponse>(
             fetchTotalUniqueDevicesQuery(),
-            deviceIndex
+            deviceIndex,
+            ioIndexInfo.orgId,
+            ioIndexInfo.version
         );
         if(!response || !response.aggregations) {
             console.error("Failed to fetch total unique devices:", response);
@@ -86,7 +101,9 @@ const DeviceInformationPage:React.FC = () => {
             for (let partition = 0; partition < totalPartitions; partition++) {
                 const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
                     fetchUniqueDevicesQuery(partition, totalPartitions),
-                    elasticIndices.ioDevices
+                    elasticIndices.ioDevices,
+                    ioIndexInfo.orgId,
+                    ioIndexInfo.version
                 );
 
                 if (!result?.aggregations) {
@@ -107,12 +124,17 @@ const DeviceInformationPage:React.FC = () => {
 
     const fetchDistribution = useMemo(async () => {
         if(!devices.length || !selectedMetric.field || isFetchingMetrics) return;
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.runningProcesses);
+        if (!indexInfo) return;
         const distributions:{device: string, distribution: DistributionInfo[]}[] = [];
         setIsFetchingMetrics(true);
         for (let device of devices) {
             const result = await elasticsearchService.aggregate<null, fetchDistributionDataResponse>(
                 fetchDistributionDataQuery(device, selectedMetric.field),
-                elasticIndices.runningProcesses
+                elasticIndices.runningProcesses,
+                indexInfo.orgId,
+                indexInfo.version
             );
             if(!result || !result.aggregations) {
                 console.error("Failed to fetch distribution data:", result);
@@ -123,11 +145,14 @@ const DeviceInformationPage:React.FC = () => {
         }
         setIsFetchingMetrics(false);
         return distributions
-    }, [devices, selectedMetric]);
+    }, [devices, selectedMetric, selectedOrg, isResourceProvisioned, resource]);
 
 
     const fetchDeviceMetrics = useMemo(async () => {
         if(!devices.length || !uptimeDateStart || !uptimeDateEnd || isFetchingUptime) return;
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.deviceMetrics);
+        if (!indexInfo) return;
         setIsFetchingUptime(true);
         const uptimeResults:{device: string, metrics: {timestamp: string, entries: number}[]}[] = [];
 
@@ -152,7 +177,9 @@ const DeviceInformationPage:React.FC = () => {
                     to: uptimeDateEnd,
                     unit: fetchUnit as "minute" | "hour" | "day" | "week" | "month" | "year"
                 }),
-                elasticIndices.deviceMetrics
+                elasticIndices.deviceMetrics,
+                indexInfo.orgId,
+                indexInfo.version
             );
             if(!response || !response.aggregations) {
                 console.error("Failed to fetch device metrics:", response);
@@ -184,7 +211,7 @@ const DeviceInformationPage:React.FC = () => {
         }
         setIsFetchingUptime(false);
         return uptimeResults;
-    }, [devices, uptimeDateStart, uptimeDateEnd]);
+    }, [devices, uptimeDateStart, uptimeDateEnd, selectedOrg, isResourceProvisioned, resource]);
 
     /* Component Specific Functions */
 

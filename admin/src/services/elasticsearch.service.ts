@@ -13,26 +13,32 @@ export class ElasticsearchService {
         }
     }
 
-    search<T>(query: any, index:string): Promise<ElasticSearchResponse<T>> {
+    search<T>(query: any, index: string, organizationId?: string, majorVersion?: number): Promise<ElasticSearchResponse<T>> {
         let jsonData = typeof query === 'string' ? this.parseQuery(query) : query;
         if(!jsonData) {
             return Promise.reject(new Error("Invalid JSON query"));
         }
 
-        const url = `${elasticsearchEndpoint}${index.length ? `/${index}` : ""}/_search`;
+        const basePath = `${elasticsearchEndpoint}${index.length ? `/${index}` : ""}/_search`;
+        const url = organizationId !== undefined && majorVersion !== undefined
+            ? `${basePath}/${organizationId}/${majorVersion}`
+            : basePath;
         return httpService.post<ElasticSearchResponse<T>>(url, {
             method: 'POST',
             body: JSON.stringify(jsonData),
         }, true); // true to include auth token
     }
 
-    aggregate<P, Q>(query: any, index:string): Promise<ElasticSearchAggregationResponse<P,Q>> {
+    aggregate<P, Q>(query: any, index: string, organizationId?: string, majorVersion?: number): Promise<ElasticSearchAggregationResponse<P,Q>> {
         let jsonData = typeof query === 'string' ? this.parseQuery(query) : query;
         if(!jsonData) {
             return Promise.reject(new Error("Invalid JSON query"));
         }
 
-        const url = `${elasticsearchEndpoint}${index.length ? `/${index}` : ""}/_search`;
+        const basePath = `${elasticsearchEndpoint}${index.length ? `/${index}` : ""}/_search`;
+        const url = organizationId !== undefined && majorVersion !== undefined
+            ? `${basePath}/${organizationId}/${majorVersion}`
+            : basePath;
         return httpService.post<ElasticSearchAggregationResponse<P,Q>>(url, {
             method: 'POST',
             body: JSON.stringify(jsonData),

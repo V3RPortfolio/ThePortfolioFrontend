@@ -1,6 +1,7 @@
 import type React from "react";
 import MetricsCard from "../../components/Card/MetricsCard";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useOrganization } from "../../contexts/organization.context";
 import LineChart from "../../components/Charts/LineChart";
 import DataTable from "../../components/Table/DataTable";
 import elasticsearchService from "../../services/elasticsearch.service";
@@ -68,6 +69,15 @@ const CardRow: React.FC<CardRowProps> = ({ memoryUsagePercent, cpuUsagePercent, 
  * @returns
  */
 const ProcessInformationPage: React.FC = () => {
+    const { selectedOrg, resource, isResourceProvisioned } = useOrganization();
+
+    const getIndexInfo = (indexName: string): { orgId: string; version: number } | null => {
+        if (!selectedOrg || !isResourceProvisioned || !resource?.indices) return null;
+        const idx = resource.indices.find(i => i.name === indexName);
+        if (!idx) return null;
+        return { orgId: selectedOrg.id, version: idx.major_version };
+    };
+
     const [memoryUsagePercent, setMemoryUsagePercent] = useState(0.0);
     const [cpuUsagePercent, setCpuUsagePercent] = useState(0.0);
     const [memoryUsageGB, setMemoryUsageGB] = useState(0.0);
@@ -121,9 +131,14 @@ const ProcessInformationPage: React.FC = () => {
     }, [toDate]);
 
     const fetchUniqueDevices = async () => {
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.ioDevices);
+        if (!indexInfo) return;
         const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
             fetchUniqueDevicesQuery(0, 1),
-            elasticIndices.ioDevices
+            elasticIndices.ioDevices,
+            indexInfo.orgId,
+            indexInfo.version
         );
         if(!result || !result.aggregations) {
             console.error("Failed to fetch unique devices:", result);
@@ -138,11 +153,14 @@ const ProcessInformationPage: React.FC = () => {
 
     const fetchDeviceMetrics = async () => {
         if(!device || !fromDate || !toDate) return;
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.deviceMetrics);
+        if (!indexInfo) return;
         const result = await elasticsearchService.aggregate<null, FetchDeviceMetricsAggregationResponse>(buildFetchDeviceMetricsQuery({
             deviceId: device,
             from: fromDate,
             to: toDate
-        }), elasticIndices.deviceMetrics);
+        }), elasticIndices.deviceMetrics, indexInfo.orgId, indexInfo.version);
         
         if(!result || !result.aggregations) {
             console.error("Failed to fetch device metrics:", result);
@@ -164,6 +182,9 @@ const ProcessInformationPage: React.FC = () => {
 
     const fetchMemoryIntensiveProcesses = useMemo(async () => {
         if(!device || !activePageMemoryIntense || !totalItemsPerPage) return;
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.runningProcesses);
+        if (!indexInfo) return;
         console.log("Fetching memory intensive processes with search term:", memoryIntenseProcessSearchTerm);
         const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
             buildFetchRunningDevicesStatsQuery({
@@ -186,7 +207,9 @@ const ProcessInformationPage: React.FC = () => {
                     }
                 ] : []
             }),
-            elasticIndices.runningProcesses
+            elasticIndices.runningProcesses,
+            indexInfo.orgId,
+            indexInfo.version
         );
         if(!result || !result.hits || !result.hits.hits?.length) {
             console.error("Failed to fetch memory intensive processes:", result);
@@ -194,17 +217,22 @@ const ProcessInformationPage: React.FC = () => {
         }
         return parseFetchRunningDevicesStatsResponse(result);
         
-    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm]);
+    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm, selectedOrg, isResourceProvisioned, resource]);
 
     const fetchTotalIODevices = async () => {
         if(!device || !fromDate || !toDate) return;
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.ioDevices);
+        if (!indexInfo) return;
         const result = await elasticsearchService.aggregate<null, FetchTotalIoDevicesResponse>(
             buildFetchTotalIoDevicesQuery({
                 deviceId: device,
                 from: fromDate,
                 to: toDate
             }),
-            elasticIndices.ioDevices
+            elasticIndices.ioDevices,
+            indexInfo.orgId,
+            indexInfo.version
         );
         if(!result || !result.aggregations) {
             console.error("Failed to fetch total I/O devices:", result);
@@ -216,6 +244,9 @@ const ProcessInformationPage: React.FC = () => {
 
     const fetchMemoryLeakProcesses = useMemo(async () => {
         if(!device || !activePageMemoryLeak || !totalItemsPerPage) return;
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.runningProcesses);
+        if (!indexInfo) return;
         const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
             buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
@@ -232,17 +263,22 @@ const ProcessInformationPage: React.FC = () => {
                     }
                 ] : [],
             }),
-            elasticIndices.runningProcesses
+            elasticIndices.runningProcesses,
+            indexInfo.orgId,
+            indexInfo.version
         );
         if(!result || !result.hits || !result.hits.hits?.length) {
             console.error("Failed to fetch memory intensive processes:", result);
             return;
         }
         return parseFetchRunningDevicesStatsResponse(result);
-    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm]);
+    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm, selectedOrg, isResourceProvisioned, resource]);
 
     const fetchProcessExecutions = async (processName: string) => {
         if(!device || !fromDate || !toDate) return;
+        if (!selectedOrg || !isResourceProvisioned) return;
+        const indexInfo = getIndexInfo(elasticIndices.processExecutions);
+        if (!indexInfo) return;
         setIsFetchingExecutions(true);
         setSelectedProcessName(processName);
         setProcessExecutionChartData(null);
@@ -258,7 +294,9 @@ const ProcessInformationPage: React.FC = () => {
                     page: 1,
                     pageSize: 200
                 }),
-                elasticIndices.processExecutions
+                elasticIndices.processExecutions,
+                indexInfo.orgId,
+                indexInfo.version
             );
             if (!result || !result.hits?.hits?.length) {
                 console.error("No process executions found for:", processName);
@@ -285,10 +323,15 @@ const ProcessInformationPage: React.FC = () => {
     const fetchProcessTree = async (processId:string, deviceId:string, processing_timestamp:string) => {
         try {
             if(!deviceId || !processing_timestamp) return;
+            if (!selectedOrg || !isResourceProvisioned) return;
+            const indexInfo = getIndexInfo(elasticIndices.processTree);
+            if (!indexInfo) return;
             setIsFetchingProcessTree(true);
             const result = await elasticsearchService.search<fetchProcessTreeResponse>(
                 fetchProcessTreeQuery(deviceId, processing_timestamp),
-                elasticIndices.processTree
+                elasticIndices.processTree,
+                indexInfo.orgId,
+                indexInfo.version
             );
             if(!result || !result.hits?.hits?.length) {
                 console.error("No process tree data found for:", {processId, deviceId, processing_timestamp});
