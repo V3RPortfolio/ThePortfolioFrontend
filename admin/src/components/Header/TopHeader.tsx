@@ -5,7 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { baseUrl, loginPath } from "../../constants";
 import { Bell, CirclePowerIcon, Menu } from "lucide-react";
 import httpService from "../../services/http.service";
-import notificationService from "../../services/notification.service";
+import { useContext } from "react";
+import { NotificationsContext } from "../../contexts/notifications.context";
 
 
 
@@ -20,7 +21,7 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
     const [currentPaths, setCurrentPaths] = useState<NavigationLink[]>([]);
 
     const [notificationPath, setNotificationPath] = useState<SidebarRoutesDTO | null>(null);
-    const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+    const notificationsContext = useContext(NotificationsContext);
 
 
     const handleLogout = async () => {
@@ -54,14 +55,6 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
         }
     }, [location.pathname, baseUrl])
 
-    useEffect(() => {
-        notificationService.listUnreadNotifications(1, 1).then(result => {
-            setHasUnreadNotifications(result.count > 0);
-        }).catch(() => {
-            setHasUnreadNotifications(false);
-        });
-    }, []);
-
     const notificationsUrl = `${baseUrl.replace(/\/$/, '')}/settings/notifications/`;
 
     return <header className={`bg-[var(--color-background)] w-[100%] flex flex-row justify-between align-center flex-wrap ${className || ''}`}>
@@ -87,9 +80,9 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
                 <a href={notificationsUrl} className="small-link relative">
                     <Bell
                         size={20}
-                        className={`cursor-pointer ${hasUnreadNotifications ? 'text-[var(--color-primary-600)]' : ''}`}
+                        className={`cursor-pointer ${notificationsContext?.hasUnreadNotifications ? 'text-[var(--color-primary-600)]' : ''}`}
                     />
-                    {hasUnreadNotifications && (
+                    {notificationsContext?.hasUnreadNotifications && (
                         <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[var(--color-error)]" />
                     )}
                 </a>
