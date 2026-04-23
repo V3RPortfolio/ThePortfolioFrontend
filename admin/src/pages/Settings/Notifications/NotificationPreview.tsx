@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import type { NotificationOut } from "../../../interfaces/notification.interface";
 import ViewNotification from "./components/ViewNotification";
 import Pagination from "../../../components/Pagination/Pagination";
@@ -21,6 +21,11 @@ const NotificationsPreviewPage: React.FC = () => {
         pageNumber: i + 1,
         isActive: i + 1 === notificationsContext?.currentPage || true,
     })));
+
+
+    useEffect(() => {
+        notificationsContext?.fetchNotifications(notificationsContext?.currentPage || 1);
+    }, [])
 
     return (
         <>
