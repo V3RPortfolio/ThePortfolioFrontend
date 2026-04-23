@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { websiteUrl } from "../../constants";
 
 
 /**
@@ -8,7 +9,7 @@ import { Link } from "react-router-dom";
 const SidebarLogo: React.FC = () => {
   return (
     <div className="flex items-center py-6">
-      <Link to="/" className="flex items-center">
+      <Link to={websiteUrl} className="flex items-center">
         <div className="text-logo flex flex-col items-start">
           <span className="text-bold">Portfolio</span>
           <span>Management</span>

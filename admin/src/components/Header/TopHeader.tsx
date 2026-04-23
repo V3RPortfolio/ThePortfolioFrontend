@@ -1,9 +1,10 @@
 import BreadCrumb, { type NavigationLink } from "./BreadCrumb";
 import { AllRoutes, type SidebarRoutesDTO } from "../../Route";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { baseUrl } from "../../constants";
-import { Bell, Menu } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { baseUrl, loginPath } from "../../constants";
+import { Bell, CirclePowerIcon, Menu } from "lucide-react";
+import httpService from "../../services/http.service";
 
 
 
@@ -14,9 +15,17 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
         return acc;
     }, {} as Record<string, SidebarRoutesDTO>);
 
+    const navigate = useNavigate();
     const [currentPaths, setCurrentPaths] = useState<NavigationLink[]>([]);
 
     const [notificationPath, setNotificationPath] = useState<SidebarRoutesDTO | null>(null);
+
+
+    const handleLogout = async () => {
+        // Clear tokens and redirect to login page
+        httpService.clearTokens();
+        navigate(loginPath);
+    };
 
     
 
@@ -62,10 +71,14 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
                 className="flex-1"
             />}
         </div>
-        <div className="toolbar-container mt-auto mb-auto p-[var(--padding-md)]">
-            {notificationPath && <Link to={notificationPath.path} className="link">
+        <div className="toolbar-container mt-auto mb-auto p-[var(--padding-md)] flex flex-wrap gap-1 flex-start align-center">
+            {notificationPath && <Link to={notificationPath.path} className="small-link">
                 <Bell size={20} className="cursor-pointer" />
             </Link>}
+
+            <button className="small-link" onClick={handleLogout}>
+                <CirclePowerIcon size={20} className="cursor-pointer" />
+            </button>
         </div>
     </header>
 }
