@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import SidebarLogo from '../Logo/Sidebar';
 import Separator from '../Divider/Separator';
 import { type SidebarRoutesDTO, SidebarRoutes } from '../../Route';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useOrganization } from '../../contexts/organization.context';
 import Dropdown from '../Filters/Dropdown';
 
@@ -124,13 +124,29 @@ const MenuSection: React.FC = () => {
 interface SidebarProps {
   fixed?: boolean;
   sidebarWidth?: string;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
-const Sidebar: React.FC<SidebarProps> = ({ fixed = false, sidebarWidth = 'w-1' }) => {
+const Sidebar: React.FC<SidebarProps> = ({ fixed = false, sidebarWidth = 'w-1', isOpen = true, onClose }) => {
   const { selectedOrg, selectOrg, organizations } = useOrganization();
+
+  const sidebarClasses = isOpen
+    ? `flex flex-col fixed inset-0 z-50 md:static md:inset-auto md:z-auto ${sidebarWidth} h-full md:h-screen`
+    : 'hidden';
+
   return (
-    <aside className={`${fixed ? `fixed left-0 top-0` : ''} ${sidebarWidth} h-screen overflow-y-auto overflow-x-hidden shadow-sm hidden md:flex md:flex-col`}>
-      {/* Logo Section */}
-      <SidebarLogo />
+    <aside className={`${sidebarClasses} overflow-y-auto overflow-x-hidden shadow-sm bg-[var(--color-background)]`}>
+      {/* Logo Section + Close Button */}
+      <div className="flex items-center justify-between pr-[var(--padding-md)]">
+        <SidebarLogo />
+        <button
+          onClick={() => onClose?.()}
+          aria-label="Close sidebar"
+          className="p-[var(--padding-xs)] rounded-[var(--border-radius-base)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-background-secondary)] transition-colors duration-[var(--transition-fast)] cursor-pointer"
+        >
+          <X size={20} />
+        </button>
+      </div>
 
       {organizations?.length && <Dropdown
         items={organizations.map(org => ({ name: org.name, value: org.id }))}
