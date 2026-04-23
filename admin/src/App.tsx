@@ -41,14 +41,14 @@ function App() {
           {/* Sidebar */}
           <Sidebar
             fixed={false}
-            sidebarWidth={'w-[20%]'}
+            sidebarWidth={'w-[100%] md:w-[20%]'}
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
           />
 
           {/* Main Content Area */}
           {/* Body - Routes render here */}
-          <div className={`py-[var(--padding-md)] flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:max-w-[80%]' : 'w-full'}`}>
+          <div className={`py-[var(--padding-md)] flex-1 transition-all duration-300 ${isSidebarOpen ? 'max-w-[100%] md:max-w-[80%]' : 'w-full'}`}>
             <TopHeader
               isSidebarOpen={isSidebarOpen}
               onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
