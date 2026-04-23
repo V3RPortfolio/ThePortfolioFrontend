@@ -129,7 +129,7 @@ interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
-const Sidebar: React.FC<SidebarProps> = ({ fixed = false, sidebarWidth = 'w-1', isOpen = true, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({ sidebarWidth = 'w-1', isOpen = true, onClose }) => {
   const { selectedOrg, selectOrg, organizations } = useOrganization();
   const [userInfo, setUserInfo] = useState<JWTToken | null>(null);
 
