@@ -1,10 +1,12 @@
 import BreadCrumb, { type NavigationLink } from "./BreadCrumb";
 import { AllRoutes, type SidebarRoutesDTO } from "../../Route";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { baseUrl, loginPath } from "../../constants";
 import { Bell, CirclePowerIcon, Menu } from "lucide-react";
 import httpService from "../../services/http.service";
+import { useContext } from "react";
+import { NotificationsContext } from "../../contexts/notifications.context";
 
 
 
@@ -19,6 +21,7 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
     const [currentPaths, setCurrentPaths] = useState<NavigationLink[]>([]);
 
     const [notificationPath, setNotificationPath] = useState<SidebarRoutesDTO | null>(null);
+    const notificationsContext = useContext(NotificationsContext);
 
 
     const handleLogout = async () => {
@@ -52,6 +55,7 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
         }
     }, [location.pathname, baseUrl])
 
+    const notificationsUrl = `${baseUrl.replace(/\/$/, '')}/settings/notifications/`;
 
     return <header className={`bg-[var(--color-background)] w-[100%] flex flex-row justify-between align-center flex-wrap ${className || ''}`}>
         <div className="flex items-center flex-1">
@@ -72,9 +76,17 @@ const TopHeader: React.FC<{className?: string; isSidebarOpen?: boolean; onToggle
             />}
         </div>
         <div className="toolbar-container mt-auto mb-auto p-[var(--padding-md)] flex flex-wrap gap-1 flex-start align-center">
-            {notificationPath && <Link to={notificationPath.path} className="small-link">
-                <Bell size={20} className="cursor-pointer" />
-            </Link>}
+            {notificationPath && (
+                <a href={notificationsUrl} className="small-link relative">
+                    <Bell
+                        size={20}
+                        className={`cursor-pointer ${notificationsContext?.hasUnreadNotifications ? 'text-[var(--color-primary-600)]' : ''}`}
+                    />
+                    {notificationsContext?.hasUnreadNotifications && (
+                        <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[var(--color-error)]" />
+                    )}
+                </a>
+            )}
 
             <button className="small-link" onClick={handleLogout}>
                 <CirclePowerIcon size={20} className="cursor-pointer" />

@@ -23,7 +23,7 @@ export class NotificationService {
     async listUnreadNotifications(page: number = 1, pageSize: number = 10): Promise<PaginatedNotificationOut> {
         try {
             return await httpService.get<PaginatedNotificationOut>(
-                `${notificationApi}/unread/?offset=${(page - 1) * pageSize}&limit=${pageSize}`,
+                `${notificationApi}/unread?offset=${(page - 1) * pageSize}&limit=${pageSize}`,
                 {},
                 true
             );

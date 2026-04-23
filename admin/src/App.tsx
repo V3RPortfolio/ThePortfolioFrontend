@@ -8,6 +8,7 @@ import TopHeader from './components/Header/TopHeader';
 import { loginPath, requireAuth } from './constants';
 import httpService from './services/http.service';
 import { ToastProvider } from './contexts/toast.context';
+import { NotificationsProvider } from './contexts/notifications.context';
 import ToastComponent from './components/Modals/Toast';
 import { OrganizationProvider } from './contexts/organization.context';
 
@@ -48,29 +49,31 @@ function App() {
 
           {/* Main Content Area */}
           {/* Body - Routes render here */}
-          <div className={`py-[var(--padding-md)] flex-1 transition-all duration-300 ${isSidebarOpen ? 'max-w-[100%] md:max-w-[80%]' : 'w-full'}`}>
-            <TopHeader
-              isSidebarOpen={isSidebarOpen}
-              onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
-            />
+          <NotificationsProvider>
+            <div className={`py-[var(--padding-md)] flex-1 transition-all duration-300 ${isSidebarOpen ? 'max-w-[100%] md:max-w-[80%]' : 'w-full'}`}>
+              
+              <TopHeader
+                  isSidebarOpen={isSidebarOpen}
+                  onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
+              />
 
-            <ToastProvider>
-              <main className='p-[var(--padding-md)]'>
-                <Routes>
-                  {AllRoutes().filter(x => !!x.component).map(({ path, component: Component, props }) => (
-                    !!Component && <Route
-                      key={path}
-                      path={path}
-                      element={<ProtectedRoute><Component /></ProtectedRoute>}
-                      {...props}
-                    />
-                  ))}
-                </Routes>
-              </main>
-              <ToastComponent />
-            </ToastProvider>
-          </div>
-
+              <ToastProvider>
+                <main className='p-[var(--padding-md)]'>
+                  <Routes>
+                    {AllRoutes().filter(x => !!x.component).map(({ path, component: Component, props }) => (
+                      !!Component && <Route
+                        key={path}
+                        path={path}
+                        element={<ProtectedRoute><Component /></ProtectedRoute>}
+                        {...props}
+                      />
+                    ))}
+                  </Routes>
+                </main>
+                <ToastComponent />
+              </ToastProvider>
+            </div>
+          </NotificationsProvider>
         </div>
       </OrganizationProvider>
       {/* Footer */}
