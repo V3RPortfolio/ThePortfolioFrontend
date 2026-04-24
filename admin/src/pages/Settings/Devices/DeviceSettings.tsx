@@ -40,7 +40,7 @@ const DeviceSettingsPage: React.FC = () => {
 
     useEffect(() => {
         if (selectedOrg) {
-            fetchDevices(selectedOrg.id);
+            fetchDevices(selectedOrg.info.id);
         } else {
             setDevices([]);
             setSelectedDevice(null);
@@ -51,7 +51,7 @@ const DeviceSettingsPage: React.FC = () => {
     const handleSelectDevice = async (device: DeviceOut) => {
         if (!selectedOrg) return;
         try {
-            await fetchDeviceDetails(selectedOrg.id, device.id);
+            await fetchDeviceDetails(selectedOrg.info.id, device.id);
             setShowDeviceForm(false);
             setShowConfigForm(false);
         } catch (err) {
@@ -63,17 +63,17 @@ const DeviceSettingsPage: React.FC = () => {
         if (!selectedOrg) return;
         try {
             if (selectedDevice) {
-                await deviceService.updateDevice(selectedOrg.id, selectedDevice.id, {
+                await deviceService.updateDevice(selectedOrg.info.id, selectedDevice.id, {
                     name: data.name,
                     description: data.description ?? null,
                 });
                 addToast({message: `Device "${selectedDevice.name}" updated`, type: "success"});
-                await fetchDeviceDetails(selectedOrg.id, selectedDevice.id);
+                await fetchDeviceDetails(selectedOrg.info.id, selectedDevice.id);
             } else {
-                await deviceService.addDevice(selectedOrg.id, data);
+                await deviceService.addDevice(selectedOrg.info.id, data);
                 addToast({message: `Device "${data.name}" added`, type: "success"});
             }
-            await fetchDevices(selectedOrg.id);
+            await fetchDevices(selectedOrg.info.id);
             setShowDeviceForm(false);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
@@ -83,9 +83,9 @@ const DeviceSettingsPage: React.FC = () => {
     const handleDeactivateDevice = async (device: DeviceOut) => {
         if (!selectedOrg) return;
         try {
-            await deviceService.deactivateDevice(selectedOrg.id, device.id);
+            await deviceService.deactivateDevice(selectedOrg.info.id, device.id);
             addToast({message: `Deactivated device "${device.name}"`, type: "success"});
-            fetchDevices(selectedOrg.id);
+            fetchDevices(selectedOrg.info.id);
             if (selectedDevice?.id === device.id) {
                 setSelectedDevice(null);
             }
@@ -97,9 +97,9 @@ const DeviceSettingsPage: React.FC = () => {
     const handleDeleteDevice = async (device: DeviceOut) => {
         if (!selectedOrg) return;
         try {
-            await deviceService.removeDevice(selectedOrg.id, device.id);
+            await deviceService.removeDevice(selectedOrg.info.id, device.id);
             addToast({message: `Deleted device "${device.name}"`, type: "success"});
-            fetchDevices(selectedOrg.id);
+            fetchDevices(selectedOrg.info.id);
             if (selectedDevice?.id === device.id) {
                 setSelectedDevice(null);
             }
@@ -111,10 +111,10 @@ const DeviceSettingsPage: React.FC = () => {
     const handleAddConfiguration = async (dataType: DeviceDataType) => {
         if (!selectedOrg || !selectedDevice) return;
         try {
-            await deviceService.addConfiguration(selectedOrg.id, selectedDevice.id, { data_type: dataType });
+            await deviceService.addConfiguration(selectedOrg.info.id, selectedDevice.id, { data_type: dataType });
             addToast({message: `Added configuration "${dataType}"`, type: "success"});
             setShowConfigForm(false);
-            fetchDeviceDetails(selectedOrg.id, selectedDevice.id);
+            fetchDeviceDetails(selectedOrg.info.id, selectedDevice.id);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
         }
@@ -123,9 +123,9 @@ const DeviceSettingsPage: React.FC = () => {
     const handleRemoveConfiguration = async (config: DeviceConfigurationOut) => {
         if (!selectedOrg || !selectedDevice) return;
         try {
-            await deviceService.removeConfiguration(selectedOrg.id, selectedDevice.id, config.id);
+            await deviceService.removeConfiguration(selectedOrg.info.id, selectedDevice.id, config.id);
             addToast({message: `Removed configuration "${config.data_type}"`, type: "success"});
-            fetchDeviceDetails(selectedOrg.id, selectedDevice.id);
+            fetchDeviceDetails(selectedOrg.info.id, selectedDevice.id);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
         }
@@ -153,7 +153,7 @@ const DeviceSettingsPage: React.FC = () => {
                                 className="text-heading"
                                 style={{ color: "var(--color-text-primary)" }}
                             >
-                                Device Settings | Organization: {selectedOrg.name}
+                                Device Settings | Organization: {selectedOrg?.info.name || "N/A"}
                             </h3>
 
                             {!showDeviceForm && (

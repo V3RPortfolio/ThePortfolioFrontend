@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ProbabilityDistributionChart from "../../components/Charts/ProbabilityDistributionChart";
 // import TimeRange from "../components/Filters/TimeRange";
 import elasticsearchService from "../../services/elasticsearch.service";

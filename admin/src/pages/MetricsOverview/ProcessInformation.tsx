@@ -1,6 +1,6 @@
 import type React from "react";
 import MetricsCard from "../../components/Card/MetricsCard";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import LineChart from "../../components/Charts/LineChart";
 import DataTable from "../../components/Table/DataTable";
 import elasticsearchService from "../../services/elasticsearch.service";
