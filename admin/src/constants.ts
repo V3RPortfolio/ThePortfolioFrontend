@@ -32,3 +32,5 @@ export const elasticIndices = {
 
 export type NotificationType = 'invitation' | 'alert';
 export const TOAST_DURATION = 4000;
+
+export const DEFAULT_ORGANIZATION_ID = "00000000-0000-0000-0000-000000000000";

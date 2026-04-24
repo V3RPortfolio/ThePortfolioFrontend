@@ -27,9 +27,6 @@ const OrganizationSettingsPage: React.FC = () => {
         clearSelectedOrg, 
         organizations, 
         updateOrganizationsList, 
-        resource, 
-        updateProvisionedResource,
-        isResourceProvisioned
     } = useOrganization();
     const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
     const [showOrgForm, setShowOrgForm] = useState(false);
@@ -53,7 +50,7 @@ const OrganizationSettingsPage: React.FC = () => {
 
     const handleSelectOrg = async (org: OrganizationOut) => {
         try {
-            await selectOrg(org);
+            await selectOrg(org.id);
             addToast({message: `Selected organization "${org.name}"`, type: "success"});
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
@@ -63,7 +60,7 @@ const OrganizationSettingsPage: React.FC = () => {
     const handleDeleteOrg = async (org: OrganizationOut) => {
         try {
             await organizationService.deleteOrganization(org.id);
-            if (selectedOrg?.id === org.id) {
+            if (selectedOrg?.info.id === org.id) {
                 clearSelectedOrg();
             }
             addToast({message: `Deleted organization "${org.name}"`, type: "success"});
@@ -108,9 +105,9 @@ const OrganizationSettingsPage: React.FC = () => {
     const handleInviteUser = async (email: string, role: OrganizationRoleType) => {
         if (!selectedOrg) return;
         try {
-            await organizationService.inviteUser(selectedOrg.id, { email, role });
+            await organizationService.inviteUser(selectedOrg.info.id, { email, role });
             addToast({message: `Invited "${email}" to the organization`, type: "success"});
-            fetchUsers(selectedOrg.id);
+            fetchUsers(selectedOrg.info.id);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
         }
@@ -119,9 +116,9 @@ const OrganizationSettingsPage: React.FC = () => {
     const handleUpdateUserRole = async (userEmail: string, role: OrganizationRoleType) => {
         if (!selectedOrg) return;
         try {
-            await organizationService.updateOrganizationUserRole(selectedOrg.id, userEmail, { role });
+            await organizationService.updateOrganizationUserRole(selectedOrg.info.id, userEmail, { role });
             addToast({message: `Updated role for "${userEmail}"`, type: "success"});
-            fetchUsers(selectedOrg.id);
+            fetchUsers(selectedOrg.info.id);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
         }
@@ -140,9 +137,9 @@ const OrganizationSettingsPage: React.FC = () => {
     const handleRemoveUser = async (userEmail: string) => {
         if (!selectedOrg) return;
         try {
-            await organizationService.removeOrganizationUser(selectedOrg.id, userEmail);
+            await organizationService.removeOrganizationUser(selectedOrg.info.id, userEmail);
             addToast({message: `Removed "${userEmail}" from the organization`, type: "success"});
-            fetchUsers(selectedOrg.id);
+            fetchUsers(selectedOrg.info.id);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
         }
@@ -151,7 +148,7 @@ const OrganizationSettingsPage: React.FC = () => {
     const handleLeaveOrg = async (org: OrganizationOut) => {
         try {
             await organizationService.leaveOrganization(org.id);
-            if (selectedOrg?.id === org.id) {
+            if (selectedOrg?.info.id === org.id) {
                 clearSelectedOrg();
             }
             addToast({message: `Left organization "${org.name}"`, type: "success"});
@@ -162,21 +159,21 @@ const OrganizationSettingsPage: React.FC = () => {
     }
 
     const handleCreateAndProvisionResource = async () => {
-        if (!selectedOrg || isResourceProvisioned) return;
+        if (!selectedOrg || !selectedOrg.resource?.indices?.length) return;
         setIsProvisioningResource(true);
         try {
-            const created = await organizationService.createResource(selectedOrg.id, {
-                organization_id: selectedOrg.id,
-                name: selectedOrg.name,
+            const created = await organizationService.createResource(selectedOrg.info.id, {
+                organization_id: selectedOrg.info.id,
+                name: selectedOrg.info.name,
                 is_active: true
             });
             if(!!created) {
                 setTimeout(() => {
-                    updateProvisionedResource();
+                    updateOrganizationsList();
                 }, 500);
-                addToast({message: `Created resource for "${selectedOrg.name}"`, type: "success"});
-                await organizationService.provisionResource(selectedOrg.id);
-                addToast({message: `Provisioning started for "${selectedOrg.name}"`, type: "success"});
+                addToast({message: `Created resource for "${selectedOrg.info.name}"`, type: "success"});
+                await organizationService.provisionResource(selectedOrg.info.id);
+                addToast({message: `Provisioning started for "${selectedOrg.info.name}"`, type: "success"});
             }
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
@@ -186,13 +183,13 @@ const OrganizationSettingsPage: React.FC = () => {
     };
 
     const handleDeprovisionResource = async () => {
-        if (!selectedOrg || !isResourceProvisioned) return;
+        if (!selectedOrg || !selectedOrg?.resource?.indices?.length) return;
         setIsProvisioningResource(true);
         try {
-            await organizationService.deprovisionResource(selectedOrg.id);
-            addToast({message: `Deprovisioning started for "${selectedOrg.name}"`, type: "success"});
+            await organizationService.deprovisionResource(selectedOrg.info.id);
+            addToast({message: `Deprovisioning started for "${selectedOrg.info.name}"`, type: "success"});
             setTimeout(() => {
-                updateProvisionedResource();
+                updateOrganizationsList();
             }, 500);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
@@ -203,7 +200,7 @@ const OrganizationSettingsPage: React.FC = () => {
 
     useEffect(() => {
         if (selectedOrg) {
-            fetchUsers(selectedOrg.id);
+            fetchUsers(selectedOrg.info.id);
         } else {
             setOrgUsers([]);
         }
@@ -226,7 +223,7 @@ const OrganizationSettingsPage: React.FC = () => {
                                 New Organization
                             </button>
                         )}
-                        {selectedOrg && !resource && (
+                        {selectedOrg && !selectedOrg?.resource?.indices?.length && (
                             <button
                                 className="btn btn-tertiary w-full md:w-auto"
                                 onClick={handleCreateAndProvisionResource}
@@ -235,7 +232,7 @@ const OrganizationSettingsPage: React.FC = () => {
                                 {isProvisioningResource ? "Provisioning…" : "Provision resources"}
                             </button>
                         )}
-                        {selectedOrg && resource && (
+                        {selectedOrg && selectedOrg?.resource?.indices?.length && (
                             <button
                                 className="btn bg-red-100 hover:bg-red-200 text-red-700 w-full md:w-auto"
                                 onClick={handleDeprovisionResource}
@@ -257,16 +254,16 @@ const OrganizationSettingsPage: React.FC = () => {
                 )}
 
                 <ViewOrganizationList
-                    organizations={organizations}
+                    organizations={organizations.map(x => x.info)}
                     onSelect={handleSelectOrg}
                     onEdit={handleEditOrg}
                     onDelete={handleDeleteOrg}
                     onLeave={handleLeaveOrg}
                 />
 
-                {selectedOrg && resource && resource.indices && resource.indices.length > 0 && <div>
+                {selectedOrg && selectedOrg?.resource?.indices?.length && <div>
                     <hr className="divider" />
-                    <ViewResourceList indices={resource.indices} />
+                    <ViewResourceList indices={selectedOrg.resource.indices} />
                 </div>}
 
                 <div>
@@ -286,11 +283,11 @@ const OrganizationSettingsPage: React.FC = () => {
                             className="text-heading"
                             style={{ color: "var(--color-text-primary)" }}
                         >
-                            Managing: {selectedOrg.name}
+                            Managing: {selectedOrg.info.name}
                         </h3>
 
                         <InviteUser
-                            orgId={selectedOrg.id}
+                            orgId={selectedOrg.info.id}
                             onInvite={handleInviteUser}
                         />
 

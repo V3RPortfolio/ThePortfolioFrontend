@@ -1,5 +1,6 @@
 import type React from "react";
 import Pagination from "../Pagination/Pagination";
+import { useState } from "react";
 
 type TableData = { [key: string]: any}; // Generic type for table data, can be extended with specific fields as needed
 interface DataTableProps {
@@ -19,6 +20,17 @@ interface DataTableProps {
 
 const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, paginationHandler, totalPages, clipLongText, onRowClick, actions }: DataTableProps) => {
     const rowsAreClickable = Boolean(onRowClick);
+
+
+    const [clickedRowIndex, setClickedRowIndex] = useState<number | null>(null);
+
+
+    const handleRowClick = (index:number) => {
+        setClickedRowIndex(index);
+        if(onRowClick) {
+            onRowClick(data[index]);
+        }
+    }
 
     return (
         <div className="card overflow-hidden p-0">
@@ -78,8 +90,12 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                             rowIndex % 2 !== 0
                                                 ? "var(--color-background-secondary)"
                                                 : "var(--color-background)",
+                                        border: clickedRowIndex === rowIndex ?
+                                                "2px solid var(--color-primary-900)" :
+                                                undefined,
+                                        
                                     }}
-                                    onClick={rowsAreClickable ? () => onRowClick?.(row) : undefined}
+                                    onClick={rowsAreClickable ? () => handleRowClick(rowIndex) : undefined}
                                     role={rowsAreClickable ? "button" : undefined}
                                     tabIndex={rowsAreClickable ? 0 : undefined}
                                     onKeyDown={
@@ -87,7 +103,7 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                             ? (e) => {
                                                   if (e.key === "Enter" || e.key === " ") {
                                                       e.preventDefault();
-                                                      onRowClick?.(row);
+                                                      handleRowClick(rowIndex);
                                                   }
                                               }
                                             : undefined
@@ -131,6 +147,7 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                                         onClick={(e) => {
                                                             e.stopPropagation(); // Prevent row click
                                                             action.handler(row);
+                                                            handleRowClick(rowIndex); // Set clicked row index for visual feedback
                                                         }}
                                                     >
                                                         {action.name}

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ProbabilityDistributionChart from "../../components/Charts/ProbabilityDistributionChart";
 // import TimeRange from "../components/Filters/TimeRange";
 import elasticsearchService from "../../services/elasticsearch.service";
@@ -10,9 +10,12 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import TimeRange from "../../components/Filters/TimeRange";
 import { buildFetchDeviceMetricsQuery, parseFetchDeviceMetricsResponse, type FetchDeviceMetricsAggregationResponse } from "../../queries/fetchDeviceMetrics";
 import LineChart from "../../components/Charts/LineChart";
+import { useOrganization } from "../../contexts/organization.context";
 
 
 const DeviceInformationPage:React.FC = () => {
+    const { selectedOrg } = useOrganization();
+
     const today = new Date();
 
     // const [fromDate, setFromDate] = useState(past24Hours.toISOString());
@@ -62,13 +65,19 @@ const DeviceInformationPage:React.FC = () => {
 
     /* Elasticsearch Data Processing */
     const fetchUniqueDevices = async () => {
+        console.log(selectedOrg, isFetchingDevices)
+        if (!selectedOrg || !selectedOrg.resource?.indices) return;
+        const ioIndexInfo = selectedOrg.resource.indices.find(x => x.name === elasticIndices.ioDevices);
+        if (!ioIndexInfo) return;
         if(isFetchingDevices) return;
         setIsFetchingDevices(true);
         clearDevices();
         const deviceIndex = elasticIndices.ioDevices;
         const response = await elasticsearchService.aggregate<null, FetchTotalUniqueDevicesResponse>(
             fetchTotalUniqueDevicesQuery(),
-            deviceIndex
+            deviceIndex,
+            selectedOrg.info.id,
+            ioIndexInfo.major_version
         );
         if(!response || !response.aggregations) {
             console.error("Failed to fetch total unique devices:", response);
@@ -86,7 +95,9 @@ const DeviceInformationPage:React.FC = () => {
             for (let partition = 0; partition < totalPartitions; partition++) {
                 const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
                     fetchUniqueDevicesQuery(partition, totalPartitions),
-                    elasticIndices.ioDevices
+                    elasticIndices.ioDevices,
+                    selectedOrg.info.id,
+                    ioIndexInfo.major_version
                 );
 
                 if (!result?.aggregations) {
@@ -105,29 +116,37 @@ const DeviceInformationPage:React.FC = () => {
         }
     };
 
-    const fetchDistribution = useMemo(async () => {
-        if(!devices.length || !selectedMetric.field || isFetchingMetrics) return;
+    const fetchDistribution = useCallback(async () => {
+        if(!devices.length || !selectedMetric.field || isFetchingMetrics) return [];
+        if (!selectedOrg || !selectedOrg.resource?.indices) return [];
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.runningProcesses);
+        if (!indexInfo) return [];
         const distributions:{device: string, distribution: DistributionInfo[]}[] = [];
         setIsFetchingMetrics(true);
         for (let device of devices) {
             const result = await elasticsearchService.aggregate<null, fetchDistributionDataResponse>(
                 fetchDistributionDataQuery(device, selectedMetric.field),
-                elasticIndices.runningProcesses
+                elasticIndices.runningProcesses,
+                selectedOrg.info.id,
+                indexInfo.major_version
             );
             if(!result || !result.aggregations) {
                 console.error("Failed to fetch distribution data:", result);
-                return;
+                continue;
             }
             const distributionData = parseFetchDistributionDataResponse(selectedMetric.field, result);
             distributions.push({ device, distribution: distributionData });
         }
         setIsFetchingMetrics(false);
         return distributions
-    }, [devices, selectedMetric]);
+    }, [devices, selectedMetric, selectedOrg]);
 
 
-    const fetchDeviceMetrics = useMemo(async () => {
-        if(!devices.length || !uptimeDateStart || !uptimeDateEnd || isFetchingUptime) return;
+    const fetchDeviceMetrics = useCallback(async () => {
+        if(!devices.length || !uptimeDateStart || !uptimeDateEnd || isFetchingUptime) return [];
+        if (!selectedOrg || !selectedOrg.resource?.indices) return [];
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.deviceMetrics);
+        if (!indexInfo) return [];
         setIsFetchingUptime(true);
         const uptimeResults:{device: string, metrics: {timestamp: string, entries: number}[]}[] = [];
 
@@ -152,11 +171,13 @@ const DeviceInformationPage:React.FC = () => {
                     to: uptimeDateEnd,
                     unit: fetchUnit as "minute" | "hour" | "day" | "week" | "month" | "year"
                 }),
-                elasticIndices.deviceMetrics
+                elasticIndices.deviceMetrics,
+                selectedOrg.info.id,
+                indexInfo.major_version
             );
             if(!response || !response.aggregations) {
                 console.error("Failed to fetch device metrics:", response);
-                return;
+                continue;
             }
             const data = await parseFetchDeviceMetricsResponse(response.aggregations);
             
@@ -184,29 +205,25 @@ const DeviceInformationPage:React.FC = () => {
         }
         setIsFetchingUptime(false);
         return uptimeResults;
-    }, [devices, uptimeDateStart, uptimeDateEnd]);
+    }, [devices, uptimeDateStart, uptimeDateEnd, selectedOrg]);
 
     /* Component Specific Functions */
 
     useEffect(() => {
         fetchUniqueDevices();
-    }, []);
+    }, [selectedOrg]);
 
     useEffect(() => {
-        fetchDistribution.then(distributions => {
-            if(distributions) {
-                setDeviceMetrics(distributions);
-            }
+        fetchDistribution().then(distributions => {
+            setDeviceMetrics(distributions);
         });
-    }, [fetchDistribution]);
+    }, [devices, selectedMetric, selectedOrg]);
 
     useEffect(() => {
-        fetchDeviceMetrics.then(uptimeResults => {
-            if(uptimeResults) {
-                setUptimeData(uptimeResults);
-            }
+        fetchDeviceMetrics().then(uptimeResults => {
+            setUptimeData(uptimeResults);
         });
-    }, [fetchDeviceMetrics]);
+    }, [devices, uptimeDateStart, uptimeDateEnd, selectedOrg]);
 
     return <div className="p-6 flex flex-col gap-6">
         <div className="distribution-container">

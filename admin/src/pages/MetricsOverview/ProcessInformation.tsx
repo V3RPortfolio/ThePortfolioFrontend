@@ -1,6 +1,6 @@
 import type React from "react";
 import MetricsCard from "../../components/Card/MetricsCard";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import LineChart from "../../components/Charts/LineChart";
 import DataTable from "../../components/Table/DataTable";
 import elasticsearchService from "../../services/elasticsearch.service";
@@ -16,6 +16,7 @@ import SidePanel from "../../components/Panels/Sidepanel";
 import { fetchProcessTreeQuery, mapProcessTreeResponse, type fetchProcessTreeResponse, type ProcessTreeInfo } from "../../queries/fetchProcessTree";
 import ProcessTreeDiagram from "../../components/Trees/ProcessTree";
 import SearchInput from "../../components/Search/SearchInput";
+import { useOrganization } from "../../contexts/organization.context";
 
 
 interface CardRowProps {
@@ -68,6 +69,8 @@ const CardRow: React.FC<CardRowProps> = ({ memoryUsagePercent, cpuUsagePercent, 
  * @returns
  */
 const ProcessInformationPage: React.FC = () => {
+
+    const { selectedOrg } = useOrganization()
     const [memoryUsagePercent, setMemoryUsagePercent] = useState(0.0);
     const [cpuUsagePercent, setCpuUsagePercent] = useState(0.0);
     const [memoryUsageGB, setMemoryUsageGB] = useState(0.0);
@@ -121,9 +124,14 @@ const ProcessInformationPage: React.FC = () => {
     }, [toDate]);
 
     const fetchUniqueDevices = async () => {
+        if (!selectedOrg || !selectedOrg.resource?.indices) return;
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.ioDevices);
+        if (!indexInfo) return;
         const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
             fetchUniqueDevicesQuery(0, 1),
-            elasticIndices.ioDevices
+            elasticIndices.ioDevices,
+            selectedOrg.info.id,
+            indexInfo.major_version
         );
         if(!result || !result.aggregations) {
             console.error("Failed to fetch unique devices:", result);
@@ -138,11 +146,14 @@ const ProcessInformationPage: React.FC = () => {
 
     const fetchDeviceMetrics = async () => {
         if(!device || !fromDate || !toDate) return;
+        if (!selectedOrg || !selectedOrg.resource?.indices) return;
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.deviceMetrics);
+        if (!indexInfo) return;
         const result = await elasticsearchService.aggregate<null, FetchDeviceMetricsAggregationResponse>(buildFetchDeviceMetricsQuery({
             deviceId: device,
             from: fromDate,
             to: toDate
-        }), elasticIndices.deviceMetrics);
+        }), elasticIndices.deviceMetrics, selectedOrg.info.id, indexInfo.major_version);
         
         if(!result || !result.aggregations) {
             console.error("Failed to fetch device metrics:", result);
@@ -162,49 +173,20 @@ const ProcessInformationPage: React.FC = () => {
         setMemoryUsageGB(latestMetrics.memory_megabytes / 1024); // Convert MB to GB
     };
 
-    const fetchMemoryIntensiveProcesses = useMemo(async () => {
-        if(!device || !activePageMemoryIntense || !totalItemsPerPage) return;
-        console.log("Fetching memory intensive processes with search term:", memoryIntenseProcessSearchTerm);
-        const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
-            buildFetchRunningDevicesStatsQuery({
-                deviceId: device,
-                page: activePageMemoryIntense,
-                pageSize: totalItemsPerPage,
-                order_by: "avg_memory_megabytes",
-                fields: [
-                    "processing_timestamp",
-                    "avg_memory_megabytes",
-                    "deviation_memory_consumption_megabytes",
-                    "avg_cpu_consumption",
-                    "process_name"
-                ],
-                filters: memoryIntenseProcessSearchTerm ? [
-                    {
-                        wildcard: {
-                            process_name: `*${memoryIntenseProcessSearchTerm}*`
-                        }
-                    }
-                ] : []
-            }),
-            elasticIndices.runningProcesses
-        );
-        if(!result || !result.hits || !result.hits.hits?.length) {
-            console.error("Failed to fetch memory intensive processes:", result);
-            return;
-        }
-        return parseFetchRunningDevicesStatsResponse(result);
-        
-    }, [fromDate, toDate, device, activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm]);
-
     const fetchTotalIODevices = async () => {
         if(!device || !fromDate || !toDate) return;
+        if (!selectedOrg || !selectedOrg.resource?.indices) return;
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.ioDevices);
+        if (!indexInfo) return;
         const result = await elasticsearchService.aggregate<null, FetchTotalIoDevicesResponse>(
             buildFetchTotalIoDevicesQuery({
                 deviceId: device,
                 from: fromDate,
                 to: toDate
             }),
-            elasticIndices.ioDevices
+            elasticIndices.ioDevices,
+            selectedOrg.info.id,
+            indexInfo.major_version
         );
         if(!result || !result.aggregations) {
             console.error("Failed to fetch total I/O devices:", result);
@@ -214,35 +196,11 @@ const ProcessInformationPage: React.FC = () => {
         setIoDevicesConnected(ioDevices);
     };
 
-    const fetchMemoryLeakProcesses = useMemo(async () => {
-        if(!device || !activePageMemoryLeak || !totalItemsPerPage) return;
-        const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
-            buildFetchRunningDevicesStatsQuery({
-                deviceId: device,
-                // from: fromDate, # Memory leak is relative and not time dependent
-                // to: toDate, # Memory leak is relative and not time dependent
-                page: activePageMemoryLeak,
-                pageSize: totalItemsPerPage,
-                order_by: "avg_memory_leak",
-                filters: memoryLeakProcessSearchTerm ? [
-                    {
-                        wildcard: {
-                            process_name: `*${memoryLeakProcessSearchTerm}*`
-                        }
-                    }
-                ] : [],
-            }),
-            elasticIndices.runningProcesses
-        );
-        if(!result || !result.hits || !result.hits.hits?.length) {
-            console.error("Failed to fetch memory intensive processes:", result);
-            return;
-        }
-        return parseFetchRunningDevicesStatsResponse(result);
-    }, [fromDate, toDate, device, activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm]);
-
     const fetchProcessExecutions = async (processName: string) => {
         if(!device || !fromDate || !toDate) return;
+        if (!selectedOrg || !selectedOrg.resource?.indices) return;
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.processExecutions);
+        if (!indexInfo) return;
         setIsFetchingExecutions(true);
         setSelectedProcessName(processName);
         setProcessExecutionChartData(null);
@@ -258,7 +216,9 @@ const ProcessInformationPage: React.FC = () => {
                     page: 1,
                     pageSize: 200
                 }),
-                elasticIndices.processExecutions
+                elasticIndices.processExecutions,
+                selectedOrg.info.id,
+                indexInfo.major_version
             );
             if (!result || !result.hits?.hits?.length) {
                 console.error("No process executions found for:", processName);
@@ -285,10 +245,15 @@ const ProcessInformationPage: React.FC = () => {
     const fetchProcessTree = async (processId:string, deviceId:string, processing_timestamp:string) => {
         try {
             if(!deviceId || !processing_timestamp) return;
+            if (!selectedOrg || !selectedOrg.resource?.indices) return;
+            const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.processTree);
+            if (!indexInfo) return;
             setIsFetchingProcessTree(true);
             const result = await elasticsearchService.search<fetchProcessTreeResponse>(
                 fetchProcessTreeQuery(deviceId, processing_timestamp),
-                elasticIndices.processTree
+                elasticIndices.processTree,
+                selectedOrg.info.id,
+                indexInfo.major_version
             );
             if(!result || !result.hits?.hits?.length) {
                 console.error("No process tree data found for:", {processId, deviceId, processing_timestamp});
@@ -305,13 +270,91 @@ const ProcessInformationPage: React.FC = () => {
         setIsFetchingProcessTree(false);
     }
 
+    const fetchMemoryIntensiveProcesses = useCallback(async () => {
+        if(!device || !activePageMemoryIntense || !totalItemsPerPage) return;
+        if (!selectedOrg || !selectedOrg.resource?.indices) return;
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.runningProcesses);
+        if (!indexInfo) return;
+        const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
+            buildFetchRunningDevicesStatsQuery({
+                deviceId: device,
+                page: activePageMemoryIntense,
+                pageSize: totalItemsPerPage,
+                order_by: "avg_memory_megabytes",
+                fields: [
+                    "processing_timestamp",
+                    "avg_memory_megabytes",
+                    "deviation_memory_consumption_megabytes",
+                    "avg_cpu_consumption",
+                    "process_name"
+                ],
+                filters: memoryIntenseProcessSearchTerm ? [
+                    {
+                        wildcard: {
+                            process_name: `*${memoryIntenseProcessSearchTerm}*`
+                        }
+                    }
+                ] : []
+            }),
+            elasticIndices.runningProcesses,
+            selectedOrg.info.id,
+            indexInfo.major_version
+        );
+        if(!result || !result.hits || !result.hits.hits?.length) {
+            console.error("Failed to fetch memory intensive processes:", result);
+            return;
+        }
+        return parseFetchRunningDevicesStatsResponse(result);
+        
+    }, [
+        fromDate, toDate, device, 
+        activePageMemoryIntense, totalItemsPerPage, memoryIntenseProcessSearchTerm, 
+        selectedOrg
+    ]);
+    
+    const fetchMemoryLeakProcesses = useCallback(async () => {
+        if(!device || !activePageMemoryLeak || !totalItemsPerPage) return;
+        if (!selectedOrg || !selectedOrg.resource?.indices) return;
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.runningProcesses);
+        if (!indexInfo) return;
+        const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
+            buildFetchRunningDevicesStatsQuery({
+                deviceId: device,
+                // from: fromDate, # Memory leak is relative and not time dependent
+                // to: toDate, # Memory leak is relative and not time dependent
+                page: activePageMemoryLeak,
+                pageSize: totalItemsPerPage,
+                order_by: "avg_memory_leak",
+                filters: memoryLeakProcessSearchTerm ? [
+                    {
+                        wildcard: {
+                            process_name: `*${memoryLeakProcessSearchTerm}*`
+                        }
+                    }
+                ] : [],
+            }),
+            elasticIndices.runningProcesses,
+            selectedOrg.info.id,
+            indexInfo.major_version
+        );
+        if(!result || !result.hits || !result.hits.hits?.length) {
+            console.error("Failed to fetch memory intensive processes:", result);
+            return;
+        }
+        return parseFetchRunningDevicesStatsResponse(result);
+    }, [fromDate, toDate, device, 
+        activePageMemoryLeak, totalItemsPerPage, memoryLeakProcessSearchTerm, 
+        selectedOrg]);
+
     /**
      * Component Display related functions
      */
 
     useEffect(() => {
+        selectedDevice("");
+        setAvailableDevices([]);
         fetchUniqueDevices();
-    }, []);
+    }, [selectedOrg]);
 
     useEffect(() => {
         fetchTotalIODevices();
@@ -322,28 +365,40 @@ const ProcessInformationPage: React.FC = () => {
     useEffect(() => {
         setActivePageMemoryIntense(1);
         setActivePageMemoryLeak(1);
+        setMemoryIntenseProcessesSearchTerm("");
+        setMemoryLeakProcessSearchTerm("");
+        setTotalMemoryIntenseProcess(1);
+        setTotalMemoryLeakProcesses(1);
+
         setSelectedProcessName(null);
         setProcessExecutionChartData(null);
         setProcessTreeData([]);
+        setProcessTreeHighlightPid(null);
     }, [device, fromDate, toDate]);
 
     // Fires exactly once per unique (device + dateRange + page) combination for
     // the memory-intense table. The memo reference encodes all deps.
     useEffect(() => {
-        fetchMemoryIntensiveProcesses.then(data => {
+        fetchMemoryIntensiveProcesses().then(data => {
             if(data) {
                 setMemoryIntenseProcesses(data.items);
                 setTotalMemoryIntenseProcess(data.total);
+            } else {
+                setMemoryIntenseProcesses([]);
+                setTotalMemoryIntenseProcess(1);
             }
         });
     }, [fetchMemoryIntensiveProcesses]);
 
     // Same pattern for the memory-leak table.
     useEffect(() => {
-        fetchMemoryLeakProcesses.then(data => {
+        fetchMemoryLeakProcesses().then(data => {
             if(data) {
                 setMemoryLeakProcesses(data.items);
                 setTotalMemoryLeakProcesses(data.total);
+            } else {
+                setMemoryLeakProcesses([]);
+                setTotalMemoryLeakProcesses(1);
             }
         });
     }, [fetchMemoryLeakProcesses])

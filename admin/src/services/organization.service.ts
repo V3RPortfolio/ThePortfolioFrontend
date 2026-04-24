@@ -1,6 +1,6 @@
 
 import httpService from "./http.service";
-import { organizationApi } from "../constants";
+import { DEFAULT_ORGANIZATION_ID, elasticIndices, organizationApi } from "../constants";
 import type {
     OrganizationOut,
     OrganizationIn,
@@ -13,17 +13,42 @@ import type {
     ManageResourceDto,
 } from "../interfaces/organization.interface";
 
+
+export const DEFAULT_ORGANIZATION: OrganizationOut = {
+    id: DEFAULT_ORGANIZATION_ID,
+    name: "Demo Organization",
+    description: "This is the default organization.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    status: "active"
+}
+
+export const DEFAULT_ORGANIZATION_RESOURCE: ResourceDto = {
+    organization_id: DEFAULT_ORGANIZATION_ID,
+    name: "default-resource",
+    is_active: true,
+    indices: [
+        { name: elasticIndices.deviceMetrics, major_version: 1, minor_version: 0, patch_version: 0, last_attempted_provisioned_at: new Date().toISOString(), provision_status: "complete" },
+        { name: elasticIndices.ioDevices, major_version: 1, minor_version: 0, patch_version: 0, last_attempted_provisioned_at: new Date().toISOString(), provision_status: "complete" },
+        { name: elasticIndices.processExecutions, major_version: 1, minor_version: 0, patch_version: 0, last_attempted_provisioned_at: new Date().toISOString(), provision_status: "complete" },
+        { name: elasticIndices.processTree, major_version: 1, minor_version: 0, patch_version: 0, last_attempted_provisioned_at: new Date().toISOString(), provision_status: "complete" },
+        { name: elasticIndices.runningProcesses, major_version: 1, minor_version: 0, patch_version: 0, last_attempted_provisioned_at: new Date().toISOString(), provision_status: "complete" },
+    ]
+}
 export class OrganizationService {
 
     async listOrganizations(): Promise<OrganizationOut[]> {
         try {
-            return await httpService.get<OrganizationOut[]>(`${organizationApi}/`, {}, true);
+            return [...(await httpService.get<OrganizationOut[]>(`${organizationApi}/`, {}, true)), DEFAULT_ORGANIZATION];
         } catch {
-            return [];
+            return [{...DEFAULT_ORGANIZATION}];
         }
     }
 
     async getOrganization(orgId: string): Promise<OrganizationOut | null> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return {...DEFAULT_ORGANIZATION};
+        }
         try {
             return await httpService.get<OrganizationOut>(`${organizationApi}/${orgId}`, {}, true);
         } catch {
@@ -38,6 +63,9 @@ export class OrganizationService {
     }
 
     async updateOrganization(orgId: string, data: OrganizationUpdateIn): Promise<OrganizationOut> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return {...DEFAULT_ORGANIZATION};
+        }
         return httpService.fetch<OrganizationOut>(`${organizationApi}/${orgId}`, {
             method: "PATCH",
             body: JSON.stringify(data),
@@ -45,14 +73,23 @@ export class OrganizationService {
     }
 
     async deleteOrganization(orgId: string): Promise<void> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return;
+        }
         return httpService.delete<void>(`${organizationApi}/${orgId}`, {}, true);
     }
 
     async selectOrganization(orgId: string): Promise<object> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return {};
+        }
         return httpService.post<object>(`${organizationApi}/${orgId}/select`, {}, true);
     }
 
     async listOrganizationUsers(orgId: string): Promise<OrganizationUserOut[]> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return [];
+        }
         try {
             return await httpService.get<OrganizationUserOut[]>(`${organizationApi}/${orgId}/users`, {}, true);
         } catch {
@@ -61,6 +98,9 @@ export class OrganizationService {
     }
 
     async updateOrganizationUserRole(orgId: string, userEmail: string, data: OrganizationUserUpdateIn): Promise<OrganizationUserOut> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            throw new Error("Cannot update users in the default organization");
+        }
         return httpService.fetch<OrganizationUserOut>(`${organizationApi}/${orgId}/users/${encodeURIComponent(userEmail)}`, {
             method: "PATCH",
             body: JSON.stringify(data),
@@ -68,20 +108,32 @@ export class OrganizationService {
     }
 
     async removeOrganizationUser(orgId: string, userEmail: string): Promise<void> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            throw new Error("Cannot remove users from the default organization");
+        }
         return httpService.delete<void>(`${organizationApi}/${orgId}/users/${encodeURIComponent(userEmail)}`, {}, true);
     }
 
     async leaveOrganization(orgId: string): Promise<void> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            throw new Error("Cannot leave the default organization");
+        }
         return httpService.post<void>(`${organizationApi}/${orgId}/leave`, {}, true);
     }
 
     async inviteUser(orgId: string, data: OrganizationUserIn): Promise<OrganizationInvitationOut> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            throw new Error("Cannot invite users to the default organization");
+        }
         return httpService.post<OrganizationInvitationOut>(`${organizationApi}/invitations/${orgId}/invite`, {
             body: JSON.stringify(data),
         }, true);
     }
 
     async respondToInvitation(orgId: string, accept: boolean): Promise<OrganizationInvitationOut> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            throw new Error("Cannot respond to invitations for the default organization");
+        }
         return httpService.post<OrganizationInvitationOut>(`${organizationApi}/invitations/${orgId}/respond`, {
             body: JSON.stringify({ accept }),
         }, true);
@@ -92,6 +144,9 @@ export class OrganizationService {
     }
 
     async getResource(orgId: string): Promise<ResourceDto | null> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return {...DEFAULT_ORGANIZATION_RESOURCE};
+        }
         try {
             return await httpService.get<ResourceDto>(`${organizationApi}/${orgId}/resources`, {}, true);
         } catch {
@@ -100,16 +155,25 @@ export class OrganizationService {
     }
 
     async createResource(orgId: string, data: ManageResourceDto): Promise<ResourceDto> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return {...DEFAULT_ORGANIZATION_RESOURCE};
+        }
         return httpService.post<ResourceDto>(`${organizationApi}/${orgId}/resources`, {
             body: JSON.stringify(data),
         }, true);
     }
 
     async provisionResource(orgId: string): Promise<object> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return {};
+        }
         return httpService.post<object>(`${organizationApi}/${orgId}/resources/provision`, {}, true);
     }
 
     async deprovisionResource(orgId: string): Promise<{message: string}> {
+        if(orgId === DEFAULT_ORGANIZATION.id) {
+            return { message: "Default organization resource cannot be deprovisioned" };
+        }
         return httpService.delete<{message:string}>(`${organizationApi}/${orgId}/resources`, {}, true);
     }
 
