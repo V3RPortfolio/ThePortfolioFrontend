@@ -1,5 +1,5 @@
 import httpService from "./http.service";
-import { elasticsearchEndpoint } from "../constants";
+import { DEFAULT_ORGANIZATION_ID, elasticsearchEndpoint } from "../constants";
 import type { ElasticSearchAggregationResponse, ElasticSearchResponse } from "../interfaces/elasticsearch.interface";
 
 export class ElasticsearchService {
@@ -14,6 +14,10 @@ export class ElasticsearchService {
     }
 
     search<T>(query: any, index: string, organizationId?: string, majorVersion?: number): Promise<ElasticSearchResponse<T>> {
+        if(organizationId == DEFAULT_ORGANIZATION_ID) {
+            organizationId = undefined;
+            majorVersion = undefined;
+        }
         let jsonData = typeof query === 'string' ? this.parseQuery(query) : query;
         if(!jsonData) {
             return Promise.reject(new Error("Invalid JSON query"));
@@ -30,6 +34,10 @@ export class ElasticsearchService {
     }
 
     aggregate<P, Q>(query: any, index: string, organizationId?: string, majorVersion?: number): Promise<ElasticSearchAggregationResponse<P,Q>> {
+        if(organizationId == DEFAULT_ORGANIZATION_ID) {
+            organizationId = undefined;
+            majorVersion = undefined;
+        }
         let jsonData = typeof query === 'string' ? this.parseQuery(query) : query;
         if(!jsonData) {
             return Promise.reject(new Error("Invalid JSON query"));

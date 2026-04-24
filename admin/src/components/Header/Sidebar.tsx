@@ -184,9 +184,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarWidth = 'w-1', isOpen = true, 
       </div>}
 
       {organizations?.length && <Dropdown
-        items={organizations.map(org => ({ name: org.name, value: org.id }))}
-        value={selectedOrg?.id}
-        handler={(org) => selectOrg(organizations.find(o => o.id === org)!)}
+        items={organizations.map(org => ({ name: org.info.name, value: org.info.id }))}
+        value={selectedOrg?.info.id}
+        handler={selectOrg}
         label='Selected Organization'
         className='p-[var(--padding-md)]'
       />}

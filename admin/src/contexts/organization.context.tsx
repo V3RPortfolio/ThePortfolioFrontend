@@ -10,61 +10,48 @@ import {
 import type { OrganizationOut, ResourceDto } from "../interfaces/organization.interface";
 import organizationService from "../services/organization.service";
 
-export type OrganizationContextValue = {
-    selectedOrg: OrganizationOut | null;
-    organizations: OrganizationOut[];
-    selectOrg: (org: OrganizationOut) => Promise<void>;
-    clearSelectedOrg: () => void;
-    updateOrganizationsList: () => Promise<void>;
 
+
+interface OrganizationState {
+    info: OrganizationOut;
     resource: ResourceDto | null;
-    updateProvisionedResource: () => Promise<void>;
-    isResourceProvisioned: boolean;
-    
-    
+}
+
+export type OrganizationContextValue = {
+    selectedOrg: OrganizationState | null;
+    organizations: OrganizationState[];
+    selectOrg: (org: string) => Promise<void>;
+    clearSelectedOrg: () => void;
+    updateOrganizationsList: () => Promise<void>;   
 };
 
 export const OrganizationContext = createContext<OrganizationContextValue | null>(null);
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
-    const [selectedOrg, setSelectedOrg] = useState<OrganizationOut | null>(null);
-    const [organizations, setOrganizations] = useState<OrganizationOut[]>([]);
-    
-    const [resource, setResource] = useState<ResourceDto | null>(null);
-    const [isResourceProvisioned, setIsResourceProvisioned] = useState(false);
+    const [selectedOrg, setSelectedOrg] = useState<OrganizationState|null>(null);
+    const [organizations, setOrganizations] = useState<OrganizationState[]>([]);
 
-
-    const selectOrg = useCallback(async (org: OrganizationOut) => {
-        if(selectedOrg?.id === org.id) return;
-        await organizationService.selectOrganization(org.id);
-        setSelectedOrg(org);
-    }, []);
+    const selectOrg = useCallback(async (org: string) => {
+        const selectedOrg = organizations.find(o => o.info.id === org);
+        setSelectedOrg(selectedOrg || null)
+    }, [organizations]);
 
     const clearSelectedOrg = useCallback(() => {
-        if(!selectedOrg) return;
         setSelectedOrg(null);
     }, []);
 
     const updateOrganizationsList = useCallback(async () => {
-        console.log("Updating organizations list...");
         const orgs = await organizationService.listOrganizations();
-        setOrganizations(orgs);
+        const newOrgs:OrganizationState[] = [];
+        for(const org of orgs) {
+            const resource = await organizationService.getResource(org.id);
+            newOrgs.push({
+                info: org,
+                resource: resource,
+            })
+        }
+        setOrganizations(newOrgs);        
     }, []);
-
-    const updateProvisionedResource = useCallback(async () => {
-        if (!selectedOrg) {
-            setResource(null);
-            return;
-        }
-        const res = await organizationService.getResource(selectedOrg.id);
-        setResource(res);
-        if(!!res && res.indices && res.indices.length > 0) {
-            setIsResourceProvisioned(true);
-        } else {
-            setIsResourceProvisioned(false);
-        }
-        
-    }, [selectedOrg]);
 
 
     const value = useMemo<OrganizationContextValue>(
@@ -73,22 +60,15 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
             organizations,
             selectOrg,
             clearSelectedOrg,
-            updateOrganizationsList,
-            resource: resource,
-            updateProvisionedResource,
-            isResourceProvisioned
+            updateOrganizationsList
         }),
-        [selectedOrg, organizations, isResourceProvisioned, selectOrg, clearSelectedOrg, updateOrganizationsList]
+        [selectedOrg, organizations, selectOrg, clearSelectedOrg, updateOrganizationsList]
     );
-    console.log("Organization context")
+    
     useEffect(() => {
+        setSelectedOrg(null);
         updateOrganizationsList();
     }, [])
-
-    useEffect(() => {
-        if(!selectedOrg) return;
-        updateProvisionedResource();
-    }, [selectedOrg]);
 
     return (
         <OrganizationContext.Provider value={value}>
