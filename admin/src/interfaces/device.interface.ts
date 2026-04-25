@@ -1,5 +1,9 @@
 export type DeviceType = "Desktop";
 
+export type OsType = "Windows" | "Ubuntu";
+
+export type OsVersion = "10" | "24";
+
 export type DeviceDataType = "user_access" | "cpu_and_memory_usage" | "io_device_usage";
 
 export interface DeviceConfigurationOut {
@@ -24,17 +28,28 @@ export interface DeviceOut {
     created_at: string;
     updated_at: string;
     last_heartbeat_at: string | null;
+    os_type: string | null;
+    os_version: string | null;
+    script_downloaded_at: string | null;
+    script_downloaded_by: string | null;
     configurations: DeviceConfigurationOut[];
 }
+
+export interface DeviceDetailOut extends DeviceOut {}
+
 export interface DeviceIn {
     name: string;
     description?: string | null;
     device_type?: DeviceType;
+    os_type?: OsType | null;
+    os_version?: OsVersion | null;
 }
 
 export interface DeviceUpdate {
     name?: string;
     description?: string | null;
+    os_type?: OsType | null;
+    os_version?: OsVersion | null;
 }
 
 export interface DeviceConnectionStatusOut {

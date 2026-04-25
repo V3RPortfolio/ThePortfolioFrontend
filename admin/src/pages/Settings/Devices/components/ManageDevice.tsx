@@ -1,8 +1,15 @@
 import type React from "react";
 import { useState } from "react";
-import type { DeviceIn, DeviceOut, DeviceType } from "../../../../interfaces/device.interface";
+import type { DeviceIn, DeviceOut, DeviceType, OsType, OsVersion } from "../../../../interfaces/device.interface";
 
 const DEVICE_TYPE_OPTIONS: DeviceType[] = ["Desktop"];
+
+const OS_TYPE_OPTIONS: OsType[] = ["Windows", "Ubuntu"];
+
+const OS_VERSION_OPTIONS: Record<OsType, OsVersion[]> = {
+    Windows: ["10"],
+    Ubuntu: ["24"],
+};
 
 interface ManageDeviceProps {
     device?: DeviceOut | null;
@@ -22,7 +29,18 @@ const ManageDevice: React.FC<ManageDeviceProps> = ({
     const [deviceType, setDeviceType] = useState<DeviceType>(
         (device?.device_type as DeviceType) ?? "Desktop"
     );
+    const [osType, setOsType] = useState<OsType | "">(
+        (device?.os_type as OsType) ?? ""
+    );
+    const [osVersion, setOsVersion] = useState<OsVersion | "">(
+        (device?.os_version as OsVersion) ?? ""
+    );
     const [isSaving, setIsSaving] = useState(false);
+
+    const handleOsTypeChange = (value: OsType | "") => {
+        setOsType(value);
+        setOsVersion("");
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -32,6 +50,8 @@ const ManageDevice: React.FC<ManageDeviceProps> = ({
                 name: name.trim(),
                 description: description.trim() || null,
                 device_type: deviceType,
+                os_type: osType || null,
+                os_version: osVersion || null,
             };
             await onSave(payload);
         } finally {
@@ -92,6 +112,47 @@ const ManageDevice: React.FC<ManageDeviceProps> = ({
                                 {dt}
                             </option>
                         ))}
+                    </select>
+                </div>
+
+                <div className="input-group">
+                    <label className="input-label" htmlFor="device-os-type">
+                        OS Type
+                    </label>
+                    <select
+                        id="device-os-type"
+                        className="input"
+                        value={osType}
+                        onChange={(e) => handleOsTypeChange(e.target.value as OsType | "")}
+                    >
+                        <option value="">— None —</option>
+                        {OS_TYPE_OPTIONS.map((ot) => (
+                            <option key={ot} value={ot}>
+                                {ot}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="input-group">
+                    <label className="input-label" htmlFor="device-os-version">
+                        OS Version
+                    </label>
+                    <select
+                        id="device-os-version"
+                        className="input"
+                        value={osVersion}
+                        onChange={(e) => setOsVersion(e.target.value as OsVersion | "")}
+                        disabled={!osType}
+                    >
+                        <option value="">— None —</option>
+                        {osType
+                            ? OS_VERSION_OPTIONS[osType].map((ov) => (
+                                  <option key={ov} value={ov}>
+                                      {ov}
+                                  </option>
+                              ))
+                            : null}
                     </select>
                 </div>
 
