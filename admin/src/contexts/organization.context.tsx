@@ -10,6 +10,9 @@ import {
 } from "react";
 import type { OrganizationOut, ResourceDto } from "../interfaces/organization.interface";
 import organizationService from "../services/organization.service";
+import sessionService from "../services/session.service";
+
+const SELECTED_ORG_KEY = "selectedOrgId";
 
 
 
@@ -60,8 +63,11 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     const [provisioningResource, dispatchProvisioningResource] = useReducer(provisioningResourceReducerFunction, []);
 
     const selectOrg = useCallback(async (org: string) => {
-        const selectedOrg = organizations.find(o => o.info.id === org);
-        setSelectedOrg(selectedOrg || null)
+        const selected = organizations.find(o => o.info.id === org);
+        setSelectedOrg(selected || null);
+        if (selected) {
+            sessionService.set(SELECTED_ORG_KEY, org);
+        }
     }, [organizations]);
 
     const updateOrg = useCallback((id:string, info?:OrganizationOut, resource?:ResourceDto) => {
@@ -72,6 +78,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 
     const clearSelectedOrg = useCallback(() => {
         setSelectedOrg(null);
+        sessionService.remove(SELECTED_ORG_KEY);
     }, []);
 
     const updateOrganizationsList = useCallback(async () => {
@@ -94,6 +101,18 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
             }
         }
         setOrganizations(newOrgs);
+
+        const storedOrgId = sessionService.get(SELECTED_ORG_KEY);
+        const effectiveOrgId = selectedOrg?.info.id ?? storedOrgId;
+        if (effectiveOrgId) {
+            const found = newOrgs.find(o => o.info.id === effectiveOrgId);
+            if (!found) {
+                setSelectedOrg(null);
+                sessionService.remove(SELECTED_ORG_KEY);
+            } else if (!selectedOrg) {
+                setSelectedOrg(found);
+            }
+        }
     }, [selectedOrg]);
 
     const extractErrorMessage = (err: unknown): string => {
@@ -185,7 +204,6 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     );
 
     useEffect(() => {
-        setSelectedOrg(null);
         updateOrganizationsList();
     }, [])
 
