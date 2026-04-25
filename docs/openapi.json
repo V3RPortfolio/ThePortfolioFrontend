@@ -1119,13 +1119,12 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response",
-                  "type": "object"
+                  "$ref": "#/components/schemas/ErrorMessage"
                 }
               }
             }
@@ -2566,6 +2565,51 @@
             ],
             "title": "Last Heartbeat At"
           },
+          "os_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Os Type"
+          },
+          "os_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Os Version"
+          },
+          "script_downloaded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Script Downloaded At"
+          },
+          "script_downloaded_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Script Downloaded By"
+          },
           "configurations": {
             "default": [],
             "items": {
@@ -2611,6 +2655,26 @@
               }
             ],
             "default": "Desktop"
+          },
+          "os_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OsType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "os_version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OsVersion"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -2624,6 +2688,22 @@
           "Desktop"
         ],
         "title": "DeviceType",
+        "type": "string"
+      },
+      "OsType": {
+        "enum": [
+          "Windows",
+          "Ubuntu"
+        ],
+        "title": "OsType",
+        "type": "string"
+      },
+      "OsVersion": {
+        "enum": [
+          "10",
+          "24"
+        ],
+        "title": "OsVersion",
         "type": "string"
       },
       "DeviceUpdate": {
@@ -2649,6 +2729,26 @@
               }
             ],
             "title": "Description"
+          },
+          "os_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OsType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "os_version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OsVersion"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "title": "DeviceUpdate",
@@ -2710,6 +2810,51 @@
               }
             ],
             "title": "Last Heartbeat At"
+          },
+          "os_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Os Type"
+          },
+          "os_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Os Version"
+          },
+          "script_downloaded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Script Downloaded At"
+          },
+          "script_downloaded_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Script Downloaded By"
           },
           "configurations": {
             "default": [],
