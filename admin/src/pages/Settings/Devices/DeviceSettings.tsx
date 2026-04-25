@@ -66,6 +66,8 @@ const DeviceSettingsPage: React.FC = () => {
                 await deviceService.updateDevice(selectedOrg.info.id, selectedDevice.id, {
                     name: data.name,
                     description: data.description ?? null,
+                    os_type: data.os_type ?? null,
+                    os_version: data.os_version ?? null,
                 });
                 addToast({message: `Device "${selectedDevice.name}" updated`, type: "success"});
                 await fetchDeviceDetails(selectedOrg.info.id, selectedDevice.id);
@@ -131,6 +133,17 @@ const DeviceSettingsPage: React.FC = () => {
         }
     };
 
+    const handleDownloadScript = async (device: DeviceOut) => {
+        if (!selectedOrg) return;
+        try {
+            await deviceService.downloadInstallationFile(selectedOrg.info.id, device.id);
+            addToast({message: `Installation script downloaded for "${device.name}"`, type: "success"});
+            await fetchDevices(selectedOrg.info.id);
+        } catch (err) {
+            addToast({message: extractErrorMessage(err), type: "error"});
+        }
+    };
+
     return (
         <>
             <div className="p-6 flex flex-col gap-6">
@@ -182,6 +195,7 @@ const DeviceSettingsPage: React.FC = () => {
                             onSelect={handleSelectDevice}
                             onDeactivate={handleDeactivateDevice}
                             onDelete={handleDeleteDevice}
+                            onDownload={handleDownloadScript}
                         />
 
                         {selectedDevice ? (

@@ -106,6 +106,7 @@ Level 2 (Styles):
   --color-background-tertiary: #FAFCFE;
   --color-text-primary: #2B3674;
   --color-text-secondary: #A3AED0;
+  --color-text-secondary-light: #FFFFFF;
   --color-border: #E0E5F2;
   --color-error-light: #FEEFEE;
 
@@ -164,6 +165,7 @@ Level 2 (Styles):
     --color-background-tertiary: var(--color-gray-50);
     --color-text-primary: var(--color-secondary-600);
     --color-text-secondary: var(--color-secondary-400);
+    --color-text-secondary-light: var(--color-white);
     --color-border: var(--color-gray-300);
 
     --color-fill-start: var(--color-primary-600);
@@ -181,6 +183,7 @@ Level 2 (Styles):
     --color-background-tertiary: var(--color-gray-700);
     --color-text-primary: var(--color-gray-50);
     --color-text-secondary: var(--color-gray-400);
+    --color-text-secondary-light: var(--color-gray-300);
     --color-border: var(--color-gray-600);
 
     --color-fill-start: var(--color-primary-300);
