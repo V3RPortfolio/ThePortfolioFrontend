@@ -67,12 +67,12 @@ const DeviceInformationPage:React.FC = () => {
     const fetchUniqueDevices = async () => {
         console.log(selectedOrg, isFetchingDevices)
         if (!selectedOrg || !selectedOrg.resource?.indices) return;
-        const ioIndexInfo = selectedOrg.resource.indices.find(x => x.name === elasticIndices.ioDevices);
+        const ioIndexInfo = selectedOrg.resource.indices.find(x => x.name === elasticIndices.runningProcesses);
         if (!ioIndexInfo) return;
         if(isFetchingDevices) return;
         setIsFetchingDevices(true);
         clearDevices();
-        const deviceIndex = elasticIndices.ioDevices;
+        const deviceIndex = elasticIndices.runningProcesses;
         const response = await elasticsearchService.aggregate<null, FetchTotalUniqueDevicesResponse>(
             fetchTotalUniqueDevicesQuery(),
             deviceIndex,

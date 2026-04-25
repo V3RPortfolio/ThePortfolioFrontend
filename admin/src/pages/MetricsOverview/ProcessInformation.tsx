@@ -125,11 +125,11 @@ const ProcessInformationPage: React.FC = () => {
 
     const fetchUniqueDevices = async () => {
         if (!selectedOrg || !selectedOrg.resource?.indices) return;
-        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.ioDevices);
+        const indexInfo = selectedOrg.resource?.indices.find(x => x.name === elasticIndices.runningProcesses);
         if (!indexInfo) return;
         const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
             fetchUniqueDevicesQuery(0, 1),
-            elasticIndices.ioDevices,
+            elasticIndices.runningProcesses,
             selectedOrg.info.id,
             indexInfo.major_version
         );
