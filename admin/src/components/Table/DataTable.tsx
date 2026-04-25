@@ -129,7 +129,7 @@ const DataTable:React.FC<DataTableProps> = ({ title, columns, data, pagination, 
                                         <td
                                             key={col.key}
                                             className="px-5 py-3 text-sm whitespace-nowrap"
-                                            style={{ color: rowIndex % 2 == 0 ? "var(--color-text-primary)" : "var(--color-text-secondary)" }}
+                                            style={{ color: rowIndex % 2 == 0 ? "var(--color-text-primary)" : "var(--color-text-secondary-light)" }}
                                         >
                                             <span
                                             className={`${clipLongText ? "block max-w-xs truncate" : ""} ${rowsAreClickable ? "group-hover:underline underline-offset-2" : ""}`}
