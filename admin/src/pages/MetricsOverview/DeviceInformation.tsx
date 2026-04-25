@@ -95,7 +95,7 @@ const DeviceInformationPage:React.FC = () => {
             for (let partition = 0; partition < totalPartitions; partition++) {
                 const result = await elasticsearchService.aggregate<null, FetchUniqueDevicesResponse>(
                     fetchUniqueDevicesQuery(partition, totalPartitions),
-                    elasticIndices.ioDevices,
+                    elasticIndices.runningProcesses,
                     selectedOrg.info.id,
                     ioIndexInfo.major_version
                 );
@@ -135,7 +135,7 @@ const DeviceInformationPage:React.FC = () => {
                 continue;
             }
             const distributionData = parseFetchDistributionDataResponse(selectedMetric.field, result);
-            distributions.push({ device, distribution: distributionData });
+            distributions.push({ device, distribution: distributionData.filter(x => x.metric_value != undefined) });
         }
         setIsFetchingMetrics(false);
         return distributions
