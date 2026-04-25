@@ -58,7 +58,7 @@ const ViewNotification: React.FC<ViewNotificationProps> = ({ notification, onMar
 
             {/* Actions column */}
             <div className="flex-shrink-0">
-                {!notification.is_read && (
+                {!notification.is_read ? (
                     <button
                         className="btn btn-primary btn-sm"
                         onClick={() => onMarkAsRead(notification)}
@@ -66,8 +66,8 @@ const ViewNotification: React.FC<ViewNotificationProps> = ({ notification, onMar
                     >
                         Mark as Read
                     </button>
-                )}
-                {notification.is_read && (
+                ): null}
+                {notification.is_read ? (
                     <span
                         className="text-xs font-medium px-3 py-1 rounded-full"
                         style={{
@@ -77,7 +77,7 @@ const ViewNotification: React.FC<ViewNotificationProps> = ({ notification, onMar
                     >
                         Read
                     </span>
-                )}
+                ):null}
             </div>
         </div>
     );

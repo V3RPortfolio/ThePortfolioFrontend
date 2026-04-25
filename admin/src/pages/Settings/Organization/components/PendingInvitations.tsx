@@ -60,7 +60,7 @@ const PendingInvitationsComponent:React.FC<PendingInvitationsProps> = ({ onRespo
         fetchInvitations();
     }, [])
 
-    return (!loading && <DataTable 
+    return (!loading ? <DataTable 
         title="Pending Invitations"
         columns={[
             { name: "Organization Name", key: "organization_name" },
@@ -76,7 +76,7 @@ const PendingInvitationsComponent:React.FC<PendingInvitationsProps> = ({ onRespo
             { name: "Decline", className: "btn btn-secondary btn-sm text text-error", handler: (inv) => handleResponse((inv as OrganizationInvitationOut).organization_id, false) },
         ]}
         
-    />);
+    />:null);
 }
 
 export default PendingInvitationsComponent;

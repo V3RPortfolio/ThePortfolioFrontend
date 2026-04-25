@@ -60,11 +60,11 @@ const ManageOrganizationDetails: React.FC<ManageOrganizationDetailsProps> = ({
                         required
                         disabled={!!editingOrg}
                     />
-                    {editingOrg && (
+                    {editingOrg ? (
                         <span className="input-helper-text">
                             Organization name cannot be changed after creation.
                         </span>
-                    )}
+                    ):null}
                 </div>
                 <div className="input-group">
                     <label className="input-label" htmlFor="org-description">

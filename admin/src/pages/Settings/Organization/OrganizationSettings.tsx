@@ -27,6 +27,8 @@ const OrganizationSettingsPage: React.FC = () => {
         clearSelectedOrg, 
         organizations, 
         updateOrganizationsList, 
+        provisionResource,
+        deprovisionResource
     } = useOrganization();
     const [editingOrg, setEditingOrg] = useState<OrganizationOut | null>(null);
     const [showOrgForm, setShowOrgForm] = useState(false);
@@ -91,7 +93,10 @@ const OrganizationSettingsPage: React.FC = () => {
             }
             setShowOrgForm(false);
             setEditingOrg(null);
-            updateOrganizationsList();
+            
+            setTimeout(() => {
+                updateOrganizationsList();
+            }, 500);
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
         }
@@ -159,46 +164,30 @@ const OrganizationSettingsPage: React.FC = () => {
     }
 
     const handleCreateAndProvisionResource = async () => {
-        if (!selectedOrg || !selectedOrg.resource?.indices?.length) return;
         setIsProvisioningResource(true);
-        try {
-            const created = await organizationService.createResource(selectedOrg.info.id, {
-                organization_id: selectedOrg.info.id,
-                name: selectedOrg.info.name,
-                is_active: true
-            });
-            if(!!created) {
-                setTimeout(() => {
-                    updateOrganizationsList();
-                }, 500);
-                addToast({message: `Created resource for "${selectedOrg.info.name}"`, type: "success"});
-                await organizationService.provisionResource(selectedOrg.info.id);
-                addToast({message: `Provisioning started for "${selectedOrg.info.name}"`, type: "success"});
-            }
-        } catch (err) {
-            addToast({message: extractErrorMessage(err), type: "error"});
-        } finally {
-            setIsProvisioningResource(false);
+        const provisioned = await provisionResource();
+        if(!provisioned.success) {
+            addToast({message: provisioned.message, type: "error"});
+        } else {
+            addToast({message: provisioned.message, type: "success"});
+            
         }
+        setIsProvisioningResource(false);
     };
 
     const handleDeprovisionResource = async () => {
-        if (!selectedOrg || !selectedOrg?.resource?.indices?.length) return;
         setIsProvisioningResource(true);
-        try {
-            await organizationService.deprovisionResource(selectedOrg.info.id);
-            addToast({message: `Deprovisioning started for "${selectedOrg.info.name}"`, type: "success"});
-            setTimeout(() => {
-                updateOrganizationsList();
-            }, 500);
-        } catch (err) {
-            addToast({message: extractErrorMessage(err), type: "error"});
-        } finally {
-            setIsProvisioningResource(false);
+        const deprovisioned = await deprovisionResource();
+        if(!deprovisioned.success) {
+            addToast({message: deprovisioned.message, type: "error"});
+        } else {
+            addToast({message: deprovisioned.message, type: "success"});
         }
+        setIsProvisioningResource(false);
     };
 
     useEffect(() => {
+        updateOrganizationsList();
         if (selectedOrg) {
             fetchUsers(selectedOrg.info.id);
         } else {
@@ -223,16 +212,16 @@ const OrganizationSettingsPage: React.FC = () => {
                                 New Organization
                             </button>
                         )}
-                        {selectedOrg && !selectedOrg?.resource?.indices?.length && (
+                        {selectedOrg && !selectedOrg?.resource?.indices?.length ? (
                             <button
                                 className="btn btn-tertiary w-full md:w-auto"
                                 onClick={handleCreateAndProvisionResource}
                                 disabled={isProvisioningResource}
                             >
-                                {isProvisioningResource ? "Provisioning…" : "Provision resources"}
+                                {isProvisioningResource ? "Provisioning…" : !!selectedOrg?.resource ? 'Re-provision resources' : "Provision resources"}
                             </button>
-                        )}
-                        {selectedOrg && selectedOrg?.resource?.indices?.length && (
+                        ):null}
+                        {selectedOrg && selectedOrg?.resource?.indices?.length ? (
                             <button
                                 className="btn bg-red-100 hover:bg-red-200 text-red-700 w-full md:w-auto"
                                 onClick={handleDeprovisionResource}
@@ -240,18 +229,18 @@ const OrganizationSettingsPage: React.FC = () => {
                             >
                                 {isProvisioningResource ? "Provisioning…" : "De-provision resources"}
                             </button>
-                        )}
+                        ): null}
                     </div>
 
                 </div>
 
-                {showOrgForm && (
+                {showOrgForm ? (
                     <ManageOrganizationDetails
                         editingOrg={editingOrg}
                         onSave={handleSaveOrg}
                         onCancel={handleCancelOrgForm}
                     />
-                )}
+                ):null}
 
                 <ViewOrganizationList
                     organizations={organizations.map(x => x.info)}
@@ -261,10 +250,10 @@ const OrganizationSettingsPage: React.FC = () => {
                     onLeave={handleLeaveOrg}
                 />
 
-                {selectedOrg && selectedOrg?.resource?.indices?.length && <div>
+                {selectedOrg && selectedOrg?.resource?.indices?.length ? <div>
                     <hr className="divider" />
                     <ViewResourceList indices={selectedOrg.resource.indices} />
-                </div>}
+                </div>:null}
 
                 <div>
                     <hr className="divider" />
@@ -291,13 +280,13 @@ const OrganizationSettingsPage: React.FC = () => {
                             onInvite={handleInviteUser}
                         />
 
-                        {showUserForm && editingUser && (
+                        {showUserForm && editingUser ? (
                             <ManageOrganizationUser
                                 editingUser={editingUser}
                                 onSave={handleSaveOrgUser}
                                 onCancel={handleCancelOrgUserForm}
                             />
-                        )}
+                        ):null}
 
                         <ViewOrganizationUsers
                             users={orgUsers}

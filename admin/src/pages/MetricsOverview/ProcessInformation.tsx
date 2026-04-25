@@ -444,7 +444,7 @@ const ProcessInformationPage: React.FC = () => {
                 ioDevicesConnected={ioDevicesConnected} />
 
             
-            {activePageMemoryIntense && <div className="memory-intensive-process-section">
+            {activePageMemoryIntense ? <div className="memory-intensive-process-section">
                 <div className="flex flex-wrap w-full gap-2 flex-start mb-2 memory-intensive-process-filters">
                     <SearchInput 
                         value=""
@@ -486,8 +486,8 @@ const ProcessInformationPage: React.FC = () => {
                     onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
                 />
                 
-            </div>}
-            {activePageMemoryLeak && <div className="memory-leak-process-section">
+            </div>:null}
+            {activePageMemoryLeak ? <div className="memory-leak-process-section">
                 <div className="flex flex-wrap w-full gap-2 flex-start mb-2 memory-leak-process-filters">
                     <SearchInput 
                         value=""
@@ -520,7 +520,7 @@ const ProcessInformationPage: React.FC = () => {
                     totalPages={Math.ceil(totalMemoryLeakProcesses/totalItemsPerPage)}
                     onRowClick={(row) => !isFetchingExecutions && fetchProcessExecutions(row.processName)}
                 />
-            </div>}
+            </div>:null}
         </div>
         <SidePanel
         title={`Process Execution Details${selectedProcessName ? ` — ${selectedProcessName}` : ""}`}
@@ -530,14 +530,14 @@ const ProcessInformationPage: React.FC = () => {
             setProcessExecutionChartData(null);
         }}
         >
-            {selectedProcessName && (
+            {selectedProcessName ? (
                 <div className="card p-4 flex flex-col gap-2">
-                    {isFetchingExecutions && (
+                    {isFetchingExecutions ? (
                         <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>Loading executions for <strong>{selectedProcessName}</strong>…</p>
-                    )}
-                    {!isFetchingExecutions && processExecutionChartData && processExecutionChartData.x.length === 0 && (
+                    ):null}
+                    {!isFetchingExecutions && processExecutionChartData && processExecutionChartData.x.length === 0 ? (
                         <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>No execution records found for <strong>{selectedProcessName}</strong> in the selected time range.</p>
-                    )}
+                    ):null}
                     {!isFetchingExecutions && processExecutionChartData && processExecutionChartData.x.length > 0 && (
                         <LineChart
                             title={`Memory Usage over Time — ${selectedProcessName}`}
@@ -592,7 +592,7 @@ const ProcessInformationPage: React.FC = () => {
                         )
                     }
                 </div>
-            )}
+            ):null}
         </SidePanel>
 
     </>;

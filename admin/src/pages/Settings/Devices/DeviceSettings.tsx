@@ -135,7 +135,7 @@ const DeviceSettingsPage: React.FC = () => {
         <>
             <div className="p-6 flex flex-col gap-6">
 
-                {!selectedOrg && (
+                {!selectedOrg ? (
                     <div className="card">
                         <p
                             className="text-sm"
@@ -144,9 +144,9 @@ const DeviceSettingsPage: React.FC = () => {
                             Please select an organization from the Organization Settings page to manage devices.
                         </p>
                     </div>
-                )}
+                ):null}
 
-                {selectedOrg && (
+                {selectedOrg ? (
                     <>
                         <div className="flex flex-wrap justify-between">
                             <h3
@@ -156,7 +156,7 @@ const DeviceSettingsPage: React.FC = () => {
                                 Device Settings | Organization: {selectedOrg?.info.name || "N/A"}
                             </h3>
 
-                            {!showDeviceForm && (
+                            {!showDeviceForm ? (
                                 <button
                                     className="btn btn-primary mt-2 md:mt-0 w-full md:w-auto"
                                     onClick={() => {
@@ -166,16 +166,16 @@ const DeviceSettingsPage: React.FC = () => {
                                 >
                                     Add New Device
                                 </button>
-                            )}
+                            ):null}
                         </div>
 
-                        {showDeviceForm && (
+                        {showDeviceForm ? (
                             <ManageDevice
                                 device={selectedDevice}
                                 onSave={handleManageDevice}
                                 onCancel={() => setShowDeviceForm(false)}
                             />
-                        )}
+                        ):null}
 
                         <ViewDeviceList
                             devices={devices}
@@ -184,7 +184,7 @@ const DeviceSettingsPage: React.FC = () => {
                             onDelete={handleDeleteDevice}
                         />
 
-                        {selectedDevice && (
+                        {selectedDevice ? (
                             <>
                                 <hr className="divider" />
                                 <h3
@@ -194,7 +194,7 @@ const DeviceSettingsPage: React.FC = () => {
                                     Managing: {selectedDevice.name}
                                 </h3>
 
-                                {!showConfigForm && !showDeviceForm && (
+                                {!showConfigForm && !showDeviceForm ? (
                                     <div className="flex items-center gap-3">
                                         <button
                                             className="btn btn-primary"
@@ -209,23 +209,23 @@ const DeviceSettingsPage: React.FC = () => {
                                             Edit Device
                                         </button>
                                     </div>
-                                )}
+                                ):null}
 
-                                {showConfigForm && (
+                                {showConfigForm ? (
                                     <ManageConfiguration
                                         onSave={handleAddConfiguration}
                                         onCancel={() => setShowConfigForm(false)}
                                     />
-                                )}
+                                ):null}
 
                                 <ViewConfigurationList
                                     configurations={selectedDevice.configurations ?? []}
                                     onRemove={handleRemoveConfiguration}
                                 />
                             </>
-                        )}
+                        ):null}
                     </>
-                )}
+                ):null}
             </div>
         </>
     );

@@ -179,9 +179,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarWidth = 'w-1', isOpen = true, 
           <X size={20} />
         </button>
       </div>
-      {userInfo && userInfo.sub && <div className='text text-caption color-text-primary px-[var(--padding-md)]'>
+      {userInfo && userInfo.sub && (<div className='text text-caption color-text-primary px-[var(--padding-md)]'>
           <span>Logged in as: <b>{userInfo.sub}</b></span>
-      </div>}
+      </div>)}
 
       {organizations?.length && <Dropdown
         items={organizations.map(org => ({ name: org.info.name, value: org.info.id }))}

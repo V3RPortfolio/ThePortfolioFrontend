@@ -234,7 +234,7 @@ const DeviceInformationPage:React.FC = () => {
                     : <ChevronUp size={24} className="cursor-pointer" onClick={() => {setShowDistribution(true)}} />
                 }
             </div>
-            {showDistribution && <div className="flex flex-col">
+            {showDistribution && (<div className="flex flex-col">
                 <div className="flex flex-row flex-wrap flex-start gap-4 distribution-filters">
                     <Dropdown 
                         label="Select Metric"
@@ -247,7 +247,7 @@ const DeviceInformationPage:React.FC = () => {
                         className="w-auto"
                     />
                 </div>
-                {deviceMetrics && <ProbabilityDistributionChart 
+                {deviceMetrics && (<ProbabilityDistributionChart 
                     title="Metric Distribution Chart Across Devices"
                     data={deviceMetrics.map(({device, distribution}) => ({
                         label: device,
@@ -256,8 +256,8 @@ const DeviceInformationPage:React.FC = () => {
                     }))}
                     xAxisTitle="Metric Value"
                     yAxisTitle="Frequency"
-                />}
-            </div>}
+                />)}
+            </div>)}
         </div>
 
         <div className="uptime-container">
@@ -296,7 +296,7 @@ const DeviceInformationPage:React.FC = () => {
                         value={uptimeBinCategory}
                     />
                 </div>
-                {uptimeData && <LineChart 
+                {uptimeData && (<LineChart 
                     title="Device Uptime Over Time"
                     data={uptimeData.map(({device, metrics}) => ({
                         label: device,
@@ -307,7 +307,7 @@ const DeviceInformationPage:React.FC = () => {
                     xAxisTitle="Time"
                     yAxisTitle="Uptime"
                     timeSeriesUnit={uptimeBinCategory as "hour" | "day" | "week" | "month" | "year"}
-                />}
+                />)}
             </div>}
         </div>
     </div>;
