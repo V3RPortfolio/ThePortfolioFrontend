@@ -57,7 +57,7 @@
    }
  */
 
-import type { ElasticSearchAggregationResponse } from "../interfaces/elasticsearch.interface";
+import type { ElasticSearchAggregationResponse } from "../../../../interfaces/elasticsearch.interface";
 
 export const fetchDistributionDataQuery = (deviceId:string, metric:string):any => {
     return {

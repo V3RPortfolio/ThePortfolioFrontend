@@ -25,7 +25,7 @@
  * }
  */
 
-import type { ElasticSearchAggregationResponse } from "../interfaces/elasticsearch.interface";
+import type { ElasticSearchAggregationResponse } from "../../../../interfaces/elasticsearch.interface";
 
 export interface FetchDeviceMetricsParams {
     deviceId: string;

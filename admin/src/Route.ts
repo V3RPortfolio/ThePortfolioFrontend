@@ -34,18 +34,24 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
             label: 'Dashboard',
             ordering: 1
         },
-
+        {
+            path: '',
+            id: 'metrics-overview',
+            label: 'Metrics Overview',
+        },
         {
             path: `${base}/process-information/`,
             component: ProcessInformationPage,
             id: 'process-information',
-            label: 'Process Information'
+            label: 'Process Information',
+            parentRoute: 'metrics-overview'
         },
         {
             path: `${base}/device-information/`,
             component: DeviceInformationPage,
             id: 'device-information',
-            label: 'Device Information'
+            label: 'Device Information',
+            parentRoute: 'metrics-overview'
         },
         {
             path: `${import.meta.env.VITE_APP_WEBSITE_URL || '/'}`,

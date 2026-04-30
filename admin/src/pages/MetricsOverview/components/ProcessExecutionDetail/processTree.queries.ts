@@ -49,7 +49,7 @@
  *}
  */
 
-import type { ElasticSearchAggregationResponse } from "../interfaces/elasticsearch.interface";
+import type { ElasticSearchAggregationResponse } from "../../../../interfaces/elasticsearch.interface";
 
 export const fetchProcessTreeQuery = (
     deviceId:string, 

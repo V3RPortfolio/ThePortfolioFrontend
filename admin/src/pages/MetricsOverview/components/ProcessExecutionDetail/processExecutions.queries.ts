@@ -27,7 +27,7 @@
  * }
  */
 
-import type { ElasticSearchResponse } from "../interfaces/elasticsearch.interface";
+import type { ElasticSearchResponse } from "../../../../interfaces/elasticsearch.interface";
 
 export interface FetchProcessExecutionsParams {
     deviceId: string;
