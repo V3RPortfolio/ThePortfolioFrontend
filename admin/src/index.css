@@ -303,6 +303,31 @@ Level 2 (Styles):
   opacity: 0.6;
 }
 
+/* Custom Buttons */
+.btn-danger {
+  background-color: var(--color-error);
+  color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+.btn-danger:hover {
+  background-color: var(--color-error-light);
+  color: var(--color-black);
+  box-shadow: var(--shadow-md);
+}
+.btn-danger:active {
+  background-color: var(--color-error);
+  box-shadow: var(--shadow-sm);
+}
+.btn-danger:focus {
+  box-shadow: 0 0 0 3px var(--color-error-light);
+}
+.btn-danger:disabled {
+  background-color: var(--color-gray-300);
+  color: var(--color-gray-400);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* Button Sizes */
 .btn-sm {
   font-size: var(--font-size-sm);

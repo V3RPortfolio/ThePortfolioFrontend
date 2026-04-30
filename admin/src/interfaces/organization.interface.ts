@@ -69,3 +69,9 @@ export interface ManageResourceDto {
     name?: string | null;
     is_active?: boolean | null;
 }
+
+export interface InstallationDetailsDto {
+    api_key: string;
+    organization_id: string;
+    device_id: string;
+}

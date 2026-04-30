@@ -22,14 +22,14 @@ const ViewDeviceList: React.FC<ViewDeviceListProps> = ({
             title="Organization Devices"
             columns={[
                 { name: "Name", key: "name" },
-                { name: "Description", key: "description" },
+                // { name: "Description", key: "description" },
                 { name: "Device Type", key: "device_type" },
                 { name: "OS Type", key: "os_type" },
                 { name: "OS Version", key: "os_version" },
-                { name: "Status", key: "status" },
-                { name: "Script Downloaded At", key: "scriptDownloadedAt" },
-                { name: "Script Downloaded By", key: "script_downloaded_by" },
-                { name: "Created At", key: "createdAt" },
+                // { name: "Status", key: "status" },
+                // { name: "Script Downloaded At", key: "scriptDownloadedAt" },
+                // { name: "Script Downloaded By", key: "script_downloaded_by" },
+                // { name: "Created At", key: "createdAt" },
             ]}
             pagination={[{ pageNumber: 1, isActive: true }]}
             totalPages={1}
@@ -37,8 +37,8 @@ const ViewDeviceList: React.FC<ViewDeviceListProps> = ({
             actions={[
                 { name: "Select", className: "btn btn-primary btn-sm", handler: (row) => onSelect(row as DeviceOut) },
                 { name: "Download", className: "btn btn-primary btn-sm", handler: (row) => onDownload(row as DeviceOut) },
-                { name: "Deactivate", className: "btn btn-tertiary btn-sm", handler: (row) => onDeactivate(row as DeviceOut) },
-                { name: "Delete", className: "btn btn-secondary btn-sm text text-error", handler: (row) => onDelete(row as DeviceOut) },
+                { name: "Deactivate", className: "btn btn-primary btn-sm", handler: (row) => onDeactivate(row as DeviceOut) },
+                { name: "Delete", className: "btn btn-danger btn-sm", handler: (row) => onDelete(row as DeviceOut) },
             ]}
             data={devices.map((device) => ({
                 ...device,

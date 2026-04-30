@@ -1092,10 +1092,10 @@
         ]
       }
     },
-    "/api/organization/v1/devices/{org_id}/{device_id}/download": {
+    "/api/organization/v1/devices/{org_id}/{device_id}/installation-details": {
       "get": {
-        "operationId": "organization_views_devices_download_installation_file_endpoint",
-        "summary": "Download Installation File Endpoint",
+        "operationId": "organization_views_devices_fetch_installation_details",
+        "summary": "Fetch Installation Details",
         "parameters": [
           {
             "in": "path",
@@ -1145,6 +1145,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceInstallationDetailsOut"
                 }
               }
             }
@@ -2701,7 +2711,8 @@
       "OsVersion": {
         "enum": [
           "10",
-          "24"
+          "24",
+          "22"
         ],
         "title": "OsVersion",
         "type": "string"
@@ -2927,6 +2938,31 @@
           "is_active"
         ],
         "title": "DeviceConnectionStatusOut",
+        "type": "object"
+      },
+      "DeviceInstallationDetailsOut": {
+        "properties": {
+          "api_key": {
+            "title": "Api Key",
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "title": "Organization Id",
+            "type": "string"
+          },
+          "device_id": {
+            "format": "uuid",
+            "title": "Device Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "api_key",
+          "organization_id",
+          "device_id"
+        ],
+        "title": "DeviceInstallationDetailsOut",
         "type": "object"
       },
       "ResourceDto": {
