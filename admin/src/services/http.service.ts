@@ -87,7 +87,8 @@ class HttpService {
     async fetch<T>(
         url: string,
         options: RequestInit = {},
-        withAuth: boolean = false
+        withAuth: boolean = false,
+        suppressErrorStatusCodes: number[] = []
     ): Promise<T> {
         const headers: Record<string, any> = {
             'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ class HttpService {
             }
         }
 
-        if (!res.ok) {
+        if (!res.ok && !suppressErrorStatusCodes.includes(res.status)) {
             const text = await res.text().catch(() => '');
             throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
         }
@@ -148,10 +149,11 @@ class HttpService {
     async get<T>(
         url: string,
         options: RequestInit = {},
-        withAuth: boolean = false
+        withAuth: boolean = false,
+        suppressErrorStatusCodes: number[] = []
     ): Promise<T> {
         try {
-            return await this.fetch<T>(url, { ...options, method: 'GET' }, withAuth);
+            return await this.fetch<T>(url, { ...options, method: 'GET' }, withAuth, suppressErrorStatusCodes);
         } catch (err) {
             console.error(`GET request to ${url} failed:`, err);
             throw err;
@@ -161,11 +163,12 @@ class HttpService {
     async post<T>(
         url: string,
         options: RequestInit = {},
-        withAuth: boolean = false
+        withAuth: boolean = false,
+        suppressErrorStatusCodes: number[] = []
     ): Promise<T> {
 
         try {
-            return await this.fetch<T>(url, { ...options, method: 'POST' }, withAuth);
+            return await this.fetch<T>(url, { ...options, method: 'POST' }, withAuth, suppressErrorStatusCodes);
         } catch (err) {
             console.error(`POST request to ${url} failed:`, err);
             throw err;
@@ -175,11 +178,12 @@ class HttpService {
     async put<T>(
         url: string,
         options: RequestInit = {},
-        withAuth: boolean = false
+        withAuth: boolean = false,
+        suppressErrorStatusCodes: number[] = []
     ): Promise<T> {
 
         try {
-            return await this.fetch<T>(url, { ...options, method: 'PUT' }, withAuth);
+            return await this.fetch<T>(url, { ...options, method: 'PUT' }, withAuth, suppressErrorStatusCodes);
         } catch (err) {
             console.error(`PUT request to ${url} failed:`, err);
             throw err;
@@ -189,10 +193,11 @@ class HttpService {
     async delete<T>(
         url: string,
         options: RequestInit = {},
-        withAuth: boolean = false
+        withAuth: boolean = false,
+        suppressErrorStatusCodes: number[] = []
     ): Promise<T> {
         try {
-            return await this.fetch<T>(url, { ...options, method: 'DELETE' }, withAuth);
+            return await this.fetch<T>(url, { ...options, method: 'DELETE' }, withAuth, suppressErrorStatusCodes);
         } catch (err) {
             console.error(`DELETE request to ${url} failed:`, err);
             throw err;

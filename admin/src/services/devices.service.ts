@@ -68,8 +68,9 @@ class DeviceService {
 
     async fetchInstallationDetails(organizationId: string, deviceId: string): Promise<InstallationDetailsDto | null> {
         try {
-            return await httpService.get<InstallationDetailsDto>(`${deviceApi}/${organizationId}/${deviceId}/installation-details`, {}, true);
-        } catch {
+            return await httpService.get<InstallationDetailsDto>(`${deviceApi}/${organizationId}/${deviceId}/installation-details`, {}, true, [402]);
+        } catch(e) {
+            
             return null;
         }
     }
