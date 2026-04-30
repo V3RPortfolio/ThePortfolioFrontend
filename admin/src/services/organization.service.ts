@@ -212,6 +212,7 @@ export class OrganizationService {
     }
 
     async fetchSubscriptionDetails(orgId: string): Promise<SubscriptionDetailsDto|null> {
+        console.debug("Fetching subscription details for organization:", orgId);
         return {
             paid: false
         }
