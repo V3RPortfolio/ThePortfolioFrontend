@@ -2,7 +2,7 @@ export type DeviceType = "Desktop";
 
 export type OsType = "Windows" | "Ubuntu";
 
-export type OsVersion = "10" | "24";
+export type OsVersion = "10" | "11" | "24" | "22";
 
 export type DeviceDataType = "user_access" | "cpu_and_memory_usage" | "io_device_usage";
 

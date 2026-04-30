@@ -7,8 +7,8 @@ const DEVICE_TYPE_OPTIONS: DeviceType[] = ["Desktop"];
 const OS_TYPE_OPTIONS: OsType[] = ["Windows", "Ubuntu"];
 
 const OS_VERSION_OPTIONS: Record<OsType, OsVersion[]> = {
-    Windows: ["10"],
-    Ubuntu: ["24"],
+    Windows: ["10", "11"],
+    Ubuntu: ["24", "22"],
 };
 
 interface ManageDeviceProps {

@@ -1,5 +1,5 @@
 import httpService from "./http.service";
-import { deviceApi, jwtHeader } from "../constants";
+import { deviceApi } from "../constants";
 import type {
     DeviceOut,
     DeviceIn,
@@ -8,6 +8,7 @@ import type {
     DeviceConnectionStatusOut,
     DeviceUpdate,
 } from "../interfaces/device.interface";
+import type { InstallationDetailsDto } from "../interfaces/organization.interface";
 
 class DeviceService {
 
@@ -65,35 +66,12 @@ class DeviceService {
         }
     }
 
-    async downloadInstallationFile(orgId: string, deviceId: string): Promise<void> {
-        const tokenType = httpService.getTokenType();
-        const accessToken = httpService.getAccessToken();
-        if (!tokenType || !accessToken) throw new Error('No access token found for authorized request');
-
-        const res = await fetch(`${deviceApi}/${orgId}/${deviceId}/download`, {
-            method: 'GET',
-            headers: {
-                [jwtHeader]: `${tokenType} ${accessToken}`,
-            },
-        });
-
-        if (!res.ok) {
-            const text = await res.text().catch(() => '');
-            throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
+    async fetchInstallationDetails(organizationId: string, deviceId: string): Promise<InstallationDetailsDto | null> {
+        try {
+            return await httpService.get<InstallationDetailsDto>(`${deviceApi}/${organizationId}/${deviceId}/installation-details`, {}, true);
+        } catch {
+            return null;
         }
-
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const contentDisposition = res.headers.get('Content-Disposition');
-        const filenameMatch = contentDisposition?.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-        const filename = filenameMatch ? filenameMatch[1].replace(/['"]/g, '').trim() : 'installation_script';
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     }
 
 }

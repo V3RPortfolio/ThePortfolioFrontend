@@ -1,6 +1,8 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import deviceService from "../../../services/devices.service";
+import organizationService from "../../../services/organization.service";
+import CircleSpinner from "../../../components/Spinners/Circle";
 import type {
     DeviceOut,
     DeviceConfigurationOut,
@@ -13,12 +15,16 @@ import ManageConfiguration from "./components/ManageConfiguration";
 import ManageDevice from "./components/ManageDevice";
 import { useToast } from "../../../contexts/toast.context";
 import { useOrganization } from "../../../contexts/organization.context";
+import type { InstallationDetailsDto } from "../../../interfaces/organization.interface";
+import InstallationDetailsModal from "./components/InstallationDetailsModal";
 
 const DeviceSettingsPage: React.FC = () => {
     const [devices, setDevices] = useState<DeviceOut[]>([]);
     const [showDeviceForm, setShowDeviceForm] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState<DeviceOut | null>(null);
     const [showConfigForm, setShowConfigForm] = useState(false);
+    const [installationDetails, setInstallationDetails] = useState<InstallationDetailsDto | null>(null);
+    const [isDownloading, setIsDownloading] = useState(false);
 
     const { selectedOrg } = useOrganization();
     const { addToast, } = useToast();
@@ -134,18 +140,39 @@ const DeviceSettingsPage: React.FC = () => {
     };
 
     const handleDownloadScript = async (device: DeviceOut) => {
-        if (!selectedOrg) return;
+        if (!selectedOrg || isDownloading) return;
+        setIsDownloading(true);
+        if(!device?.os_type || !device.os_version) {
+            addToast({message: `Device "${device.name}" is missing OS type or version. Please edit the device to add this information before downloading the installation script.`, type: "error"});
+            return;
+        }
         try {
-            await deviceService.downloadInstallationFile(selectedOrg.info.id, device.id);
+            await organizationService.downloadInstallationFile(
+                selectedOrg.info.id,
+                device.os_type,
+                device.os_version
+            );
             addToast({message: `Installation script downloaded for "${device.name}"`, type: "success"});
-            await fetchDevices(selectedOrg.info.id);
+            setInstallationDetails(await deviceService.fetchInstallationDetails(selectedOrg.info.id, device.id));
         } catch (err) {
             addToast({message: extractErrorMessage(err), type: "error"});
         }
+        setIsDownloading(false);
     };
 
     return (
         <>
+            {isDownloading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <CircleSpinner size={48} label="Downloading installation script..." />
+                </div>
+            )}
+            {installationDetails && (
+                <InstallationDetailsModal
+                    details={installationDetails}
+                    onClose={() => setInstallationDetails(null)}
+                />
+            )}
             <div className="p-6 flex flex-col gap-6">
 
                 {!selectedOrg ? (

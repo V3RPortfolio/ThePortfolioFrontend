@@ -1,6 +1,6 @@
 
 import httpService from "./http.service";
-import { DEFAULT_ORGANIZATION_ID, elasticIndices, organizationApi } from "../constants";
+import { DEFAULT_ORGANIZATION_ID, elasticIndices, organizationApi, gatewayApi } from "../constants";
 import type {
     OrganizationOut,
     OrganizationIn,
@@ -11,6 +11,7 @@ import type {
     OrganizationInvitationOut,
     ResourceDto,
     ManageResourceDto,
+    SubscriptionDetailsDto,
 } from "../interfaces/organization.interface";
 
 
@@ -175,6 +176,46 @@ export class OrganizationService {
             return { message: "Default organization resource cannot be deprovisioned" };
         }
         return httpService.delete<{message:string}>(`${organizationApi}/${orgId}/resources`, {}, true);
+    }
+
+    async downloadInstallationFile(orgId: string, operatingSystem:string, osVersion:string, softwareVersion:string="latest"): Promise<void> {
+        const jwtHeader = `${import.meta.env.VITE_JWT_HEADER || 'Authorization'}`;
+        const tokenType = httpService.getTokenType();
+        const accessToken = httpService.getAccessToken();
+        if (!tokenType || !accessToken) throw new Error('No access token found for authorized request');
+
+        const res = await fetch(`${gatewayApi}/jarvis/organization/${orgId}/download/v1?operating_system=${operatingSystem}&os_version=${osVersion}&software_version=${softwareVersion}`, {
+            method: 'GET',
+            headers: {
+                [jwtHeader]: `${tokenType} ${accessToken}`,
+                'accept': 'application/octet-stream',
+            },
+        });
+
+        if (!res.ok) {
+            const text = await res.text().catch(() => '');
+            throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const contentDisposition = res.headers.get('Content-Disposition');
+        const filenameMatch = contentDisposition?.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        const filename = filenameMatch ? filenameMatch[1].replace(/['"]/g, '').trim() : 'installation_script';
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    async fetchSubscriptionDetails(orgId: string): Promise<SubscriptionDetailsDto|null> {
+        console.debug("Fetching subscription details for organization:", orgId);
+        return {
+            paid: false
+        }
     }
 
 }
