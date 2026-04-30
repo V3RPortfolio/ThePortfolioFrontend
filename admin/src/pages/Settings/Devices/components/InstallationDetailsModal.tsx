@@ -56,8 +56,7 @@ const InstallationDetailsModal: React.FC<InstallationDetailsModalProps> = ({ det
 
                 {/* Body */}
                 <p className="text-body" style={{ color: "var(--color-text-secondary)" }}>
-                    The installation script has been downloaded. Use the details below to configure your device agent.
-                    Keep the API key secure and do not share it.
+                    {details.message || "The installation script has been downloaded. Use the details below to configure your device agent.\nKeep the API key secure and do not share it."}
                 </p>
 
                 <div className="flex flex-col gap-3">

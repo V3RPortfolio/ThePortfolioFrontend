@@ -74,4 +74,10 @@ export interface InstallationDetailsDto {
     api_key: string;
     organization_id: string;
     device_id: string;
+    message?: string;
+}
+
+export interface SubscriptionDetailsDto {
+    paid: boolean;
+
 }

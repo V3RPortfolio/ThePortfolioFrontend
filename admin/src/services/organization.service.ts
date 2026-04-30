@@ -11,6 +11,7 @@ import type {
     OrganizationInvitationOut,
     ResourceDto,
     ManageResourceDto,
+    SubscriptionDetailsDto,
 } from "../interfaces/organization.interface";
 
 
@@ -208,6 +209,12 @@ export class OrganizationService {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    async fetchSubscriptionDetails(orgId: string): Promise<SubscriptionDetailsDto|null> {
+        return {
+            paid: false
+        }
     }
 
 }
