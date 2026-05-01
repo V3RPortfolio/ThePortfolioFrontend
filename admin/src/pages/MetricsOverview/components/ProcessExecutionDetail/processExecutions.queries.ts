@@ -27,7 +27,8 @@
  * }
  */
 
-import type { ElasticSearchResponse } from "../interfaces/elasticsearch.interface";
+import type { ElasticSearchResponse } from "../../../../interfaces/elasticsearch.interface";
+import type { ProcessExecutionProcess } from "../../../../interfaces/metricsOverview.interface";
 
 export interface FetchProcessExecutionsParams {
     deviceId: string;
@@ -74,19 +75,6 @@ export const buildFetchProcessExecutionsQuery = ({
         ]
     }
 };
-
-export interface ProcessExecutionProcess {
-    _id: string;
-    process_name: string;
-    device_id: string;
-    memory_megabytes: number;
-    cpu_usage: number;
-    memory_usage: number;
-    timestamp: string; // ISO 8601 date string
-    processing_status: string;
-    process_id: string;
-    processing_timestamp: string; // ISO 8601 date string
-}
 
 export interface FetchProcessExecutionsResponse extends ElasticSearchResponse<ProcessExecutionProcess> {
 

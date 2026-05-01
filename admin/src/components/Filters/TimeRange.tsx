@@ -47,6 +47,7 @@ const TimeRange: React.FC<TimeRangeProps> = ({
     const toOk = useMemo(() => isIsoLike(normalize(toValue)), [toValue]);
 
     const emit = (nextFrom: string, nextTo: string) => {
+        if(!isIsoLike(normalize(nextFrom)) || !isIsoLike(normalize(nextTo))) return;
         handler?.({
             from: normalize(nextFrom),
             to: normalize(nextTo),

@@ -18,6 +18,8 @@
  * }
  */
 
+import type { IoDeviceBucket } from "../../../../interfaces/metricsOverview.interface";
+
 export interface FetchTotalIoDevicesParams {
     deviceId: string;
     from: string; // ISO 8601 date string, e.g. "2026-01-01T00:00:00Z"
@@ -54,11 +56,6 @@ export const buildFetchTotalIoDevicesQuery = ({ deviceId, from, to }: FetchTotal
         }
     }
 });
-
-export interface IoDeviceBucket {
-    key: string;
-    doc_count: number;
-}
 
 export interface FetchTotalIoDevicesResponse {
     unique_io_devices: {
