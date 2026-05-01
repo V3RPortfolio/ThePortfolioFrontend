@@ -16,12 +16,27 @@ interface DeviceUptimeStatisticsProps {
     devices: string[];
 }
 
+interface UptimeStats {
+    timestamp: string;
+    entries: number;
+    cpu_perct_metric: number;
+    memory_perct_metrics: number;
+    memory_megabyte_metrics: number;
+}
+
 const timeSeriesViewUnits: Record<string, { label: string; value: string }> = {
     hour: { label: "Hour", value: "hour" },
     day: { label: "Day", value: "day" },
     week: { label: "Week", value: "week" },
     month: { label: "Month", value: "month" },
     year: { label: "Year", value: "year" },
+};
+
+const availableMetrics: Record<string, { field: string; label: string }> = {
+    uptime: { field: "uptime", label: "Uptime" },
+    cpuUsage: { field: "avg_cpu_consumption", label: "Average CPU Usage (%)" },
+    memoryUsage: { field: "avg_memory_consumption", label: "Average Memory Usage (%)" },
+    memoryMB: { field: "avg_memory_megabytes", label: "Average Memory Usage (MB)" },
 };
 
 const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices }) => {
@@ -38,9 +53,10 @@ const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices
         timeSeriesViewUnits.hour.value
     );
     const [uptimeData, setUptimeData] = useState<
-        { device: string; metrics: { timestamp: string; entries: number }[] }[]
+        { device: string; metrics: UptimeStats[] }[]
     >([]);
     const [isFetchingUptime, setIsFetchingUptime] = useState(false);
+    const [selectedMetric, setSelectedMetric] = useState(availableMetrics.uptime);
 
     const fetchDeviceMetrics = useCallback(async () => {
         if (!devices.length || !uptimeDateStart || !uptimeDateEnd || isFetchingUptime) return [];
@@ -52,7 +68,7 @@ const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices
         if (!indexInfo) return [];
 
         setIsFetchingUptime(true);
-        const uptimeResults: { device: string; metrics: { timestamp: string; entries: number }[] }[] = [];
+        const uptimeResults: { device: string; metrics: UptimeStats[] }[] = [];
 
         const fetchUnit =
             uptimeBinCategory === "hour" ? "minute" :
@@ -97,22 +113,35 @@ const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices
                 continue;
             }
 
-            const metricsMap: Record<string, number> = {};
+            const metricsMap: Record<string, {count: number, cpu_perct: number, memory_perct: number, memory_megabytes:number}> = {};
             for (const hit of data) {
                 const hourKey = hit.processing_timestamp.substring(0, substringIndex);
                 if (metricsMap[hourKey] == undefined) {
-                    metricsMap[hourKey] = 0;
+                    metricsMap[hourKey] = {
+                        count: 1,
+                        cpu_perct: hit.cpu_usage,
+                        memory_perct: hit.memory_usage,
+                        memory_megabytes: hit.memory_megabytes,
+                    };
                 } else {
-                    metricsMap[hourKey] += 1;
+                    metricsMap[hourKey] = {
+                        count: metricsMap[hourKey].count + 1,
+                        cpu_perct: metricsMap[hourKey].cpu_perct + hit.cpu_usage,
+                        memory_perct: metricsMap[hourKey].memory_perct + hit.memory_usage,
+                        memory_megabytes: metricsMap[hourKey].memory_megabytes + hit.memory_megabytes,
+                    };
                 }
             }
 
             uptimeResults.push({
                 device,
                 metrics: Object.entries(metricsMap)
-                    .map(([hour, entries]) => ({
+                    .map(([hour, metrics]) => ({
                         timestamp: hour + ":00:00Z",
-                        entries,
+                        entries: metrics.count,
+                        cpu_perct_metric: metrics.cpu_perct / metrics.count,
+                        memory_perct_metrics: metrics.memory_perct / metrics.count,
+                        memory_megabyte_metrics: metrics.memory_megabytes / metrics.count,
                     }))
                     .sort(
                         (a, b) =>
@@ -134,7 +163,7 @@ const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices
     return (
         <div className="uptime-container">
             <div className="flex flex-row justify-between p-6 bg-[var(--color-background)] mb-6 distribution-header">
-                <h4 className="text text-title">Device Uptime Statistics</h4>
+                <h4 className="text text-title">Device {selectedMetric.label} Statistics</h4>
                 {showUptime ? (
                     <ChevronDown
                         size={24}
@@ -161,7 +190,7 @@ const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices
                                 if (from) setUptimeDateStart(from);
                                 if (to) setUptimeDateEnd(to);
                             }}
-                            className="w-full md:w-auto"
+                            className="w-full lg:w-auto min-w-[30%]"
                         />
                         <Dropdown
                             label="View Chart By"
@@ -169,7 +198,7 @@ const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices
                                 name: unit.label,
                                 value: unit.value,
                             }))}
-                            className="w-full lg:w-auto"
+                            className="w-full lg:w-auto min-w-[20%]"
                             handler={(value: string) => {
                                 if (
                                     Object.values(timeSeriesViewUnits).find(
@@ -181,19 +210,37 @@ const DeviceUptimeStatistics: React.FC<DeviceUptimeStatisticsProps> = ({ devices
                             }}
                             value={uptimeBinCategory}
                         />
+                        <Dropdown
+                            label="Select Metric"
+                            items={Object.values(availableMetrics).map((metric) => ({
+                                name: metric.label,
+                                value: metric.field,
+                            }))}
+                            value={selectedMetric.field}
+                            handler={(value) => {
+                                const metric = Object.values(availableMetrics).find(
+                                    (m) => m.field === value
+                                );
+                                if (metric) setSelectedMetric(metric);
+                            }}
+                            className="w-full lg:w-auto min-w-[20%]"
+                        />
                     </div>
 
                     {uptimeData && (
                         <LineChart
-                            title="Device Uptime Over Time"
+                            title={`${selectedMetric.label} Over Time Across`}
                             data={uptimeData.map(({ device, metrics }) => ({
                                 label: device,
-                                y: metrics.map((m) => m.entries),
+                                y: metrics.map((m) => selectedMetric.field == 'uptime' ? m.entries : 
+                                                        selectedMetric.field == 'avg_cpu_consumption' ? 
+                                                        m.cpu_perct_metric : selectedMetric.field == 'avg_memory_consumption' ? 
+                                                        m.memory_perct_metrics : m.memory_megabyte_metrics),
                                 x: metrics.map((m) => new Date(m.timestamp)),
                                 dataPointId: metrics.map((m) => m.timestamp),
                             }))}
                             xAxisTitle="Time"
-                            yAxisTitle="Uptime"
+                            yAxisTitle={selectedMetric.label}
                             timeSeriesUnit={
                                 uptimeBinCategory as "hour" | "day" | "week" | "month" | "year"
                             }
