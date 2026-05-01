@@ -58,6 +58,7 @@
  */
 
 import type { ElasticSearchAggregationResponse } from "../../../../interfaces/elasticsearch.interface";
+import type { DistributionInfo } from "../../../../interfaces/metricsOverview.interface";
 
 export const fetchDistributionDataQuery = (deviceId:string, metric:string):any => {
     return {
@@ -107,12 +108,6 @@ export const fetchDistributionDataQuery = (deviceId:string, metric:string):any =
             "processing_timestamp"
         ]
     }
-}
-
-export interface DistributionInfo {
-    process_name: string;
-    metric_value: number;
-    processing_timestamp: string;
 }
 
 export interface fetchDistributionDataResponse {

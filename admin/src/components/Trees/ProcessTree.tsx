@@ -1,6 +1,6 @@
 import type React from "react";
 import { useState } from "react";
-import type { ProcessTreeInfo } from "../../pages/MetricsOverview/queries/fetchProcessTree";
+import type { ProcessTreeInfo } from "../../interfaces/metricsOverview.interface";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

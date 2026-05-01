@@ -13,9 +13,9 @@ import {
     fetchProcessTreeQuery,
     mapProcessTreeResponse,
     type fetchProcessTreeResponse,
-    type ProcessTreeInfo,
 } from "./processTree.queries";
 import { useOrganization } from "../../../../contexts/organization.context";
+import type { ProcessTreeInfo } from "../../../../interfaces/metricsOverview.interface";
 
 interface ProcessExecutionDetailProps {
     /** The currently selected process name — `null` means the panel is hidden. */

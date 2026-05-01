@@ -6,9 +6,9 @@ import { elasticIndices } from "../../../../constants";
 import {
     buildFetchRunningDevicesStatsQuery,
     parseFetchRunningDevicesStatsResponse,
-    type RunningDevicesStatsResponse,
 } from "./memoryStats.queries";
 import { useOrganization } from "../../../../contexts/organization.context";
+import type { RunningDeviceStatsInfo } from "../../../../interfaces/metricsOverview.interface";
 
 interface MemoryLeakProcessesProps {
     device: string;
@@ -27,7 +27,7 @@ const MemoryLeakProcesses: React.FC<MemoryLeakProcessesProps> = ({
 }) => {
     const { selectedOrg } = useOrganization();
 
-    const [processes, setProcesses] = useState<RunningDevicesStatsResponse[]>([]);
+    const [processes, setProcesses] = useState<RunningDeviceStatsInfo[]>([]);
     const [activePage, setActivePage] = useState(1);
     const [totalProcesses, setTotalProcesses] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
@@ -46,7 +46,7 @@ const MemoryLeakProcesses: React.FC<MemoryLeakProcessesProps> = ({
         );
         if (!indexInfo) return;
 
-        const result = await elasticsearchService.search<RunningDevicesStatsResponse>(
+        const result = await elasticsearchService.search<RunningDeviceStatsInfo>(
             buildFetchRunningDevicesStatsQuery({
                 deviceId: device,
                 // Memory leak is relative and not time-range dependent

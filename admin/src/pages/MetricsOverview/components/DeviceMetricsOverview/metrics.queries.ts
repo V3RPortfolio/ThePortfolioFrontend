@@ -26,6 +26,7 @@
  */
 
 import type { ElasticSearchAggregationResponse } from "../../../../interfaces/elasticsearch.interface";
+import type { DeviceMetricsInfo } from "../../../../interfaces/metricsOverview.interface";
 
 export interface FetchDeviceMetricsParams {
     deviceId: string;
@@ -89,14 +90,7 @@ export const buildFetchDeviceMetricsQuery = ({ deviceId, from, to, unit }: Fetch
     ]
 });
 
-export interface FetchDeviceMetricsResponse {
-    cpu_usage: number;
-    memory_usage: number;
-    memory_megabytes: number;
-    processing_timestamp: string;
-}
-
-export interface FetchDeviceMetricsAggregationResponse extends ElasticSearchAggregationResponse<null, FetchDeviceMetricsResponse> {
+export interface FetchDeviceMetricsAggregationResponse extends ElasticSearchAggregationResponse<null, DeviceMetricsInfo> {
     metrics_over_time: {
         buckets: {
             key_as_string: string; // e.g. "2026-04-07T10:00:00Z"
@@ -114,7 +108,7 @@ export interface FetchDeviceMetricsAggregationResponse extends ElasticSearchAggr
     }
 }
 
-export const parseFetchDeviceMetricsResponse = (response: FetchDeviceMetricsAggregationResponse): FetchDeviceMetricsResponse[] => {
+export const parseFetchDeviceMetricsResponse = (response: FetchDeviceMetricsAggregationResponse): DeviceMetricsInfo[] => {
     if (
         typeof response !== 'object' ||
         !response?.metrics_over_time?.buckets?.length

@@ -50,6 +50,7 @@
  */
 
 import type { ElasticSearchAggregationResponse } from "../../../../interfaces/elasticsearch.interface";
+import type { ProcessTreeInfo } from "../../../../interfaces/metricsOverview.interface";
 
 export const fetchProcessTreeQuery = (
     deviceId:string, 
@@ -80,15 +81,6 @@ export const fetchProcessTreeQuery = (
             }
         }
     }
-}
-
-export interface ProcessTreeInfo {
-    timestamp: string;
-    processing_timestamp: string;
-    device_id: string;
-    pid: string;
-    parent_pid?: string|null;
-    process_name: string;
 }
 
 export interface fetchProcessTreeResponse extends ElasticSearchAggregationResponse<null, ProcessTreeInfo> {

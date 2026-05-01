@@ -6,11 +6,11 @@ import elasticsearchService from "../../../../services/elasticsearch.service";
 import {
     fetchDistributionDataQuery,
     parseFetchDistributionDataResponse,
-    type DistributionInfo,
     type fetchDistributionDataResponse,
 } from "./distribution.queries";
 import { elasticIndices } from "../../../../constants";
 import { useOrganization } from "../../../../contexts/organization.context";
+import type { DistributionInfo } from "../../../../interfaces/metricsOverview.interface";
 
 interface DeviceMetricsDistributionProps {
     devices: string[];

@@ -24,6 +24,7 @@
  */
 
 import type { ElasticSearchResponse } from "../../../../interfaces/elasticsearch.interface";
+import type { RunningDeviceStatsInfo } from "../../../../interfaces/metricsOverview.interface";
 
 export interface FetchRunningDevicesStatsParams {
     deviceId: string;
@@ -97,33 +98,14 @@ export const buildFetchRunningDevicesStatsQuery = ({
     return query;
 };
 
-export interface RunningDevicesStatsResponse {
-    process_name: string;
-    /** Pre-aggregated average memory consumption in megabytes */
-    avg_memory_megabytes?: number;
-    /** Average deviation of memory consumption from the mean (percentage) */
-    deviation_memory_consumption_megabytes?: number;
-    /** Pre-aggregated average CPU usage percentage */
-    avg_cpu_consumption?: number;
-    deviation_cpu_consumption?: number;
-
-    avg_memory_consumption?: number;
-    deviation_memory_consumption?: number;
-
-    avg_memory_leak?: number;
-    deviation_memory_leak?: number;
-
-    processing_timestamp: string; // ISO 8601 date string
-}
-
 export interface FetchRunningDevicesStatsResult {
-    items: RunningDevicesStatsResponse[];
+    items: RunningDeviceStatsInfo[];
     /** Total number of matching documents (from hits.total.value) */
     total: number;
 }
 
 export const parseFetchRunningDevicesStatsResponse = (
-    response: ElasticSearchResponse<RunningDevicesStatsResponse>
+    response: ElasticSearchResponse<RunningDeviceStatsInfo>
 ): FetchRunningDevicesStatsResult => {
     if (
         !response ||
