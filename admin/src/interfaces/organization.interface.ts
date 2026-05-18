@@ -74,6 +74,7 @@ export interface InstallationDetailsDto {
     api_key: string;
     organization_id: string;
     device_id: string;
+    device_name: string;
     message?: string;
 }
 

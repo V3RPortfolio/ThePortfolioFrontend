@@ -58,6 +58,7 @@ const DeviceSettingsPage: React.FC = () => {
         if (!selectedOrg) return;
         try {
             await fetchDeviceDetails(selectedOrg.info.id, device.id);
+            setInstallationDetails(await deviceService.fetchInstallationDetails(selectedOrg.info.id, device.id));
             setShowDeviceForm(false);
             setShowConfigForm(false);
         } catch (err) {
