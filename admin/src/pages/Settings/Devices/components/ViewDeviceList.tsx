@@ -47,7 +47,7 @@ const ViewDeviceList: React.FC<ViewDeviceListProps> = ({
                 os_type: device.os_type ?? "—",
                 os_version: device.os_version ?? "—",
                 status: device.is_active ? "Active" : "Inactive",
-                last_heartbeat_at: device.last_heartbeat_at ?? "—"
+                last_heartbeat_at: device.last_heartbeat_at ? new Date(device.last_heartbeat_at).toLocaleString() : "—"
                 scriptDownloadedAt: device.script_downloaded_at
                     ? new Date(device.script_downloaded_at).toLocaleDateString()
                     : "—",
