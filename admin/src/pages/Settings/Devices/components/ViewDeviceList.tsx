@@ -26,6 +26,7 @@ const ViewDeviceList: React.FC<ViewDeviceListProps> = ({
                 { name: "Device Type", key: "device_type" },
                 { name: "OS Type", key: "os_type" },
                 { name: "OS Version", key: "os_version" },
+                { name: "Last Connection", key: "last_heartbeat_at" },
                 // { name: "Status", key: "status" },
                 // { name: "Script Downloaded At", key: "scriptDownloadedAt" },
                 // { name: "Script Downloaded By", key: "script_downloaded_by" },
@@ -46,6 +47,7 @@ const ViewDeviceList: React.FC<ViewDeviceListProps> = ({
                 os_type: device.os_type ?? "—",
                 os_version: device.os_version ?? "—",
                 status: device.is_active ? "Active" : "Inactive",
+                last_heartbeat_at: device.last_heartbeat_at ?? "—"
                 scriptDownloadedAt: device.script_downloaded_at
                     ? new Date(device.script_downloaded_at).toLocaleDateString()
                     : "—",
