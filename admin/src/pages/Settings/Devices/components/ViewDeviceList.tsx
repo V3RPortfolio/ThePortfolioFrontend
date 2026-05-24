@@ -27,6 +27,8 @@ const ViewDeviceList: React.FC<ViewDeviceListProps> = ({
                 { name: "OS Type", key: "os_type" },
                 { name: "OS Version", key: "os_version" },
                 { name: "Last Connection", key: "last_heartbeat_at" },
+                { name: "Last Upload", key: "last_upload_at"},
+                { name: "Last Processed", key: "last_processed_at"},
                 // { name: "Status", key: "status" },
                 // { name: "Script Downloaded At", key: "scriptDownloadedAt" },
                 // { name: "Script Downloaded By", key: "script_downloaded_by" },

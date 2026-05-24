@@ -28,6 +28,8 @@ export interface DeviceOut {
     created_at: string;
     updated_at: string;
     last_heartbeat_at: string | null;
+    last_upload_at: string | null;
+    last_processed_at: string|null,
     os_type: string | null;
     os_version: string | null;
     script_downloaded_at: string | null;
@@ -56,4 +58,6 @@ export interface DeviceConnectionStatusOut {
     device_id: string;
     is_active: boolean;
     last_heartbeat_at: string | null;
+    last_upload_at: string | null;
+    last_processed_at: string|null,
 }
