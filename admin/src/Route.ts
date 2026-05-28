@@ -7,6 +7,7 @@ import DeviceInformationPage from "./pages/MetricsOverview/DeviceInformation";
 import OrganizationSettingsPage from "./pages/Settings/Organization/OrganizationSettings";
 import NotificationsPreviewPage from "./pages/Settings/Notifications/NotificationPreview";
 import DeviceSettingsPage from "./pages/Settings/Devices/DeviceSettings";
+import WorkflowsPage from "./pages/Workflows/Workflows";
 
 
 export interface SidebarRoutesDTO {
@@ -38,6 +39,13 @@ export function SidebarRoutes(): SidebarRoutesDTO[] {
             path: '',
             id: 'metrics-overview',
             label: 'Metrics Overview',
+        },
+        {
+            path: `${base}/workflows/`,
+            component: WorkflowsPage,
+            id: 'workflows',
+            label: 'Workflows',
+            ordering: 2,
         },
         {
             path: `${base}/process-information/`,
