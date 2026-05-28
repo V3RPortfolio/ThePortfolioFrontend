@@ -27,6 +27,12 @@ interface Workflow {
 }
 
 const nowIso = (): string => new Date().toISOString();
+const createWorkflowId = (): string => {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+        return `wf-${crypto.randomUUID()}`;
+    }
+    return `wf-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
+};
 
 const createDummyWorkflows = (): Workflow[] => [
     {
@@ -93,6 +99,7 @@ const createDummyWorkflows = (): Workflow[] => [
 const WorkflowsPage: React.FC = () => {
     const [workflows, setWorkflows] = useState<Workflow[]>(() => createDummyWorkflows());
     const [selectedWorkflowId, setSelectedWorkflowId] = useState<string | null>(null);
+    const [actionFeedback, setActionFeedback] = useState<string>("");
     const [searchValue, setSearchValue] = useState("");
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newQuery, setNewQuery] = useState("");
@@ -127,8 +134,12 @@ const WorkflowsPage: React.FC = () => {
     };
 
     const cancelWorkflow = (workflow: Workflow) => {
-        if (workflow.status !== "running") return;
+        if (workflow.status === "completed" || workflow.status === "failed" || workflow.status === "cancelled") {
+            setActionFeedback(`Workflow ${workflow.id} cannot be cancelled because it is already ${workflow.status}.`);
+            return;
+        }
         const updatedAt = nowIso();
+        setActionFeedback(`Workflow ${workflow.id} was cancelled.`);
         setWorkflows((current) =>
             current.map((item) => {
                 if (item.id !== workflow.id) return item;
@@ -138,7 +149,9 @@ const WorkflowsPage: React.FC = () => {
                     updatedAt,
                     completedAt: updatedAt,
                     stages: item.stages.map((stage) =>
-                        stage.status === "running" ? { ...stage, status: "cancelled" } : stage
+                        stage.status === "running" || stage.status === "pending" || stage.status === "paused"
+                            ? { ...stage, status: "cancelled" }
+                            : stage
                     ),
                     logs: [...item.logs, "Workflow cancelled by user request"],
                 };
@@ -147,9 +160,16 @@ const WorkflowsPage: React.FC = () => {
     };
 
     const pauseOrResumeWorkflow = (workflow: Workflow) => {
-        if (workflow.status !== "running" && workflow.status !== "paused") return;
-        const isPausing = workflow.status === "running";
-        const nextStatus: WorkflowStatus = isPausing ? "paused" : "running";
+        if (workflow.status === "completed" || workflow.status === "failed" || workflow.status === "cancelled") {
+            setActionFeedback(`Workflow ${workflow.id} cannot be paused or resumed because it is ${workflow.status}.`);
+            return;
+        }
+        const nextStatus: WorkflowStatus =
+            workflow.status === "running" || workflow.status === "queued" ? "paused" : "running";
+        const shouldPause = nextStatus === "paused";
+        setActionFeedback(
+            shouldPause ? `Workflow ${workflow.id} was paused.` : `Workflow ${workflow.id} was resumed.`
+        );
         setWorkflows((current) =>
             current.map((item) => {
                 if (item.id !== workflow.id) return item;
@@ -158,13 +178,15 @@ const WorkflowsPage: React.FC = () => {
                     status: nextStatus,
                     updatedAt: nowIso(),
                     stages: item.stages.map((stage) => {
-                        if (isPausing && stage.status === "running") return { ...stage, status: "paused" };
-                        if (!isPausing && stage.status === "paused") return { ...stage, status: "running" };
+                        if (shouldPause && stage.status === "running") {
+                            return { ...stage, status: "paused" };
+                        }
+                        if (!shouldPause && stage.status === "paused") return { ...stage, status: "running" };
                         return stage;
                     }),
                     logs: [
                         ...item.logs,
-                        isPausing ? "Workflow paused by user request" : "Workflow resumed by user request",
+                        shouldPause ? "Workflow paused by user request" : "Workflow resumed by user request",
                     ],
                 };
             }),
@@ -175,7 +197,7 @@ const WorkflowsPage: React.FC = () => {
         const query = newQuery.trim();
         if (!query) return;
         const createdAt = nowIso();
-        const workflowId = `wf-${Math.floor(Date.now() / 1000)}`;
+        const workflowId = createWorkflowId();
         const stageNames = newStages
             .split(",")
             .map((item) => item.trim())
@@ -190,14 +212,13 @@ const WorkflowsPage: React.FC = () => {
             id: workflowId,
             timestamp: createdAt,
             updatedAt: createdAt,
-            startedAt: createdAt,
-            status: "running",
+            status: "queued",
             query,
-            stages: normalizedStages.map((stage, index) => ({
+            stages: normalizedStages.map((stage) => ({
                 name: stage,
-                status: index === 0 ? "running" : "pending",
+                status: "pending",
             })),
-            logs: ["Workflow created", "Execution started"],
+            logs: ["Workflow created", "Workflow queued for execution"],
             agents: normalizedAgents,
             createdBy: newCreatedBy.trim() || "unknown@portfolio.dev",
             priority: "medium",
@@ -228,6 +249,7 @@ const WorkflowsPage: React.FC = () => {
                     placeholder="Search by workflow ID, creator, query, or agent"
                 />
             </div>
+            {actionFeedback ? <div className="card text-caption">{actionFeedback}</div> : null}
 
             {showCreateForm ? (
                 <div className="card flex flex-col gap-3">
@@ -302,11 +324,10 @@ const WorkflowsPage: React.FC = () => {
                 pagination={[{ pageNumber: 1, isActive: true }]}
                 totalPages={1}
                 clipLongText={true}
-                onRowClick={(row) => setSelectedWorkflowId(String(row.id))}
                 actions={[
-                    { name: "Details", className: "btn btn-tertiary btn-sm", handler: (row) => setSelectedWorkflow(row as Workflow) },
-                    { name: "Pause/Resume", className: "btn btn-primary btn-sm", handler: (row) => pauseOrResumeWorkflow(row as Workflow) },
-                    { name: "Cancel", className: "btn btn-danger btn-sm", handler: (row) => cancelWorkflow(row as Workflow) },
+                    { name: "View Details", className: "btn btn-tertiary btn-sm", handler: (row) => setSelectedWorkflow(row as Workflow) },
+                    { name: "Pause or Resume Workflow", className: "btn btn-primary btn-sm", handler: (row) => pauseOrResumeWorkflow(row as Workflow) },
+                    { name: "Cancel Workflow", className: "btn btn-danger btn-sm", handler: (row) => cancelWorkflow(row as Workflow) },
                 ]}
                 data={filteredWorkflows.map((workflow) => ({
                     ...workflow,
