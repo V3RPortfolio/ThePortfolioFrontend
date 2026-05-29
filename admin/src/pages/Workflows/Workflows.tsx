@@ -2,37 +2,12 @@ import type React from "react";
 import { useMemo, useState } from "react";
 import DataTable from "../../components/Table/DataTable";
 import SearchInput from "../../components/Search/SearchInput";
+import { type Workflow, type WorkflowStatus } from '../../interfaces/workflow.interface';
+import CreateWorkflow from "./components/CreateWorkflow";
+import ViewWorkflowDetails from "./components/ViewWorkflowDetails";
 
-type WorkflowStatus = "queued" | "running" | "paused" | "completed" | "failed" | "cancelled";
-type StageStatus = "pending" | "running" | "paused" | "completed" | "failed" | "cancelled";
 
-interface WorkflowStage {
-    name: string;
-    status: StageStatus;
-}
 
-interface Workflow {
-    id: string;
-    timestamp: string;
-    updatedAt: string;
-    startedAt?: string;
-    completedAt?: string;
-    status: WorkflowStatus;
-    query: string;
-    stages: WorkflowStage[];
-    logs: string[];
-    agents: string[];
-    createdBy: string;
-    priority: "low" | "medium" | "high";
-}
-
-const nowIso = (): string => new Date().toISOString();
-const createWorkflowId = (): string => {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-        return `wf-${crypto.randomUUID()}`;
-    }
-    return `wf-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
-};
 
 const createDummyWorkflows = (): Workflow[] => [
     {
@@ -102,10 +77,6 @@ const WorkflowsPage: React.FC = () => {
     const [actionFeedback, setActionFeedback] = useState<string>("");
     const [searchValue, setSearchValue] = useState("");
     const [showCreateForm, setShowCreateForm] = useState(false);
-    const [newQuery, setNewQuery] = useState("");
-    const [newCreatedBy, setNewCreatedBy] = useState("admin@portfolio.dev");
-    const [newAgents, setNewAgents] = useState("workflow-agent, validation-agent");
-    const [newStages, setNewStages] = useState("query-validation, execution, report");
 
     const selectedWorkflow = useMemo(
         () => workflows.find((workflow) => workflow.id === selectedWorkflowId) ?? null,
@@ -138,7 +109,7 @@ const WorkflowsPage: React.FC = () => {
             setActionFeedback(`Workflow ${workflow.id} cannot be cancelled because it is already ${workflow.status}.`);
             return;
         }
-        const updatedAt = nowIso();
+        const updatedAt = new Date().toISOString();
         setActionFeedback(`Workflow ${workflow.id} was cancelled.`);
         setWorkflows((current) =>
             current.map((item) => {
@@ -176,7 +147,7 @@ const WorkflowsPage: React.FC = () => {
                 return {
                     ...item,
                     status: nextStatus,
-                    updatedAt: nowIso(),
+                    updatedAt: new Date().toISOString(),
                     stages: item.stages.map((stage) => {
                         if (shouldPause && stage.status === "running") {
                             return { ...stage, status: "paused" };
@@ -193,42 +164,15 @@ const WorkflowsPage: React.FC = () => {
         );
     };
 
-    const createWorkflow = () => {
-        const query = newQuery.trim();
-        if (!query) return;
-        const createdAt = nowIso();
-        const workflowId = createWorkflowId();
-        const stageNames = newStages
-            .split(",")
-            .map((item) => item.trim())
-            .filter((item) => item.length > 0);
-        const normalizedStages = stageNames.length > 0 ? stageNames : ["query-validation", "execution", "report"];
-        const normalizedAgents = newAgents
-            .split(",")
-            .map((item) => item.trim())
-            .filter((item) => item.length > 0);
-
-        const newWorkflow: Workflow = {
-            id: workflowId,
-            timestamp: createdAt,
-            updatedAt: createdAt,
-            status: "queued",
-            query,
-            stages: normalizedStages.map((stage) => ({
-                name: stage,
-                status: "pending",
-            })),
-            logs: ["Workflow created", "Workflow queued for execution"],
-            agents: normalizedAgents,
-            createdBy: newCreatedBy.trim() || "unknown@portfolio.dev",
-            priority: "medium",
-        };
-
-        setWorkflows((current) => [newWorkflow, ...current]);
-        setSelectedWorkflowId(newWorkflow.id);
-        setNewQuery("");
+    const onCreateWorkflow = (workflow:Workflow) => {
+        setWorkflows([...workflows, workflow]);
+        setSelectedWorkflowId(workflow.id);
         setShowCreateForm(false);
-    };
+    }
+
+    const onCancelCreateWorkflow = () => {
+        setShowCreateForm(false);
+    }
 
     return (
         <section className="p-6 flex flex-col gap-6">
@@ -242,6 +186,10 @@ const WorkflowsPage: React.FC = () => {
                 </button>
             </div>
 
+            {showCreateForm ? (
+                <CreateWorkflow onSubmit={onCreateWorkflow} onCancel={onCancelCreateWorkflow} />
+            ) : null}
+
             <div className="card">
                 <SearchInput
                     value={searchValue}
@@ -251,72 +199,11 @@ const WorkflowsPage: React.FC = () => {
             </div>
             {actionFeedback ? <div className="card text-caption">{actionFeedback}</div> : null}
 
-            {showCreateForm ? (
-                <div className="card flex flex-col gap-3">
-                    <h3 className="text-heading">Create New Workflow</h3>
-                    <div className="input-group">
-                        <label className="input-label">Query</label>
-                        <textarea
-                            className="input"
-                            rows={4}
-                            value={newQuery}
-                            onChange={(event) => setNewQuery(event.target.value)}
-                            placeholder="Write a workflow query..."
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div className="input-group">
-                            <label className="input-label">Created By</label>
-                            <input
-                                className="input"
-                                value={newCreatedBy}
-                                onChange={(event) => setNewCreatedBy(event.target.value)}
-                                placeholder="user@example.com"
-                            />
-                        </div>
-                        <div className="input-group">
-                            <label className="input-label">Assigned Agents (comma separated)</label>
-                            <input
-                                className="input"
-                                value={newAgents}
-                                onChange={(event) => setNewAgents(event.target.value)}
-                                placeholder="agent-a, agent-b"
-                            />
-                        </div>
-                    </div>
-                    <div className="input-group">
-                        <label className="input-label">Stages (comma separated)</label>
-                        <input
-                            className="input"
-                            value={newStages}
-                            onChange={(event) => setNewStages(event.target.value)}
-                            placeholder="validate, execute, finalize"
-                        />
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                        <button
-                            className="btn btn-primary"
-                            onClick={createWorkflow}
-                            disabled={newQuery.trim().length === 0}
-                        >
-                            Submit Workflow
-                        </button>
-                        <button
-                            className="btn btn-secondary"
-                            onClick={() => setShowCreateForm(false)}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            ) : null}
-
             <DataTable
                 title="Current Workflows"
                 columns={[
                     { name: "ID", key: "id" },
                     { name: "Status", key: "status" },
-                    { name: "Created By", key: "createdBy" },
                     { name: "Agents", key: "agents" },
                     { name: "Stages", key: "stages" },
                     { name: "Created At", key: "timestamp" },
@@ -338,54 +225,7 @@ const WorkflowsPage: React.FC = () => {
             />
 
             {selectedWorkflow ? (
-                <div className="card flex flex-col gap-4">
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                        <h3 className="text-heading">Workflow Details · {selectedWorkflow.id}</h3>
-                        <span className="text-caption">Status: {selectedWorkflow.status}</span>
-                    </div>
-                    <p className="text-body">{selectedWorkflow.query}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h4 className="text-subheading">Metadata</h4>
-                            <ul className="text-caption mt-2 flex flex-col gap-1">
-                                <li>Created by: {selectedWorkflow.createdBy}</li>
-                                <li>Priority: {selectedWorkflow.priority}</li>
-                                <li>Assigned agents: {selectedWorkflow.agents.join(", ") || "—"}</li>
-                                <li>Created at: {new Date(selectedWorkflow.timestamp).toLocaleString()}</li>
-                                <li>Updated at: {new Date(selectedWorkflow.updatedAt).toLocaleString()}</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="text-subheading">Stage Status</h4>
-                            <ul className="mt-2 flex flex-col gap-2">
-                                {selectedWorkflow.stages.map((stage) => (
-                                    <li
-                                        key={`${selectedWorkflow.id}-${stage.name}`}
-                                        className="flex items-center justify-between px-3 py-2 rounded-md"
-                                        style={{ background: "var(--color-background-secondary)" }}
-                                    >
-                                        <span className="text-caption">{stage.name}</span>
-                                        <span className="text-caption">{stage.status}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 className="text-subheading">Logs</h4>
-                        <ul className="mt-2 flex flex-col gap-2">
-                            {selectedWorkflow.logs.map((logMessage, index) => (
-                                <li
-                                    key={`${selectedWorkflow.id}-log-${index}`}
-                                    className="text-caption px-3 py-2 rounded-md"
-                                    style={{ background: "var(--color-background-secondary)" }}
-                                >
-                                    {logMessage}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
+                <ViewWorkflowDetails selectedWorkflow={selectedWorkflow} />
             ) : null}
         </section>
     );
