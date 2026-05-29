@@ -1,87 +1,50 @@
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import DataTable from "../../components/Table/DataTable";
 import SearchInput from "../../components/Search/SearchInput";
-import { type Workflow, type WorkflowStatus } from '../../interfaces/workflow.interface';
+import type { Workflow } from '../../interfaces/workflow.interface';
+import workflowService from "../../services/workflow.service";
 import CreateWorkflow from "./components/CreateWorkflow";
 import ViewWorkflowDetails from "./components/ViewWorkflowDetails";
 
-
-
-
-const createDummyWorkflows = (): Workflow[] => [
-    {
-        id: "wf-1001",
-        timestamp: new Date(Date.now() - 1000 * 60 * 55).toISOString(),
-        updatedAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-        startedAt: new Date(Date.now() - 1000 * 60 * 54).toISOString(),
-        status: "running",
-        query: "Collect portfolio analytics for all projects and refresh ranking scores",
-        stages: [
-            { name: "query-validation", status: "completed" },
-            { name: "data-extraction", status: "running" },
-            { name: "score-normalization", status: "pending" },
-        ],
-        logs: [
-            "Workflow accepted by scheduler",
-            "Validation passed",
-            "Extraction started",
-            "Waiting for next data chunk",
-        ],
-        agents: ["analytics-agent", "ranking-agent"],
-        createdBy: "zuhair@portfolio.dev",
-        priority: "high",
-    },
-    {
-        id: "wf-1002",
-        timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-        updatedAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-        startedAt: new Date(Date.now() - 1000 * 60 * 179).toISOString(),
-        completedAt: new Date(Date.now() - 1000 * 60 * 121).toISOString(),
-        status: "completed",
-        query: "Generate daily quality metrics for CI workflow runs",
-        stages: [
-            { name: "query-validation", status: "completed" },
-            { name: "data-collection", status: "completed" },
-            { name: "report-generation", status: "completed" },
-        ],
-        logs: [
-            "Workflow accepted by scheduler",
-            "Data collection finished",
-            "Report pushed to storage",
-        ],
-        agents: ["metrics-agent"],
-        createdBy: "ops@portfolio.dev",
-        priority: "medium",
-    },
-    {
-        id: "wf-1003",
-        timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-        updatedAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
-        status: "queued",
-        query: "Find stale portfolio entries and prepare cleanup candidates",
-        stages: [
-            { name: "query-validation", status: "pending" },
-            { name: "candidate-generation", status: "pending" },
-        ],
-        logs: ["Workflow queued and waiting for worker allocation"],
-        agents: ["cleanup-agent"],
-        createdBy: "admin@portfolio.dev",
-        priority: "low",
-    },
-];
+const PAGE_SIZE = 10;
 
 const WorkflowsPage: React.FC = () => {
-    const [workflows, setWorkflows] = useState<Workflow[]>(() => createDummyWorkflows());
-    const [selectedWorkflowId, setSelectedWorkflowId] = useState<string | null>(null);
+    const [workflows, setWorkflows] = useState<Workflow[]>([]);
+    const [totalCount, setTotalCount] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
     const [actionFeedback, setActionFeedback] = useState<string>("");
     const [searchValue, setSearchValue] = useState("");
     const [showCreateForm, setShowCreateForm] = useState(false);
 
-    const selectedWorkflow = useMemo(
-        () => workflows.find((workflow) => workflow.id === selectedWorkflowId) ?? null,
-        [selectedWorkflowId, workflows],
-    );
+    const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+
+    const fetchWorkflows = useCallback(async (page: number) => {
+        try {
+            const { items, count } = await workflowService.getWorkflows(page, PAGE_SIZE);
+            setWorkflows(items);
+            setTotalCount(count);
+        } catch {
+            setActionFeedback("Failed to fetch workflows.");
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchWorkflows(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage]);
+
+    const paginationHandler = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const pagination = useMemo(() => {
+        return Array.from({ length: totalPages }, (_, i) => ({
+            pageNumber: i + 1,
+            isActive: i + 1 === currentPage,
+        }));
+    }, [totalPages, currentPage]);
 
     const filteredWorkflows = useMemo(() => {
         const normalizedSearch = searchValue.trim().toLowerCase();
@@ -100,79 +63,63 @@ const WorkflowsPage: React.FC = () => {
         });
     }, [searchValue, workflows]);
 
-    const setSelectedWorkflow = (workflow: Workflow) => {
-        setSelectedWorkflowId(workflow.id);
+    const handleViewDetails = async (workflow: Workflow) => {
+        try {
+            const details = await workflowService.viewWorkflowDetails(workflow.id);
+            setSelectedWorkflow(details);
+        } catch {
+            setActionFeedback(`Failed to load details for workflow ${workflow.id}.`);
+        }
     };
 
-    const cancelWorkflow = (workflow: Workflow) => {
+    const handleCancelWorkflow = async (workflow: Workflow) => {
         if (workflow.status === "completed" || workflow.status === "failed" || workflow.status === "cancelled") {
             setActionFeedback(`Workflow ${workflow.id} cannot be cancelled because it is already ${workflow.status}.`);
             return;
         }
-        const updatedAt = new Date().toISOString();
-        setActionFeedback(`Workflow ${workflow.id} was cancelled.`);
-        setWorkflows((current) =>
-            current.map((item) => {
-                if (item.id !== workflow.id) return item;
-                return {
-                    ...item,
-                    status: "cancelled",
-                    updatedAt,
-                    completedAt: updatedAt,
-                    stages: item.stages.map((stage) =>
-                        stage.status === "running" || stage.status === "pending" || stage.status === "paused"
-                            ? { ...stage, status: "cancelled" }
-                            : stage
-                    ),
-                    logs: [...item.logs, "Workflow cancelled by user request"],
-                };
-            }),
-        );
+        try {
+            const updated = await workflowService.cancelWorkflow(workflow.id);
+            if (updated) {
+                setActionFeedback(`Workflow ${workflow.id} was cancelled.`);
+                await fetchWorkflows(currentPage);
+            }
+        } catch {
+            setActionFeedback(`Failed to cancel workflow ${workflow.id}.`);
+        }
     };
 
-    const pauseOrResumeWorkflow = (workflow: Workflow) => {
+    const handlePauseOrResumeWorkflow = async (workflow: Workflow) => {
         if (workflow.status === "completed" || workflow.status === "failed" || workflow.status === "cancelled") {
             setActionFeedback(`Workflow ${workflow.id} cannot be paused or resumed because it is ${workflow.status}.`);
             return;
         }
-        const nextStatus: WorkflowStatus =
-            workflow.status === "running" || workflow.status === "queued" ? "paused" : "running";
-        const shouldPause = nextStatus === "paused";
-        setActionFeedback(
-            shouldPause ? `Workflow ${workflow.id} was paused.` : `Workflow ${workflow.id} was resumed.`
-        );
-        setWorkflows((current) =>
-            current.map((item) => {
-                if (item.id !== workflow.id) return item;
-                return {
-                    ...item,
-                    status: nextStatus,
-                    updatedAt: new Date().toISOString(),
-                    stages: item.stages.map((stage) => {
-                        if (shouldPause && stage.status === "running") {
-                            return { ...stage, status: "paused" };
-                        }
-                        if (!shouldPause && stage.status === "paused") return { ...stage, status: "running" };
-                        return stage;
-                    }),
-                    logs: [
-                        ...item.logs,
-                        shouldPause ? "Workflow paused by user request" : "Workflow resumed by user request",
-                    ],
-                };
-            }),
-        );
+        const shouldPause = workflow.status === "running" || workflow.status === "queued";
+        try {
+            const updated = shouldPause
+                ? await workflowService.pauseWorkflow(workflow.id)
+                : await workflowService.resumeWorkflow(workflow.id);
+
+            if (updated) {
+                setActionFeedback(
+                    shouldPause ? `Workflow ${workflow.id} was paused.` : `Workflow ${workflow.id} was resumed.`
+                );
+                await fetchWorkflows(currentPage);
+            }
+        } catch {
+            setActionFeedback(`Failed to ${shouldPause ? "pause" : "resume"} workflow ${workflow.id}.`);
+        }
     };
 
-    const onCreateWorkflow = (workflow:Workflow) => {
-        setWorkflows([...workflows, workflow]);
-        setSelectedWorkflowId(workflow.id);
+    const onCreateWorkflow = (workflow: Workflow) => {
+        setWorkflows((current) => [workflow, ...current]);
+        setTotalCount((count) => count + 1);
+        setSelectedWorkflow(workflow);
         setShowCreateForm(false);
-    }
+    };
 
     const onCancelCreateWorkflow = () => {
         setShowCreateForm(false);
-    }
+    };
 
     return (
         <section className="p-6 flex flex-col gap-6">
@@ -208,13 +155,14 @@ const WorkflowsPage: React.FC = () => {
                     { name: "Stages", key: "stages" },
                     { name: "Created At", key: "timestamp" },
                 ]}
-                pagination={[{ pageNumber: 1, isActive: true }]}
-                totalPages={1}
+                pagination={pagination}
+                paginationHandler={paginationHandler}
+                totalPages={totalPages}
                 clipLongText={true}
                 actions={[
-                    { name: "View Details", className: "btn btn-tertiary btn-sm", handler: (row) => setSelectedWorkflow(row as Workflow) },
-                    { name: "Pause or Resume Workflow", className: "btn btn-primary btn-sm", handler: (row) => pauseOrResumeWorkflow(row as Workflow) },
-                    { name: "Cancel Workflow", className: "btn btn-danger btn-sm", handler: (row) => cancelWorkflow(row as Workflow) },
+                    { name: "View Details", className: "btn btn-tertiary btn-sm", handler: (row) => handleViewDetails(row as Workflow) },
+                    { name: "Pause or Resume Workflow", className: "btn btn-primary btn-sm", handler: (row) => handlePauseOrResumeWorkflow(row as Workflow) },
+                    { name: "Cancel Workflow", className: "btn btn-danger btn-sm", handler: (row) => handleCancelWorkflow(row as Workflow) },
                 ]}
                 data={filteredWorkflows.map((workflow) => ({
                     ...workflow,

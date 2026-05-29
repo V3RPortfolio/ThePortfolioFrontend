@@ -1,40 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 import { type Workflow } from '../../../interfaces/workflow.interface';
-
-
-const nowIso = (): string => new Date().toISOString();
-const createWorkflowId = (): string => {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-        return `wf-${crypto.randomUUID()}`;
-    }
-    return `wf-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
-};
-
-const getNewWorkflow = (query:string):Workflow => {
-    return {
-        query,
-        id: createWorkflowId(),
-        timestamp: nowIso(),
-        updatedAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-        startedAt: nowIso(),
-        status: "running",
-        stages: [
-            { name: "query-validation", status: "completed" },
-            { name: "data-extraction", status: "running" },
-            { name: "score-normalization", status: "pending" },
-        ],
-        logs: [
-            "Workflow accepted by scheduler",
-            "Validation passed",
-            "Extraction started",
-            "Waiting for next data chunk",
-        ],
-        agents: ["analytics-agent", "ranking-agent"],
-        createdBy: "zuhair@portfolio.dev",
-        priority: "high",
-    }
-}
+import workflowService from "../../../services/workflow.service";
 
 interface CreateWorkflowProps {
     onSubmit: (workflow:Workflow) => void;
@@ -43,14 +10,18 @@ interface CreateWorkflowProps {
 
 const CreateWorkflow:React.FC<CreateWorkflowProps> = ({onSubmit, onCancel}) => {
     const [newQuery, setNewQuery] = useState("");
-    const createWorkflow = () => {
+    const createWorkflow = async () => {
         const query = newQuery.trim();
         if (!query) return;
 
-        // TODO: Api call to create new workflow
-        const workflow = getNewWorkflow(query);
-        onSubmit(workflow);
-        setNewQuery("");
+        try {
+            const workflow = await workflowService.createWorkflow({ query });
+            onSubmit(workflow);
+            setNewQuery("");
+        } catch {
+            // Error handling will be improved when backend is integrated
+            console.error("Failed to create workflow");
+        }
     };
 
     return <div className="card flex flex-col gap-3">
