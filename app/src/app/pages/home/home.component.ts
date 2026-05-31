@@ -9,10 +9,14 @@ import { GithubIssueMetricsComponent } from '../../components/github/github-issu
 
 import { DataAnalyticsComponent } from '../../components/banners/data-analytics/data-analytics.component';
 import { RagArchitectureComponent } from '../../components/banners/rag-architecture/rag-architecture.component';
-import { IntrusionPreventionComponent } from '../../components/static-sections/intrusion-prevention/intrusion-prevention.component';
-import { TargetPlatformComponent } from '../../components/target-platform/target-platform.component';
+import { IntrusionPreventionComponent } from '../../components/banners/intrusion-prevention/intrusion-prevention.component';
 import { DataIngestionPipelineComponent } from '../../components/banners/data-ingestion-pipeline/data-ingestion-pipeline.component';
 import { FamiliarTechnologiesComponent } from '../../components/static-sections/familiar-technologies/familiar-technologies.component';
+import { JarvisAiIntroComponent } from '../../components/banners/jarvis-ai-intro/jarvis-ai-intro.component';
+import { TargetPlatformComponent } from '../../components/banners/target-platform/target-platform.component';
+import { PrivacyByDesignComponent } from '../../components/banners/privacy-by-design/privacy-by-design.component';
+import { KernelLevelSecurityComponent } from '../../components/banners/kernel-level-security/kernel-level-security.component';
+import { DistributedAiComponent } from '../../components/banners/distributed-ai/distributed-ai.component';
 
 @Component({
     selector: 'app-home',
@@ -22,11 +26,15 @@ import { FamiliarTechnologiesComponent } from '../../components/static-sections/
     imports: [
       NotificationBannerComponent,
       
+      JarvisAiIntroComponent,
       DataIngestionPipelineComponent, 
       DataAnalyticsComponent,
       RagArchitectureComponent,
       IntrusionPreventionComponent,
       TargetPlatformComponent,
+      PrivacyByDesignComponent,
+      KernelLevelSecurityComponent,
+      DistributedAiComponent,
 
       ParallaxDirective, 
       HeroComponent, 

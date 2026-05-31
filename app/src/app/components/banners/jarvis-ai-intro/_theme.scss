@@ -1,0 +1,16 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/theme/theme' as theme;
+@use '../../../../styles/theme/breakpoint' as breakpoint;
+
+#jarvis-ai-intro-banner {
+    .jarvis-ai-intro-banner-title, .jarvis-ai-intro-banner-content {
+        color: mat.get-theme-color(theme.$theme, 'primary', 95);
+    }
+    .jarvis-ai-intro-banner-title {
+        text-shadow: 0px 5px 30px mat.get-theme-color(theme.$theme, 'primary', 90);
+    }
+
+    @include breakpoint.mobile {
+        background-color: mat.get-theme-color(theme.$theme, 'primary', 25);
+    }
+}

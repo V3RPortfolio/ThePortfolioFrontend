@@ -1,0 +1,14 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/theme/theme' as theme;
+@use '../../../../styles/theme/constants' as constants;
+
+#kernel-level-security {
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 100);
+    .kernel-level-security-title, .kernel-level-security-description {
+        color: mat.get-theme-color(theme.$theme, 'primary', 20);
+        font-weight: bold;
+    }
+    .kernel-level-security-description {
+        font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+    }
+}

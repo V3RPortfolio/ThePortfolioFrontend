@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ParallaxDirective } from '../../directives/parallax.directive';
+import { ParallaxDirective } from '../../../directives/parallax.directive';
 
 @Component({
   selector: 'app-target-platform',
