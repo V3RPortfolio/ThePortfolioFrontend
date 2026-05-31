@@ -1,0 +1,10 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/theme/theme' as theme;
+
+#distributed-ai-banner {
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 20);
+
+    .distributed-ai-banner-title, .distributed-ai-banner-content {
+        color: mat.get-theme-color(theme.$theme, 'neutral', 95);
+    }
+}

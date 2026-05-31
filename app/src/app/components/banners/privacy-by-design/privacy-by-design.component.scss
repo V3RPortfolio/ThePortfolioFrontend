@@ -1,0 +1,15 @@
+@use 'theme';
+
+
+#privacy-by-design {
+    padding: 20px 0;
+    .privacy-by-design-title {
+        width: 100%;
+        text-align: center;
+    }
+    .privacy-by-design-description {
+        font-style: italic;
+        text-align: center;
+        font-weight: normal;
+    }
+}

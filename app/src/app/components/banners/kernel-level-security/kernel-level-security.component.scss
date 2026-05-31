@@ -1,0 +1,15 @@
+@use 'theme';
+
+
+#kernel-level-security {
+    padding: 20px 0;
+    .kernel-level-security-title {
+        width: 100%;
+        text-align: center;
+    }
+    .kernel-level-security-description {
+        font-style: italic;
+        text-align: center;
+        font-weight: normal;
+    }
+}

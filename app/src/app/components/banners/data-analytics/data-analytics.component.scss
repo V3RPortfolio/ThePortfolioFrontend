@@ -1,13 +1,24 @@
 @use 'theme';
+@use '../../../../styles/theme/breakpoint' as breakpoint;
 
 #data-analytics-banner {
     .data-analytics-banner-content {
         font-style: italic;
     }
 
+    .data-analytics-banner-image-container {
+        text-align: center;
+    }
+
     .data-analytics-banner-image {
         max-width: 100%;
         width: 100%;
         height: auto;
+
+        @include breakpoint.tablet {
+            max-width: 500px;
+        }
     }
+
+     
 }

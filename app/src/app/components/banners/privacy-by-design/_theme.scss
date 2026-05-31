@@ -1,0 +1,14 @@
+@use '@angular/material' as mat;
+@use '../../../../styles/theme/theme' as theme;
+@use '../../../../styles/theme/constants' as constants;
+
+#privacy-by-design {
+    background-color: mat.get-theme-color(theme.$theme, 'primary', 20);
+    .privacy-by-design-title, .privacy-by-design-description {
+        color: mat.get-theme-color(theme.$theme, 'neutral', 95);
+        font-weight: bold;
+    }
+    .privacy-by-design-description {
+        font-size: map-get($map: constants.$font-sizes-rem, $key: md);
+    }
+}
