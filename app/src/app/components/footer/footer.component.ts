@@ -4,7 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatIconAnchor, MatAnchor } from '@angular/material/button';
-import { SocialLinksComponent } from '../social-links/social-links.component';
+import { SocialLinksComponent } from '../static-sections/social-links/social-links.component';
 import { RoutePaths } from '../../app.constants';
 
 

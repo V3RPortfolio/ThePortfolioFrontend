@@ -2,10 +2,10 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
-import { IntroBannerComponent } from './components/intro-banner/intro-banner.component';
 import { NgClass } from '@angular/common';
 
 import { SessionManager } from './services/session.service';
+import { IntroBannerComponent } from './components/banners/intro-banner/intro-banner.component';
 
 @Component({
   selector: 'app-root',

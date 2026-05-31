@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IntroBannerComponent } from '../../components/intro-banner/intro-banner.component';
+import { IntroBannerComponent } from '../../components/banners/intro-banner/intro-banner.component';
 
 @Component({
   selector: 'app-about',

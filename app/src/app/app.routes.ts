@@ -4,7 +4,7 @@ import { PostListComponent } from './pages/post-list/post-list.component';
 import { RoutePaths } from './app.constants';
 import { PostComponent } from './pages/post/post.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { CreditsComponent } from './components/credits/credits.component';
+import { CreditsComponent } from './components/static-sections/credits/credits.component';
 import { AboutComponent } from './pages/about/about.component';
 import { LoginComponent } from './pages/login/login.component';
 import { LogoutComponent } from './components/logout/logout.component';
