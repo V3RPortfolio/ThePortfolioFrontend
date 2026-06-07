@@ -1,0 +1,51 @@
+<div class="mat-typography container" id="locations-and-services">
+  <div class="row page-header">
+    <h1 class="page-title">Locations &amp; Services</h1>
+    <p class="page-subtitle">Browse the services and infrastructure that power this platform.</p>
+  </div>
+
+  <mat-divider class="header-divider"></mat-divider>
+
+  <div class="row content-area">
+    <!-- Sidebar -->
+    <aside class="col-3 col-md-12 sidebar">
+      @if (isLoadingGroups) {
+        <p class="sidebar-loading">Loading groups&hellip;</p>
+      } @else if (groupsError) {
+        <p class="sidebar-error">{{ groupsError }}</p>
+      } @else {
+        @for (group of serviceGroups; track group.id) {
+          <div class="sidebar-group">
+            <h6 class="sidebar-group-title">{{ group.title }}</h6>
+            <ul class="sidebar-list">
+              @for (service of group.services; track service.id) {
+                <li
+                  class="sidebar-item"
+                  [ngClass]="{ active: service.id === selectedServiceId }"
+                  (click)="select(service)"
+                >
+                  {{ service.title }}
+                </li>
+              }
+            </ul>
+          </div>
+          <mat-divider class="group-divider"></mat-divider>
+        }
+      }
+    </aside>
+
+    <!-- Content -->
+    <main class="col-9 col-md-12 content">
+      @if (isLoadingService) {
+        <p class="content-loading">Loading content&hellip;</p>
+      } @else if (serviceError) {
+        <p class="content-error">{{ serviceError }}</p>
+      } @else if (selectedService) {
+        <app-markdown-previewer
+          [title]="selectedService.title"
+          [markdown]="combinedMarkdown"
+        ></app-markdown-previewer>
+      }
+    </main>
+  </div>
+</div>

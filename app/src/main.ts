@@ -15,6 +15,8 @@ import {MatCardModule} from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
 import { provideNamedApollo } from 'apollo-angular';
+import { provideMarkdown } from 'ngx-markdown';
+
 
 import { GraphQLClients } from './app/app.constants';
 import { ApolloService } from './app/services/apollo.service';
@@ -47,6 +49,7 @@ bootstrapApplication(AppComponent, {
         ),
         provideAnimations(),
         provideRouter(routes),
+        provideMarkdown({ loader: HttpClient }),
         provideNamedApollo(() => {
             const http = inject(HttpClient);
             return {
@@ -57,7 +60,8 @@ bootstrapApplication(AppComponent, {
         {
             provide: UrlSerializer,
             useClass: CustomUrlSerializer
-        }        
+        },
+                
         
     ]
 })

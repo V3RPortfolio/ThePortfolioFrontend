@@ -32,6 +32,7 @@
     "graphql": "^16.9.0",
     "material-icons": "^1.13.12",
     "ngx-bootstrap": "^18.0.2",
+    "ngx-markdown": "^18.1.0",
     "ngxtension": "^4.0.0",
     "rxjs": "~7.8.0",
     "three": "^0.169.0",

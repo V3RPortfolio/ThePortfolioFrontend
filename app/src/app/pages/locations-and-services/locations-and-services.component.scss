@@ -1,0 +1,135 @@
+@use '../../../styles/theme/breakpoint' as breakpoint;
+@use '../../../styles/theme/constants' as constants;
+
+#locations-and-services {
+  padding-top: 40px;
+  padding-bottom: 60px;
+  min-height: calc(100vh - 120px);
+
+  .page-header {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    margin: 0;
+    font-size: map-get(constants.$font-sizes-rem, xl);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .page-subtitle {
+    margin: 0;
+    opacity: 0.6;
+    font-size: map-get(constants.$font-sizes-rem, md);
+  }
+
+  .header-divider {
+    margin-bottom: 32px;
+  }
+
+  .content-area {
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  // ── Sidebar ──────────────────────────────────────────
+  .sidebar {
+    position: sticky;
+    top: 90px;
+    padding-right: 24px;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+
+    .sidebar-group {
+      margin-bottom: 8px;
+    }
+
+    .sidebar-group-title {
+      margin: 0 0 8px 0;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.45;
+    }
+
+    .sidebar-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sidebar-item {
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: map-get(constants.$font-sizes-rem, md);
+      transition: background 0.15s ease, color 0.15s ease;
+      color: inherit;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      &.active {
+        background: rgba(15, 35, 53, 0.08);
+        font-weight: 600;
+        color: #0f2335;
+      }
+    }
+
+    .group-divider {
+      margin: 12px 0;
+
+      &:last-of-type {
+        display: none;
+      }
+    }
+  }
+
+  // ── Main content ──────────────────────────────────────
+  .content {
+    padding-left: 36px;
+    min-height: 400px;
+  }
+
+  // ── Responsive ───────────────────────────────────────
+  @include breakpoint.tablet {
+    .content-area {
+      flex-direction: column;
+    }
+
+    .sidebar {
+      position: static;
+      width: 100% !important;
+      border-right: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      padding-right: 0;
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+
+      .sidebar-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .sidebar-item {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+      }
+
+      .group-divider {
+        display: none;
+      }
+    }
+
+    .content {
+      padding-left: 0;
+      width: 100% !important;
+    }
+  }
+}
