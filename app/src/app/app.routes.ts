@@ -10,7 +10,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { LogoutComponent } from './components/logout/logout.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { environment } from '../environments/environment.development';
-import { LocationsAndServicesComponent } from './pages/locations-and-services/locations-and-services.component';
+import { PlatformsAndServicesComponent } from './pages/platforms-and-services/platforms-and-services.component';
 
 
 
@@ -27,7 +27,7 @@ export const routes: Routes = [
     {path: RoutePaths.oauth2CallbackGoogle, component: LoginComponent},
     {path: RoutePaths.logout, component: LogoutComponent},
     {path: RoutePaths.admin, redirectTo: `${environment.ADMIN_FRONTEND_URL}/${RoutePaths.admin}/`, pathMatch: 'full'},
-    {path: RoutePaths.locationsAndServices, component: LocationsAndServicesComponent},
+    {path: RoutePaths.platformsAndServices, component: PlatformsAndServicesComponent},
     
     {path: '**', component: PageNotFoundComponent}
 ];

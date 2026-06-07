@@ -6,9 +6,9 @@ import { AuthenticationService } from '../../services/djadmin/documentation.serv
 import { ServiceGroupInfoOut, ServiceInfoOut, ServiceOut } from '../../interfaces/djadmin/documentation.interface';
 
 @Component({
-  selector: 'app-locations-and-services',
-  templateUrl: './locations-and-services.component.html',
-  styleUrl: './locations-and-services.component.scss',
+  selector: 'app-platforms-and-services',
+  templateUrl: './platforms-and-services.component.html',
+  styleUrl: './platforms-and-services.component.scss',
   standalone: true,
   imports: [
     NgClass,
@@ -16,7 +16,7 @@ import { ServiceGroupInfoOut, ServiceInfoOut, ServiceOut } from '../../interface
     MarkdownPreviewerComponent,
   ],
 })
-export class LocationsAndServicesComponent implements OnInit {
+export class PlatformsAndServicesComponent implements OnInit {
   serviceGroups: ServiceGroupInfoOut[] = [];
   selectedService: ServiceOut | null = null;
   selectedServiceId: string | null = null;

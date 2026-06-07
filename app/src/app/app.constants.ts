@@ -12,7 +12,7 @@ export enum RoutePaths {
     logout = 'logout',
     admin = 'admin',
     oauth2CallbackGoogle = 'oauth2/callback/google',
-    locationsAndServices = 'locations-and-services',
+    platformsAndServices = 'platforms-and-services',
 }
 
 export const BACKEND_POST_SPECIFIC_STYLESHEET = "https://gateway.vip3rtech6069.com/wp-content/uploads/elementor/css/post-{id}.css";
