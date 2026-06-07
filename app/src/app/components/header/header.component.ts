@@ -51,6 +51,7 @@ export class HeaderComponent implements OnInit {
   contactRoute=`/${RoutePaths.contact}`;
   loginRoute=`/${RoutePaths.login}`;
   adminRoute=`/${RoutePaths.admin}`;
+  locationsAndServicesRoute=`/${RoutePaths.locationsAndServices}`;
 
   constructor(
     private backendService:WPBackendService,
